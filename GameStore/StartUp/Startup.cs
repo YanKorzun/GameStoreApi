@@ -31,6 +31,7 @@ namespace GameStore.StartUp
             services.RegisterIdentity();
             services.RegisterAutoMapper();
             services.RegisterSwagger();
+            services.RegisterHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +51,8 @@ namespace GameStore.StartUp
             }
 
             app.RegisterSwaggerUi();
+
+            app.RegisterHealthChecks();
 
 
             app.UseHttpsRedirection();
