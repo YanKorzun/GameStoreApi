@@ -8,12 +8,12 @@ using Newtonsoft.Json;
 
 namespace GameStore.Controllers
 { 
-    [Route("")]
-    [Route("Home/GetInfo")]
     [ApiController]
+    [Route("api/home")]
     public class HomeController : ControllerBase
     {
         [HttpGet]
+        [Route("info")]
         public ActionResult<string> GetInfo() => "Hello World";
     }
 

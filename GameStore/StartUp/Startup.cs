@@ -25,9 +25,9 @@ namespace GameStore.StartUp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var databaseSettings = RegisterSettings(Configuration);
+            var AppSettings = RegisterSettings(Configuration);
             
-            services.RegisterDatabase(databaseSettings);
+            services.RegisterDatabase(AppSettings.Database);
             services.RegisterIdentity();
             services.RegisterAutoMapper();
             services.RegisterSwagger();
@@ -71,10 +71,10 @@ namespace GameStore.StartUp
             });
         }
 
-        private static DatabaseSettings RegisterSettings(IConfiguration configuration)
-        {
-            var databaseSettings = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>();
-            return (databaseSettings);
-        }
+        private static AppSettings RegisterSettings(IConfiguration configuration) => 
+                new() 
+                {
+                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>() 
+                };
     }
 }
