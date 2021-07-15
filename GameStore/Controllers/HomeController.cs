@@ -3,16 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 
 namespace GameStore.Controllers
-{
-    [Controller]
-    public class HomeController : Controller
+{ 
+    [Route("")]
+    [Route("Home/GetInfo")]
+    [ApiController]
+    public class HomeController : ControllerBase
     {
-        public string GetInfo()
-        {
-            return JsonConvert.SerializeObject("Hello World!");
-        }
+        [HttpGet]
+        public ActionResult<string> GetInfo() => "Hello World";
     }
+
 }

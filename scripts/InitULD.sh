@@ -1,1 +1,0 @@
-dotnet new webapp --auth $1 -uld -o $2
