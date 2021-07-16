@@ -1,15 +1,10 @@
-using System;
 using GameStore.Core.Configuration;
-using GameStore.DAL;
 using GameStore.StartUp.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace GameStore.StartUp
 {
@@ -26,7 +21,7 @@ namespace GameStore.StartUp
         public void ConfigureServices(IServiceCollection services)
         {
             var AppSettings = RegisterSettings(Configuration);
-            
+
             services.RegisterDatabase(AppSettings.Database);
             services.RegisterIdentity();
             services.RegisterAutoMapper();
@@ -37,7 +32,6 @@ namespace GameStore.StartUp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -53,7 +47,6 @@ namespace GameStore.StartUp
             app.RegisterSwaggerUi();
 
             app.RegisterHealthChecks();
-
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -71,10 +64,10 @@ namespace GameStore.StartUp
             });
         }
 
-        private static AppSettings RegisterSettings(IConfiguration configuration) => 
-                new() 
+        private static AppSettings RegisterSettings(IConfiguration configuration) =>
+                new()
                 {
-                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>() 
+                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>()
                 };
     }
 }

@@ -2,14 +2,25 @@
 {
     public class DatabaseSettings
     {
-        public string Server { get; set; }
+        public string DataSource { get; set; }
+        public string InitialCatalog { get; set; }
+        public string UserID { get; set; }
+        public string Password { get; set; }
+        public int ConnectTimeout { get; set; }
+        public bool Encrypt { get; set; }
+        public bool TrustedServerCertificate { get; set; }
+        public string ApplicationIntent { get; set; }
+        public bool MultiSubnetFailover { get; set; }
 
-        public string Database { get; set; }
-
-        public bool TrustedConnection{ get; set; }
-
-        public bool MultipleActiveResultSets { get; set; }
-
-        public string ConnectionString => $"Server={Server};Database={Database};Trusted_Connection={TrustedConnection};MultipleActiveResultSets={MultipleActiveResultSets}";
+        public string ConnectionString =>
+          $"Data Source={DataSource};" +
+          $"Initial Catalog={InitialCatalog};" +
+          $"User ID={UserID};" +
+          $"Password={Password};" +
+          $"Connect Timeout={ConnectTimeout};" +
+          $"Encrypt={Encrypt};" +
+          $"TrustServerCertificate={TrustedServerCertificate};" +
+          $"ApplicationIntent={ApplicationIntent};" +
+          $"MultiSubnetFailover={MultiSubnetFailover}";
     }
 }

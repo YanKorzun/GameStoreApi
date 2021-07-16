@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace GameStore.StartUp.Configuration
 {
@@ -23,7 +18,6 @@ namespace GameStore.StartUp.Configuration
                         Title = "Click on 'TermsOfService' API",
                         Description = "Lorem ipsum",
                         TermsOfService = new Uri("../Home/GetInfo", UriKind.Relative),
-
                     });
                 });
         }
@@ -35,7 +29,6 @@ namespace GameStore.StartUp.Configuration
             {
                 o.SwaggerEndpoint("/swagger/v1/swagger.json", "GameStore API V1");
             });
-
         }
     }
 }
