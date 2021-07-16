@@ -1,33 +1,32 @@
-﻿using GameStore.Core.Models;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace GameStore.StartUp.Configuration
 {
     public static class RegisterExceptionExtensions
     {
-        public static void RegisterExceptionHandler(this IApplicationBuilder app)
+        public static void RegisterExceptionHandler(this IApplicationBuilder app, ILogger logger)
         {
             app.UseExceptionHandler(appError =>
             {
                 appError.Run(async context =>
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Response.ContentType = "application/json";
 
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
 
-                    if (contextFeature != null)
+                    if (contextFeature is not null)
                     {
                         var exceptionResponse = new ExceptionResponse
                         {
                             Status = "Internal Server Error",
                             Message = contextFeature.Error.Message
                         };
-                        Log.Error($"Error caught in global handler: '{exceptionResponse.Message}'");
+                        logger.LogError($"Error caught in global handler: '{exceptionResponse.Message}'");
 
                         await context.Response.WriteAsync($@"
                             {{
@@ -43,5 +42,11 @@ namespace GameStore.StartUp.Configuration
             }
             );
         }
+        private class ExceptionResponse
+        {
+            public string Status { get; set; }
+            public string Message { get; set; }
+        }
     }
+
 }

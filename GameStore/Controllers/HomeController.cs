@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
 
@@ -12,9 +13,15 @@ namespace GameStore.Controllers
         [Route("info")]
         public ActionResult<string> GetInfo()
         {
-            Log.Information("Now im throwing a new exception, lovi aptechku");
-            throw new Exception("Exception message without middleware");
+            Log.Information("Some test information here");
             return "Hello World";
+        }
+
+        [HttpGet]
+        [Route("error")]
+        public ActionResult GetError()
+        {
+            throw new Exception("Access denied");
         }
     }
 }

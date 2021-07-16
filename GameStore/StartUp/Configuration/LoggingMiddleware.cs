@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -7,10 +7,12 @@ namespace GameStore.Startup.Configuration
 {
     public class LoggingMiddleware
     {
+        private readonly ILogger<LoggingMiddleware> _logger;
         private readonly RequestDelegate _next;
 
-        public LoggingMiddleware(RequestDelegate next)
+        public LoggingMiddleware(ILogger<LoggingMiddleware> logger,RequestDelegate next)
         {
+            _logger = logger;
             _next = next;
         }
 
@@ -28,7 +30,7 @@ namespace GameStore.Startup.Configuration
                     context.Request.Body.Position = 0;
                 }
 
-                Log.Information($"Request {context.Request?.Method} {context.Request?.Path.Value} {jsonBody} => {context.Response?.StatusCode}");
+                _logger.LogInformation($"Request {context.Request?.Method} {context.Request?.Path.Value} {jsonBody} => {context.Response?.StatusCode}");
             }
             finally
             {

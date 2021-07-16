@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameStore.StartUp
 {
@@ -29,7 +31,7 @@ namespace GameStore.StartUp
             services.RegisterHealthChecks();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -46,7 +48,7 @@ namespace GameStore.StartUp
             app.RegisterHealthChecks();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.RegisterExceptionHandler();
+            app.RegisterExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -55,7 +57,7 @@ namespace GameStore.StartUp
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
-                    name: "default", pattern: "{controller=HomeController}/{action=GetInfo}/{id?}");
+                    name: "default", pattern: "{controller=HomeController}");
             });
         }
 
