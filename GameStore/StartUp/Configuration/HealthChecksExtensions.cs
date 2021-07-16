@@ -1,14 +1,6 @@
-﻿using System;
-
-using Microsoft.EntityFrameworkCore;
-
+﻿using GameStore.DAL;
 using Microsoft.AspNetCore.Builder;
-using GameStore.Core.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GameStore.DAL;
 
 namespace GameStore.StartUp.Configuration
 {
