@@ -9,16 +9,14 @@ namespace GameStore.Controllers
     [Route("api/home")]
     public class HomeController : ControllerBase
     {
-        [HttpGet]
-        [Route("info")]
+        [HttpGet("info")]
         public ActionResult<string> GetInfo()
         {
             Log.Information("Some test information here");
             return "Hello World";
         }
 
-        [HttpGet]
-        [Route("error")]
+        [HttpGet("error")]
         public ActionResult GetError()
         {
             throw new Exception("Access denied");

@@ -52,13 +52,7 @@ namespace GameStore.StartUp
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
-                    name: "default", pattern: "{controller=HomeController}");
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
         private static AppSettings RegisterSettings(IConfiguration configuration) =>
