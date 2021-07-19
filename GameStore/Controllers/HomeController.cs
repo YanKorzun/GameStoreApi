@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
+using Microsoft.Extensions.Logging;
+
 using System;
 
 namespace GameStore.Controllers
@@ -9,10 +10,16 @@ namespace GameStore.Controllers
     [Route("api/home")]
     public class HomeController : ControllerBase
     {
+        private readonly ILogger _logger;
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
         [HttpGet("info")]
         public ActionResult<string> GetInfo()
         {
-            Log.Information("Some test information here");
+            _logger.LogInformation("Log in home controller is working fine");
             return "Hello World";
         }
 

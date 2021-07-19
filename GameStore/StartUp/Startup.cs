@@ -13,18 +13,22 @@ namespace GameStore.StartUp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
+            LoggerFactory = loggerFactory;
         }
 
+
         public IConfiguration Configuration { get; }
+        private ILoggerFactory LoggerFactory { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
             var AppSettings = RegisterSettings(Configuration);
 
-            services.RegisterDatabase(AppSettings.Database);
+            services.RegisterDatabase(AppSettings.Database, LoggerFactory);
             services.RegisterIdentity();
             services.RegisterAutoMapper();
             services.RegisterSwagger();
