@@ -1,36 +1,41 @@
 using GameStore.Core.Configuration;
+using GameStore.Startup.Configuration;
 using GameStore.StartUp.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameStore.StartUp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
+            LoggerFactory = loggerFactory;
         }
 
-        public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        public IConfiguration Configuration { get; }
+        private ILoggerFactory LoggerFactory { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
+            
             var AppSettings = RegisterSettings(Configuration);
 
-            services.RegisterDatabase(AppSettings.Database);
+            services.RegisterDatabase(AppSettings.Database, LoggerFactory);
             services.RegisterIdentity();
             services.RegisterAutoMapper();
             services.RegisterSwagger();
             services.RegisterHealthChecks();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -39,29 +44,19 @@ namespace GameStore.StartUp
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
+            app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
-
             app.RegisterHealthChecks();
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.RegisterExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
-                    name: "default", pattern: "{controller=HomeController}/{action=GetInfo}/{id?}");
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
         private static AppSettings RegisterSettings(IConfiguration configuration) =>
