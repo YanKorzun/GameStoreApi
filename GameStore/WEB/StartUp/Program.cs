@@ -6,7 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.RollingFileAlternative;
 
-namespace GameStore.StartUp
+namespace GameStore.WEB.StartUp
 {
     public class Program
     {

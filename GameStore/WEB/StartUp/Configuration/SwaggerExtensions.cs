@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
 
-namespace GameStore.StartUp.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class SwaggerExtensions
     {

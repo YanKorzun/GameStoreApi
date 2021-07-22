@@ -1,15 +1,15 @@
-using GameStore.Core.Configuration;
 using GameStore.Startup.Configuration;
-using GameStore.StartUp.Configuration;
+using GameStore.WEB.Settings;
+using GameStore.WEB.Startup.Configuration;
+using GameStore.WEB.StartUp.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
-namespace GameStore.StartUp
+namespace GameStore.WEB.StartUp
 {
     public class Startup
     {
@@ -19,34 +19,23 @@ namespace GameStore.StartUp
             LoggerFactory = loggerFactory;
         }
 
-
         public IConfiguration Configuration { get; }
         private ILoggerFactory LoggerFactory { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
             var AppSettings = RegisterSettings(Configuration);
-
+            services.RegisterServices(AppSettings);
             services.RegisterDatabase(AppSettings.Database, LoggerFactory);
-            services.RegisterIdentity();
             services.RegisterAutoMapper();
             services.RegisterSwagger();
             services.RegisterHealthChecks();
+            services.RegisterIdentity();
+            services.RegisterAuthSettings(AppSettings.Token);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-
             app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
             app.RegisterHealthChecks();
@@ -62,7 +51,8 @@ namespace GameStore.StartUp
         private static AppSettings RegisterSettings(IConfiguration configuration) =>
                 new()
                 {
-                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>()
+                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>(),
+                    Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>()
                 };
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace GameStore.Core.Configuration
+﻿namespace GameStore.WEB.Settings
 {
     public class DatabaseSettings
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace GameStore.StartUp.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class AutoMapperExtensions
     {

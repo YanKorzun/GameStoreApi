@@ -1,10 +1,10 @@
-﻿using GameStore.Core.Configuration;
-using GameStore.DAL;
+﻿using GameStore.DAL;
+using GameStore.WEB.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace GameStore.StartUp.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class DatabaseExtensions
     {

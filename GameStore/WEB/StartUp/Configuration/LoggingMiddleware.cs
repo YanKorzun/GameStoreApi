@@ -3,14 +3,14 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace GameStore.Startup.Configuration
+namespace GameStore.WEB.Startup.Configuration
 {
     public class LoggingMiddleware
     {
         private readonly ILogger<LoggingMiddleware> _logger;
         private readonly RequestDelegate _next;
 
-        public LoggingMiddleware(ILogger<LoggingMiddleware> logger,RequestDelegate next)
+        public LoggingMiddleware(ILogger<LoggingMiddleware> logger, RequestDelegate next)
         {
             _logger = logger;
             _next = next;

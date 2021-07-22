@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GameStore.StartUp.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class HealthChecksExtensions
     {

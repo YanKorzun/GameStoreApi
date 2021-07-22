@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
-namespace GameStore.StartUp.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class RegisterExceptionExtensions
     {
@@ -42,11 +41,11 @@ namespace GameStore.StartUp.Configuration
             }
             );
         }
+
         private class ExceptionResponse
         {
             public string Status { get; set; }
             public string Message { get; set; }
         }
     }
-
 }
