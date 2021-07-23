@@ -3,10 +3,8 @@ using GameStore.WEB.Settings;
 using GameStore.WEB.Startup.Configuration;
 using GameStore.WEB.StartUp.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace GameStore.WEB.StartUp

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,13 +18,13 @@ namespace GameStore.WEB.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("info")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public ActionResult<string> GetInfo()
         {
-            if (User.IsInRole("admin"))
-            {
-                return "User is admin";
-            }
             _logger.LogInformation("Log in home controller is working fine");
             return User.Identity.Name + "\n" + User.Identity.IsAuthenticated + "\n";
         }
@@ -32,13 +33,6 @@ namespace GameStore.WEB.Controllers
         public ActionResult GetError()
         {
             throw new Exception("Access denied");
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("secret")]
-        public ActionResult<string> GetSecret()
-        {
-            return "Welcome";
         }
     }
 }

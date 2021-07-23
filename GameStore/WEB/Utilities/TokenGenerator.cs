@@ -17,7 +17,7 @@ namespace GameStore.WEB.Utilities
             _appSettings = appSettings;
         }
 
-        public string GenerateAccessToken(int userId, string userName, string userRole)
+        public string GenerateAccessToken(int userId, string userName, string userRole = "user")
         {
             var claim = GetClaims(userId, userName, userRole);
 

@@ -11,6 +11,7 @@ namespace GameStore.BL.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+
         public RoleService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<int>> roleManager)
         {
             _roleManager = roleManager;

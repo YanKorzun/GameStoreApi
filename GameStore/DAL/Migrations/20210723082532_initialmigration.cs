@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace GameStore.DAL.Migrations
+namespace GameStore.Migrations
 {
-    public partial class IdentityTestSchema : Migration
+    public partial class initialmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

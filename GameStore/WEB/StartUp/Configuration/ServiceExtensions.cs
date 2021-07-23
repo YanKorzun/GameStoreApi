@@ -9,8 +9,6 @@ namespace GameStore.WEB.StartUp.Configuration
         {
             //AppSettings
             services.AddSingleton(appSettings);
-
-
         }
     }
 }

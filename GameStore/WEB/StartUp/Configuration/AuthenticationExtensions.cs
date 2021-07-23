@@ -10,7 +10,13 @@ namespace GameStore.Startup.Configuration
     {
         public static void RegisterAuthSettings(this IServiceCollection services, TokenSettings tokenSettings)
         {
-            services.AddAuthentication(config=> { config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; })
+            services.AddAuthentication(
+            options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
                     options.RequireHttpsMetadata = false;

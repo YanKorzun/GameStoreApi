@@ -20,6 +20,4 @@ namespace GameStore.WEB.Settings
 
         public bool ValidateIssuerSigningKey { get; set; }
     }
-
-    //temp
 }

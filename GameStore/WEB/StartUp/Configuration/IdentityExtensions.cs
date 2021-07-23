@@ -16,7 +16,7 @@ namespace GameStore.WEB.StartUp.Configuration
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers();
         }
     }
 }
