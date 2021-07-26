@@ -1,4 +1,7 @@
-﻿using GameStore.WEB.Settings;
+﻿using GameStore.BL.Interfaces;
+using GameStore.BL.Services;
+using GameStore.WEB.Settings;
+using GameStore.WEB.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GameStore.WEB.StartUp.Configuration
@@ -7,8 +10,11 @@ namespace GameStore.WEB.StartUp.Configuration
     {
         public static void RegisterServices(this IServiceCollection services, AppSettings appSettings)
         {
-            //AppSettings
             services.AddSingleton(appSettings);
+
+            services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IEmailSender, EmailSender>();
         }
     }
 }

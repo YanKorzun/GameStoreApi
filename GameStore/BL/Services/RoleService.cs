@@ -1,61 +1,61 @@
-﻿using GameStore.DAL.Entities;
+﻿using GameStore.BL.Enums;
+using GameStore.BL.ResultWrappers;
+using GameStore.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GameStore.BL.Services
 {
-    public class RoleService
+    public class RoleService : IRoleService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<int>> roleManager)
+        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
         }
 
-        public ActionResult<IEnumerable<IdentityRole<int>>> GetRoles()
-        {
-            return _roleManager.Roles.ToList();
-        }
+        public ServiceResult<ActionResult<IList<ApplicationRole>>> GetRoles() => new() { Result = ServiceResultType.Success, Data = _roleManager.Roles.AsNoTracking().Take(30).ToList() };
 
-        public async Task<bool> Create(string roleName)
+        public async Task<ServiceResult> CreateAsync(string roleName)
         {
             if (!string.IsNullOrEmpty(roleName))
             {
-                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
+                IdentityResult result = await _roleManager.CreateAsync(new ApplicationRole(roleName));
                 if (result.Succeeded)
                 {
-                    return true;
+                    return new(ServiceResultType.Success);
                 }
             }
-            return false;
+            return new(ServiceResultType.InternalError);
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<ServiceResult> DeleteAsync(string id)
         {
-            IdentityRole<int> role = await _roleManager.FindByIdAsync(id);
+            ApplicationRole role = await _roleManager.FindByIdAsync(id);
             if (role != null)
             {
                 var res = await _roleManager.DeleteAsync(role);
                 if (res.Succeeded)
                 {
-                    return true;
+                    return new(ServiceResultType.Success);
                 }
             }
-            return false;
+            return new(ServiceResultType.InternalError);
         }
 
-        public async Task Edit(string userId, string roleName)
+        public async Task EditAsync(string userId, string roleName)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                var userRoles = _userManager.GetRolesAsync(user).Result;
+                var userRoles = await _userManager.GetRolesAsync(user);
                 await _userManager.RemoveFromRolesAsync(user, userRoles);
                 await _userManager.AddToRoleAsync(user, roleName);
             }
