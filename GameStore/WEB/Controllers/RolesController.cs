@@ -1,4 +1,5 @@
-﻿using GameStore.BL.Services;
+﻿using GameStore.BL.Enums;
+using GameStore.BL.Services;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
 using Microsoft.AspNetCore.Authorization;
@@ -15,47 +16,46 @@ namespace GameStore.WEB.Controllers
     public class RolesController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
-        private readonly RoleService _roleService;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IRoleService _roleService;
 
-        public RolesController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<int>> roleManager)
+        public RolesController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IRoleService roleService)
         {
             _roleManager = roleManager;
             _userManager = userManager;
-            _roleService = new(_userManager, _roleManager);
+            _roleService = roleService;
         }
 
         [HttpGet("list")]
-        public ActionResult<IEnumerable<IdentityRole<int>>> GetRoles() => _roleService.GetRoles();
+        public ActionResult<IList<ApplicationRole>> GetRoles() => _roleService.GetRoles().Data;
 
-        [HttpGet("add")]
-        public async Task<ActionResult<bool>> Create([FromBody] RoleDTO role)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] RoleModel role)
         {
-            var result = await _roleService.Create(role.RoleName);
-            if (result)
-            {
-                return Ok();
-            }
-
-            return BadRequest();
-        }
-
-        [HttpPost("delete")]
-        public async Task<IActionResult> Delete([FromBody] RoleDTO role)
-        {
-            var IsDeleted = await _roleService.Delete(role.RoleId);
-
-            if (IsDeleted)
+            var result = await _roleService.CreateAsync(role.RoleName);
+            if (result.Result is ServiceResultType.Success)
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpPost("edit")]
-        public async Task<IActionResult> Edit([FromBody] RoleDTO role)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
         {
-            await _roleService.Edit(role.UserId, role.RoleName);
+            var IsDeleted = await _roleService.DeleteAsync(id);
+
+            if (IsDeleted.Result is ServiceResultType.Success)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromBody] RoleModel role)
+        {
+            await _roleService.EditAsync(role.UserId, role.RoleName);
             return Ok();
         }
     }

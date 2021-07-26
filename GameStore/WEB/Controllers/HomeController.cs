@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GameStore.WEB.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace GameStore.WEB.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         [HttpGet("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

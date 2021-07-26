@@ -1,8 +1,10 @@
-﻿using GameStore.BL.Services;
+﻿using GameStore.BL.Constants;
+using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
+using GameStore.BL.Services;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
 using GameStore.WEB.Settings;
-using GameStore.WEB.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,54 +16,37 @@ namespace GameStore.WEB.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly AppSettings _appSettings;
+        private readonly IEmailSender _emailSender;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, AppSettings appSettings)
+        public AuthController(SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, AppSettings appSettings, IUserService userService)
         {
-            _userManager = userManager;
+            _emailSender = emailSender;
             _signInManager = signInManager;
             _appSettings = appSettings;
-            _userService = new(_userManager, _signInManager);
+            _userService = userService;
         }
 
         [HttpPost("sign-up")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<int>> SignUp([FromBody] UserDTO userDTO)
+        public async Task<ActionResult> SignUp([FromBody] UserModel userDTO)
         {
-            var IsEmailValid = UserDTOValidator.IsValidEmail(userDTO.Email);
-            if (!IsEmailValid)
-            {
-                return BadRequest("Wrong email format");
-            }
-            var IsPasswordValid = UserDTOValidator.IsPasswordValid(userDTO.Password);
-            if (!IsPasswordValid)
-            {
-                return BadRequest("Wrong password format");
-            }
+            var signUpResult = await _userService.SignUp(userDTO.Email, userDTO.Password, userDTO.Username);
 
-            var IsRegistered = await _userService.SignUp(userDTO.Email, userDTO.Password, userDTO.Username);
-
-            if (IsRegistered)
+            if (signUpResult.Result is ServiceResultType.Success)
             {
-                return StatusCodes.Status201Created;
+                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { id = signUpResult.Data.user.Id, signUpResult.Data.confirmToken }, Request.Scheme);
+                await _emailSender.SendEmailAsync(signUpResult.Data.user.Email, EmailSubjects.AccountConfirmation, $"<a href='{confirmationLink}'>confirm</a>");
+                return CreatedAtAction("SignUp", signUpResult.Data.user);
             }
             return BadRequest();
         }
 
         [HttpPost("sign-in")]
-        public async Task<ActionResult<string>> SignIn([FromBody] UserDTO userDTO)
+        public async Task<ActionResult<string>> SignIn([FromBody] UserModel userDTO)
         {
-            var IsEmailValid = UserDTOValidator.IsValidEmail(userDTO.Email);
-            if (!IsEmailValid)
-                return Unauthorized();
-            var IsPasswordValid = UserDTOValidator.IsPasswordValid(userDTO.Password);
-            if (!IsPasswordValid)
-            {
-                return Unauthorized();
-            }
             var Token = await _userService.SignIn(userDTO, _appSettings);
 
             if (Token is not null)
@@ -72,9 +57,9 @@ namespace GameStore.WEB.Controllers
         }
 
         [HttpGet("email-confirmation")]
-        public IActionResult Confirm(int id, string token)
+        public IActionResult ConfirmEmail(string id, string confirmToken)
         {
-            if (_userService.Confirm(id, token))
+            if (_userService.Confirm(id, confirmToken).Result.Result is ServiceResultType.Success)
             {
                 return NoContent();
             }
