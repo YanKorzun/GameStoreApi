@@ -1,6 +1,6 @@
 ﻿namespace GameStore.WEB.DTO
 {
-    public class RoleDTO
+    public class RoleModel
     {
         public string RoleName { get; set; }
         public string UserId { get; set; }

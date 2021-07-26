@@ -30,6 +30,7 @@ namespace GameStore.WEB.StartUp
             services.RegisterHealthChecks();
             services.RegisterIdentity();
             services.RegisterAuthSettings(AppSettings.Token);
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -50,7 +51,8 @@ namespace GameStore.WEB.StartUp
                 new()
                 {
                     Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>(),
-                    Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>()
+                    Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>(),
+                    SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings)).Get<SmtpClientSettings>()
                 };
     }
 }

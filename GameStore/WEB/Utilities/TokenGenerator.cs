@@ -17,13 +17,12 @@ namespace GameStore.WEB.Utilities
             _appSettings = appSettings;
         }
 
-        public string GenerateAccessToken(int userId, string userName, string userRole = "user")
+        public string GenerateAccessToken(int userId, string userName, string userRole)
         {
             var claim = GetClaims(userId, userName, userRole);
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Token.SigningKey));
             var now = DateTime.UtcNow;
-            // создаем JWT-токен
             var jwt = new JwtSecurityToken(
                     issuer: _appSettings.Token.Issuer,
                     audience: _appSettings.Token.Audience,
@@ -40,14 +39,14 @@ namespace GameStore.WEB.Utilities
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                new Claim(ClaimTypes.Role, userRole),
-                new Claim(ClaimTypes.Name, userName),
+                new (ClaimTypes.NameIdentifier, userId.ToString()),
+                new (ClaimTypes.Role, userRole),
+                new (ClaimTypes.Name, userName),
             };
 
             var claimsIdentity = new ClaimsIdentity(
                 claims,
-                "Schema"
+                "Token"
             );
 
             return claimsIdentity;

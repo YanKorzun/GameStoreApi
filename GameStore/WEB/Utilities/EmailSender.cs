@@ -1,25 +1,39 @@
-﻿using System.Net;
-using System.Net.Mail;
+﻿using GameStore.BL.Interfaces;
+using GameStore.WEB.Settings;
+using MailKit.Net.Smtp;
+using MimeKit;
+using MimeKit.Text;
+using System.Threading.Tasks;
 
 namespace GameStore.WEB.Utilities
 {
-    public class EmailSender
+    public class EmailSender : IEmailSender
     {
-        public static void SendConfirmMessage(int id, string token, string adress, string email)
+        private readonly AppSettings _appSettings;
+
+        public EmailSender(AppSettings appSettings)
         {
-            //place here your own login and password
-            MailAddress from = new MailAddress("mail", "Tom");
-            MailAddress to = new MailAddress(email);
-            MailMessage m = new MailMessage(from, to);
-            m.Subject = "Тест";
-            m.Body = @$"<h2>Для потверждения учетной записи перейдите по ссылке<br><h1><a href='{adress}?id={id}&token={token}'>Тык</a></h1></h2>";
-            m.IsBodyHtml = true;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.EnableSsl = true;
-            smtp.UseDefaultCredentials = false;
-            //place here your own login and password
-            smtp.Credentials = new NetworkCredential("mail", "password");
-            smtp.Send(m);
+            _appSettings = appSettings;
+        }
+
+        public async Task SendEmailAsync(string emailToSend, string subject, string message)
+        {
+            var email = new MimeMessage();
+
+            email.From.Add(new MailboxAddress(_appSettings.SmtpClientSettings.EmailName, _appSettings.SmtpClientSettings.EmailAddress));
+            email.To.Add(new MailboxAddress(string.Empty, emailToSend));
+            email.Subject = subject;
+            email.Body = new TextPart(TextFormat.Html)
+            {
+                Text = message
+            };
+
+            using var smtpClient = new SmtpClient();
+
+            await smtpClient.ConnectAsync(_appSettings.SmtpClientSettings.Host, _appSettings.SmtpClientSettings.Port, _appSettings.SmtpClientSettings.UseSsl);
+            await smtpClient.AuthenticateAsync(_appSettings.SmtpClientSettings.EmailAddress, _appSettings.SmtpClientSettings.Password);
+            await smtpClient.SendAsync(email);
+            await smtpClient.DisconnectAsync(true);
         }
     }
 }
