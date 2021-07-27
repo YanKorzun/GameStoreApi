@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace GameStore.DAL.Entities
 {
-    public class ApplicationUser : IdentityUser<int>, IBaseUser
+    public class ApplicationUser : IdentityUser<int>
     {
-        public IList<ApplicationRole> UserRoles { get; set; }
+        public IList<ApplicationUserRole> UserRoles { get; set; }
     }
 }

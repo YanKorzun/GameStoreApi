@@ -1,11 +1,9 @@
-﻿using GameStore.BL.Enums;
+﻿using AutoMapper;
+using GameStore.BL.Enums;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
+using GameStore.WEB.DTO;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GameStore.BL.Services
@@ -14,31 +12,29 @@ namespace GameStore.BL.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IMapper _mapper;
 
-        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper)
         {
             _roleManager = roleManager;
+            _mapper = mapper;
             _userManager = userManager;
         }
 
-        public ServiceResult<ActionResult<IList<ApplicationRole>>> GetRoles() => new() { Result = ServiceResultType.Success, Data = _roleManager.Roles.AsNoTracking().Take(30).ToList() };
-
-        public async Task<ServiceResult> CreateAsync(string roleName)
+        public async Task<ServiceResult> CreateAsync(RoleModel roleModel)
         {
-            if (!string.IsNullOrEmpty(roleName))
+            var applicationRole = _mapper.Map<ApplicationRole>(roleModel);
+            var result = await _roleManager.CreateAsync(applicationRole);
+            if (!result.Succeeded)
             {
-                IdentityResult result = await _roleManager.CreateAsync(new ApplicationRole(roleName));
-                if (result.Succeeded)
-                {
-                    return new(ServiceResultType.Success);
-                }
+                return new(ServiceResultType.InternalError);
             }
-            return new(ServiceResultType.InternalError);
+            return new(ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> DeleteAsync(string id)
         {
-            ApplicationRole role = await _roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByIdAsync(id);
             if (role != null)
             {
                 var res = await _roleManager.DeleteAsync(role);
@@ -50,14 +46,14 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.InternalError);
         }
 
-        public async Task EditAsync(string userId, string roleName)
+        public async Task EditAsync(UserWithRoleModel userModel)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(userModel.Email);
             if (user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
                 await _userManager.RemoveFromRolesAsync(user, userRoles);
-                await _userManager.AddToRoleAsync(user, roleName);
+                await _userManager.AddToRoleAsync(user, userModel.Role);
             }
         }
     }

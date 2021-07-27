@@ -1,4 +1,5 @@
-﻿using GameStore.BL.Enums;
+﻿using AutoMapper;
+using GameStore.BL.Enums;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.Constants;
@@ -16,11 +17,13 @@ namespace GameStore.BL.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult<string>> SignIn(UserModel userDTO, AppSettings appSettings)
@@ -45,11 +48,15 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.InternalError);
         }
 
-        public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(string email, string password, string username)
+        public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(UserModel userModel)
         {
-            var user = new ApplicationUser() { Email = email, UserName = username is null ? email : username };
-            var result = await _userManager.CreateAsync(user, password);
-            user = await _userManager.FindByEmailAsync(email);
+            var user = _mapper.Map<ApplicationUser>(userModel);
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+            if (result.Succeeded is not true)
+            {
+                return new(ServiceResultType.InternalError);
+            }
+            user = await _userManager.FindByEmailAsync(user.Email);
             var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmTokenEncoded = HttpUtility.UrlEncode(confirmToken);
 
@@ -64,7 +71,6 @@ namespace GameStore.BL.Services
             return new() { Result = ServiceResultType.Success, Data = (user, confirmTokenEncoded) };
         }
 
-        //"CfDJ8Msbs77VffBJtuboPM5ql4SYWIopw9IvXJqml%2b0PWGfRCQ2qrGm7Zq154kYb2AietlbEmI1OkEiYFc2K4Z00xEQbhGPdy6cLl1BFu3TusyBUMn4STBDymAv4Fdp0FnHuAtag19SgGq5eoAt3ItSV0iVu2%2bq%2buvEssbdEE%2bLX3rKP5QYoRtgtIUW6UNb4XtPC8DaskWkjUY1t6mMx%2ftBGCSk%3d"
         public async Task<ServiceResult> Confirm(string id, string token)
         {
             var user = await _userManager.FindByIdAsync(id);
