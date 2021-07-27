@@ -10,7 +10,7 @@ namespace GameStore.BL.Services
     {
         public Task<ServiceResult<string>> SignIn(UserModel userDTO, AppSettings appSettings);
 
-        public Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(string email, string password, string username);
+        public Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(UserModel userModel);
 
         public Task<ServiceResult> Confirm(string id, string confirmToken);
     }

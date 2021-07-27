@@ -19,7 +19,6 @@ namespace GameStore.WEB.DTO
         [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", ErrorMessage = ExceptionMessageConstants.InvalidPasswordString)]
         public string Password { get; set; }
 
-        public string Username { get; set; }
-        public string UserRole { get; set; }
+        public string UserName { get; set; }
     }
 }

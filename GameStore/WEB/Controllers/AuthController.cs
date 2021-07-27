@@ -31,42 +31,49 @@ namespace GameStore.WEB.Controllers
 
         [HttpPost("sign-up")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SignUp([FromBody] UserModel userDTO)
         {
-            var signUpResult = await _userService.SignUp(userDTO.Email, userDTO.Password, userDTO.Username);
+            var signUpResult = await _userService.SignUp(userDTO);
 
-            if (signUpResult.Result is ServiceResultType.Success)
+            if (signUpResult.Result is not ServiceResultType.Success)
             {
-                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { id = signUpResult.Data.user.Id, signUpResult.Data.confirmToken }, Request.Scheme);
-                await _emailSender.SendEmailAsync(signUpResult.Data.user.Email, EmailSubjects.AccountConfirmation, $"<a href='{confirmationLink}'>confirm</a>");
-                return CreatedAtAction("SignUp", signUpResult.Data.user);
+                return BadRequest();
             }
-            return BadRequest();
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { id = signUpResult.Data.user.Id, signUpResult.Data.confirmToken }, Request.Scheme);
+            await _emailSender.SendEmailAsync(signUpResult.Data.user.Email, EmailSubjects.AccountConfirmation, $"<a href='{confirmationLink}'>confirm</a>");
+
+            return CreatedAtAction("SignUp", signUpResult.Data.user);
         }
 
         [HttpPost("sign-in")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<string>> SignIn([FromBody] UserModel userDTO)
         {
-            var Token = await _userService.SignIn(userDTO, _appSettings);
+            var token = await _userService.SignIn(userDTO, _appSettings);
 
-            if (Token is not null)
+            if (token is not null)
             {
-                return Ok(Token);
+                return Ok(token);
             }
             return Unauthorized();
         }
 
         [HttpGet("email-confirmation")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult ConfirmEmail(string id, string confirmToken)
         {
-            if (_userService.Confirm(id, confirmToken).Result.Result is ServiceResultType.Success)
+            if (_userService.Confirm(id, confirmToken).Result.Result is not ServiceResultType.Success)
             {
-                return NoContent();
+                return BadRequest();
             }
-            return BadRequest();
+            return NoContent();
         }
 
         [HttpPost("sign-out")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
