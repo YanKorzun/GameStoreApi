@@ -34,7 +34,7 @@ namespace GameStore.BL.Services
             var userRoleList = await _userManager.GetRolesAsync(user);
             var userRole = userRoleList.FirstOrDefault();
 
-            if (user is null || userRole is null)
+            if (user is null || string.IsNullOrWhiteSpace(userRole))
             {
                 return new(ServiceResultType.InvalidData);
             }
@@ -65,7 +65,7 @@ namespace GameStore.BL.Services
             var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             var confirmTokenEncoded = HttpUtility.UrlEncode(confirmToken);
 
-            await _roleService.EditAsync(new(role: UserRoleConstants.User, email: identityUser.Email));
+            await _roleService.EditAsync(new(UserRoleConstants.User, identityUser.Email));
             await _signInManager.SignInAsync(identityUser, false);
 
             return new(ServiceResultType.Success, (identityUser, confirmTokenEncoded));
