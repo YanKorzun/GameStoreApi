@@ -18,68 +18,69 @@ namespace GameStore.BL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMapper _mapper;
+        private readonly IRoleService _roleService;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMapper mapper)
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMapper mapper, IRoleService roleService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         public async Task<ServiceResult<string>> SignIn(UserModel userDTO, AppSettings appSettings)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             var userRoleList = await _userManager.GetRolesAsync(user);
-            if (user is null)
+            var userRole = userRoleList.FirstOrDefault();
+
+            if (user is null || userRole is null)
             {
-                return null;
+                return new(ServiceResultType.InvalidData);
             }
-            if (user.EmailConfirmed)
+            if (!user.EmailConfirmed)
             {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
-                if (result.Succeeded)
-                {
-                    TokenGenerator gtor = new(appSettings);
-                    var userRole = userRoleList.FirstOrDefault();
-                    var token = gtor.GenerateAccessToken(user.Id, user.UserName, userRole is null ? UserRoleConstants.User : userRole);
-                    return new() { Result = ServiceResultType.Success, Data = token };
-                }
+                return new(ServiceResultType.InternalError) { ErrorMessage = "Please confirm your email" };
             }
-            return new(ServiceResultType.InternalError);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
+            if (!result.Succeeded)
+            {
+                return new(ServiceResultType.InvalidData);
+            }
+            var tokenGenerator = new TokenGenerator(appSettings);
+            var token = tokenGenerator.GenerateAccessToken(user.Id, user.UserName, userRole);
+
+            return new(ServiceResultType.Success, token);
         }
 
         public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(UserModel userModel)
         {
             var user = _mapper.Map<ApplicationUser>(userModel);
             var result = await _userManager.CreateAsync(user, userModel.Password);
-            if (result.Succeeded is not true)
+            if (!result.Succeeded)
             {
                 return new(ServiceResultType.InternalError);
             }
-            user = await _userManager.FindByEmailAsync(user.Email);
-            var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var identityUser = await _userManager.FindByEmailAsync(user.Email);
+            var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             var confirmTokenEncoded = HttpUtility.UrlEncode(confirmToken);
 
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(user, false);
-            }
-            else if (result.Errors.Any())
-            {
-                return new(ServiceResultType.InternalError);
-            }
-            return new() { Result = ServiceResultType.Success, Data = (user, confirmTokenEncoded) };
+            await _roleService.EditAsync(new(role: UserRoleConstants.User, email: identityUser.Email));
+            await _signInManager.SignInAsync(identityUser, false);
+
+            return new(ServiceResultType.Success, (identityUser, confirmTokenEncoded));
         }
 
         public async Task<ServiceResult> Confirm(string id, string token)
         {
             var user = await _userManager.FindByIdAsync(id);
-            var IsEmailConfirmed = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(token));
-            if (IsEmailConfirmed.Succeeded)
+            var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(token));
+            if (!isEmailConfirmed.Succeeded)
             {
-                return new(ServiceResultType.Success);
+                return new(ServiceResultType.InternalError);
             }
-            return new(ServiceResultType.InternalError);
+
+            return new(ServiceResultType.Success);
         }
     }
 }

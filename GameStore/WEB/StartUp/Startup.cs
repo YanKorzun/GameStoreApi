@@ -30,7 +30,10 @@ namespace GameStore.WEB.StartUp
             services.RegisterHealthChecks();
             services.RegisterIdentity();
             services.RegisterAuthSettings(AppSettings.Token);
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(
+                options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                ); ;
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

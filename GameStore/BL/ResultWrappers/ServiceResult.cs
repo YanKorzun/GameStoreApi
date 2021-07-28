@@ -16,12 +16,12 @@ namespace GameStore.BL.ResultWrappers
         public ServiceResult(ServiceResultType result, string message)
         {
             Result = result;
-            Message = message;
+            ErrorMessage = message;
         }
 
         public ServiceResultType Result { get; set; }
 
-        public string Message { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public class ServiceResult<T> : ServiceResult
@@ -38,7 +38,7 @@ namespace GameStore.BL.ResultWrappers
         public ServiceResult(ServiceResultType result, string message)
         {
             Result = result;
-            Message = message;
+            ErrorMessage = message;
         }
 
         public ServiceResult(ServiceResultType result, T data)
@@ -50,7 +50,7 @@ namespace GameStore.BL.ResultWrappers
         public ServiceResult(ServiceResultType result, string message, T data)
         {
             Result = result;
-            Message = message;
+            ErrorMessage = message;
             Data = data;
         }
 

@@ -43,7 +43,7 @@ namespace GameStore.WEB.Controllers
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { id = signUpResult.Data.user.Id, signUpResult.Data.confirmToken }, Request.Scheme);
             await _emailSender.SendEmailAsync(signUpResult.Data.user.Email, EmailSubjects.AccountConfirmation, $"<a href='{confirmationLink}'>confirm</a>");
 
-            return CreatedAtAction("SignUp", signUpResult.Data.user);
+            return CreatedAtAction(nameof(SignUp), signUpResult.Data.user);
         }
 
         [HttpPost("sign-in")]

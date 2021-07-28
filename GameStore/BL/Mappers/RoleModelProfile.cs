@@ -8,8 +8,7 @@ namespace GameStore.BL.Mappers
     {
         public RoleModelProfile()
         {
-            CreateMap<RoleModel, ApplicationRole>();
-            CreateMap<ApplicationUser, UserModel>();
+            CreateMap<RoleModel, ApplicationRole>().ReverseMap();
         }
     }
 }

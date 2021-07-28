@@ -29,32 +29,43 @@ namespace GameStore.BL.Services
             {
                 return new(ServiceResultType.InternalError);
             }
+
             return new(ServiceResultType.Success);
         }
 
         public async Task<ServiceResult> DeleteAsync(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
-            if (role != null)
+            if (role is null)
             {
-                var res = await _roleManager.DeleteAsync(role);
-                if (res.Succeeded)
-                {
-                    return new(ServiceResultType.Success);
-                }
+                return new(ServiceResultType.NotFound);
             }
-            return new(ServiceResultType.InternalError);
+            var res = await _roleManager.DeleteAsync(role);
+            if (!res.Succeeded)
+            {
+                return new(ServiceResultType.InternalError);
+            }
+
+            return new(ServiceResultType.Success);
         }
 
-        public async Task EditAsync(UserWithRoleModel userModel)
+        public async Task<ServiceResult> EditAsync(UserWithRoleModel userModel)
         {
             var user = await _userManager.FindByEmailAsync(userModel.Email);
-            if (user != null)
+            if (user is null)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                await _userManager.RemoveFromRolesAsync(user, userRoles);
-                await _userManager.AddToRoleAsync(user, userModel.Role);
+                return new(ServiceResultType.NotFound);
             }
+            var userRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, userRoles);
+            var identityRole = await _roleManager.FindByNameAsync(userModel.Role);
+            if (identityRole is null)
+            {
+                await CreateAsync(new(name: userModel.Role));
+            }
+            await _userManager.AddToRoleAsync(user, userModel.Role);
+
+            return new(ServiceResultType.Success);
         }
     }
 }

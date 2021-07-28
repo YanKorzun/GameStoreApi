@@ -10,6 +10,6 @@ namespace GameStore.BL.Services
 
         public Task<ServiceResult> DeleteAsync(string id);
 
-        public Task EditAsync(UserWithRoleModel roleModel);
+        public Task<ServiceResult> EditAsync(UserWithRoleModel roleModel);
     }
 }
