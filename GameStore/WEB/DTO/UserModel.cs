@@ -1,4 +1,5 @@
 ﻿using GameStore.BL.Constants;
+using GameStore.WEB.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.WEB.DTO
@@ -7,18 +8,12 @@ namespace GameStore.WEB.DTO
     {
         [Required]
         [EmailAddress]
-        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = ExceptionMessageConstants.InvalidEmailString)]
+        [RegularExpression(RegexConstants.EmailRegex, ErrorMessage = ExceptionMessageConstants.InvalidEmailString)]
         public string Email { get; set; }
 
-        [Required]
-        //At least one upper case english letter
-        //At least one lower case english letter
-        //At least one digit
-        //At least one special character
-        //Minimum 8 in length
-        [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", ErrorMessage = ExceptionMessageConstants.InvalidPasswordString)]
-        public string Password { get; set; }
-
         public string UserName { get; set; }
+
+        [RegularExpression(RegexConstants.PhoneRegex)]
+        public string PhoneNumber { get; set; }
     }
 }
