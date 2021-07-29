@@ -32,7 +32,7 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-up")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> SignUp([FromBody] UserModel userDTO)
+        public async Task<ActionResult> SignUp([FromBody] UserWithPasswordModel userDTO)
         {
             var signUpResult = await _userService.SignUp(userDTO);
 
@@ -49,7 +49,7 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<string>> SignIn([FromBody] UserModel userDTO)
+        public async Task<ActionResult<string>> SignIn([FromBody] UserWithPasswordModel userDTO)
         {
             var token = await _userService.SignIn(userDTO, _appSettings);
 
