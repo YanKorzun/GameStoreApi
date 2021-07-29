@@ -1,5 +1,7 @@
 ﻿using GameStore.BL.Interfaces;
 using GameStore.BL.Services;
+using GameStore.DAL.Interfaces;
+using GameStore.DAL.Repositories;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,8 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
         }
     }
 }

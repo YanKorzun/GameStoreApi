@@ -7,7 +7,9 @@ using GameStore.WEB.DTO;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -28,7 +30,7 @@ namespace GameStore.BL.Services
             _roleService = roleService;
         }
 
-        public async Task<ServiceResult<string>> SignIn(UserModel userDTO, AppSettings appSettings)
+        public async Task<ServiceResult<string>> SignIn(UserWithPasswordModel userDTO, AppSettings appSettings)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             var userRoleList = await _userManager.GetRolesAsync(user);
@@ -53,7 +55,7 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success, token);
         }
 
-        public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(UserModel userModel)
+        public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUp(UserWithPasswordModel userModel)
         {
             var user = _mapper.Map<ApplicationUser>(userModel);
             var result = await _userManager.CreateAsync(user, userModel.Password);
@@ -81,6 +83,26 @@ namespace GameStore.BL.Services
             }
 
             return new(ServiceResultType.Success);
+        }
+
+        public ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal user)
+        {
+            IEnumerable<Claim> idClaims = user.FindAll(ClaimTypes.NameIdentifier);
+            var userId = idClaims.Select(r => r.Value).FirstOrDefault();
+            int iUserId;
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return new(ServiceResultType.NotFound);
+            }
+            try
+            {
+                iUserId = int.Parse(userId);
+            }
+            catch (System.Exception)
+            {
+                return new(ServiceResultType.InvalidData);
+            }
+            return new(ServiceResultType.Success, iUserId);
         }
     }
 }
