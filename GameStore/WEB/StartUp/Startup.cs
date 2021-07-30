@@ -34,6 +34,7 @@ namespace GameStore.WEB.StartUp
             services.RegisterHealthChecks();
             services.RegisterIdentity();
             services.RegisterAuthSettings(AppSettings.Token);
+            services.RegisterHttpContextExtensions();
             services.AddControllers(
                 options =>
                 {

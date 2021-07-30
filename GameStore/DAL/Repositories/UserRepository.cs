@@ -6,7 +6,6 @@ using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -32,29 +31,22 @@ namespace GameStore.DAL.Repositories
             _userManager = userManager;
         }
 
-        public async Task<ServiceResult<ApplicationUser>> AddLibraryGame(string email, GamesLibrary game)
-        {
-            var existingUser = await GetUserWithChildren(usr => usr.Email == email);
-
-            existingUser.GamesLibrary.Add(game);
-
-            var updateResult = await _userManager.UpdateAsync(existingUser);
-            return new(ServiceResultType.Success, existingUser);
-        }
-
-        public async Task<ServiceResult<ApplicationUser>> UpdateUser(ApplicationUser appUser, int userId)
+        public async Task<ServiceResult<ApplicationUser>> UpdateUserAsync(ApplicationUser appUser, int userId)
         {
             var existingUser = await _userManager.FindByIdAsync(userId.ToString());
             existingUser.UserName = appUser.UserName;
-            existingUser.Email = appUser.Email;
             existingUser.PhoneNumber = appUser.PhoneNumber;
 
             var updateResult = await _userManager.UpdateAsync(existingUser);
-
-            return new(ServiceResultType.Success, existingUser);
+            if (!updateResult.Succeeded)
+            {
+                return new(ServiceResultType.InternalError);
+            }
+            var fullUser = (await FindUserByIdAsync(userId)).Data;
+            return new(ServiceResultType.Success, fullUser);
         }
 
-        public async Task<ServiceResult> UpdateUserPassword(int userId, string newPassword)
+        public async Task<ServiceResult> UpdateUserPasswordAsync(int userId, string newPassword)
         {
             var existingUser = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -69,9 +61,13 @@ namespace GameStore.DAL.Repositories
             return new(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult<ApplicationUser>> FindUserByIdAsync(int userId) => new(ServiceResultType.Success, await GetUserWithChildren(o => o.Id == userId));
+        public async Task<ServiceResult<ApplicationUser>> FindUserByIdAsync(int userId)
+        {
+            var users = await GetUserWithChildrenAsync(o => o.Id == userId);
+            return new(ServiceResultType.Success, users);
+        }
 
-        private async Task<ApplicationUser> GetUserWithChildren(Expression<Func<ApplicationUser, bool>> expression)
-            => await _entity.Include(o => o.OwnedGames).Include(o => o.GamesLibrary).Include(o => o.UserRoles).ThenInclude(o => o.Role).FirstOrDefaultAsync(expression);
+        private async Task<ApplicationUser> GetUserWithChildrenAsync(Expression<Func<ApplicationUser, bool>> expression)
+            => await _entity.AsNoTracking().Include(o => o.GamesLibraries).Include(o => o.UserRoles).ThenInclude(o => o.Role).FirstOrDefaultAsync(expression);
     }
 }

@@ -24,6 +24,7 @@ namespace GameStore.BL.Services
         public async Task<ServiceResult> CreateAsync(RoleModel roleModel)
         {
             var applicationRole = _mapper.Map<ApplicationRole>(roleModel);
+
             var result = await _roleManager.CreateAsync(applicationRole);
             if (!result.Succeeded)
             {
@@ -40,6 +41,7 @@ namespace GameStore.BL.Services
             {
                 return new(ServiceResultType.NotFound);
             }
+
             var res = await _roleManager.DeleteAsync(role);
             if (!res.Succeeded)
             {
@@ -56,13 +58,17 @@ namespace GameStore.BL.Services
             {
                 return new(ServiceResultType.NotFound);
             }
+
             var userRoles = await _userManager.GetRolesAsync(user);
+
             await _userManager.RemoveFromRolesAsync(user, userRoles);
+
             var identityRole = await _roleManager.FindByNameAsync(userModel.Role);
             if (identityRole is null)
             {
                 await CreateAsync(new(name: userModel.Role));
             }
+
             await _userManager.AddToRoleAsync(user, userModel.Role);
 
             return new(ServiceResultType.Success);

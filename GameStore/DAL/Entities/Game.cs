@@ -10,7 +10,6 @@ namespace GameStore.DAL.Entities
         public string Developers { get; set; }
         public string Publishers { get; set; }
         public DateTime PublicationDate { get; set; }
-        public IList<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
-        public IList<GamesLibrary> GamesLibraries { get; set; } = new List<GamesLibrary>();
+        public IList<GameLibraries> GameLibraries { get; set; } = new List<GameLibraries>();
     }
 }
