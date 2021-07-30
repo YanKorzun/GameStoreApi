@@ -1,12 +1,12 @@
 ﻿namespace GameStore.DAL.Entities
 {
-    public class GamesLibrary
+    public class GameLibraries
     {
-        public GamesLibrary()
+        public GameLibraries()
         {
         }
 
-        public GamesLibrary(int userId, int gameId)
+        public GameLibraries(int userId, int gameId)
         {
             UserId = userId;
             GameId = gameId;
