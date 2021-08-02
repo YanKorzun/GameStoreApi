@@ -2,6 +2,7 @@
 using GameStore.DAL.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,14 @@ namespace GameStore.WEB.Controllers
         {
             var platforms = await _productRepository.GetPopularPlatforms();
             return Ok(platforms.Data);
+        }
+
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms([FromQuery, BindRequired] string term, int limit, int offset)
+        {
+            var platforms = await _productRepository.GetProductsBySearchTerm(term, limit, offset);
+            return Ok(platforms);
         }
     }
 }

@@ -2,11 +2,8 @@
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GameStore.DAL.Repositories
@@ -20,12 +17,24 @@ namespace GameStore.DAL.Repositories
         public async Task<ServiceResult<IList<string>>> GetPopularPlatforms()
         {
             var products = await _entity.ToListAsync();
-            var topPlatforms = products.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).SelectMany(x => x).ToList().GroupBy(o => o.Platform).Select(p => p.Key.ToString()).ToList();
+            var topPlatforms = products.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).SelectMany(x => x).ToList().GroupBy(o => o.Platform).Select(p => p.Key.ToString()).Take(3).ToList();
 
             return new(ServiceResultType.Success, topPlatforms);
         }
 
-        private async Task<IList<Product>> GetProductsWithChildren(Expression<Func<Product, bool>> expression)
-            => await _entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).ToListAsync();
+        public async Task<List<Product>> GetProductsBySearchTerm(string searchTerm, int limit, int skipedCount)
+        {
+            var query = from teams in _entity
+                    .AsNoTracking()
+                    .Include(x => x.ProductLibraries)
+                    .ThenInclude(x => x.AppUser)
+                    .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
+                    .Take(limit).Skip(skipedCount)
+                        select teams;
+
+            var teamEntities = await query.ToListAsync();
+
+            return teamEntities;
+        }
     }
 }

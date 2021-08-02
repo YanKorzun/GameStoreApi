@@ -9,5 +9,7 @@ namespace GameStore.DAL.Repositories
     public interface IProductRepository : IBaseRepository<Product>
     {
         public Task<ServiceResult<IList<string>>> GetPopularPlatforms();
+
+        public Task<List<Product>> GetProductsBySearchTerm(string searchTerm, int limit, int skipedCount);
     }
 }
