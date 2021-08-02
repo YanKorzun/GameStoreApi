@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using GameStore.BL.Constants;
 using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
@@ -8,15 +10,11 @@ using GameStore.WEB.DTO;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.JsonPatch;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNetCore.Mvc;
-using GameStore.BL.Constants;
-using GameStore.BL.Interfaces;
 
 namespace GameStore.BL.Services
 {
@@ -29,10 +27,11 @@ namespace GameStore.BL.Services
         private readonly IRoleService _roleService;
         private readonly IUrlHelper _urlHelper;
         private readonly IEmailSender _emailSender;
+        private readonly IClaimsUtility _claimsUtility;
 
         public const string AccountConfirmation = "Account confirmation";
 
-        public UserService(UserManager<ApplicationUser> userManager, IUserRepository userRepository, SignInManager<ApplicationUser> signInManager, IMapper mapper, IRoleService roleService, IUrlHelper urlHelper, IEmailSender emailSender)
+        public UserService(UserManager<ApplicationUser> userManager, IUserRepository userRepository, SignInManager<ApplicationUser> signInManager, IMapper mapper, IRoleService roleService, IUrlHelper urlHelper, IEmailSender emailSender, IClaimsUtility claimsUtility)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
@@ -41,22 +40,27 @@ namespace GameStore.BL.Services
             _mapper = mapper;
             _roleService = roleService;
             _urlHelper = urlHelper;
+            _claimsUtility = claimsUtility;
         }
 
         public async Task<ServiceResult<string>> SignInAsync(UserWithPasswordModel userDTO, AppSettings appSettings)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            if (user is null)
+            {
+                return new(ServiceResultType.InvalidData, ExceptionMessageConstants.MissingUser);
+            }
 
             var userRoleList = await _userManager.GetRolesAsync(user);
             var userRole = userRoleList.FirstOrDefault();
 
-            if (user is null || string.IsNullOrWhiteSpace(userRole))
+            if (string.IsNullOrWhiteSpace(userRole))
             {
                 return new(ServiceResultType.InvalidData);
             }
             else if (!user.EmailConfirmed)
             {
-                return new(ServiceResultType.InternalError) { ErrorMessage = "Please confirm your email" };
+                return new(ServiceResultType.InternalError, "Please confirm your email");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userDTO.Password, false);
@@ -68,7 +72,7 @@ namespace GameStore.BL.Services
             var tokenGenerator = new TokenGenerator(appSettings);
             var token = tokenGenerator.GenerateAccessToken(user.Id, user.UserName, userRole);
 
-            return new(ServiceResultType.Success) { Data = token };
+            return new(ServiceResultType.Success, data: token);
         }
 
         public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(UserWithPasswordModel userModel)
@@ -117,47 +121,16 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal httpUserContext)
+        public async Task<ServiceResult> UdpateUserPasswordAsync(ApplicationUser user, UserWithPasswordModel userModel)
         {
-            IEnumerable<Claim> idClaims = httpUserContext.FindAll(ClaimTypes.NameIdentifier);
-            var userId = idClaims.Select(r => r.Value).FirstOrDefault();
-
-            return new(ServiceResultType.Success, int.Parse(userId));
-        }
-
-        public async Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal httpUserContext)
-        {
-            var parseIdResult = GetUserIdFromClaims(httpUserContext);
-            if (parseIdResult.Result is not ServiceResultType.Success)
-            {
-                return new(parseIdResult.Result);
-            }
-
-            var userId = parseIdResult.Data;
-
-            var userSearchResult = await _userRepository.FindUserByIdAsync(userId);
-            if (userSearchResult.Result is not ServiceResultType.Success)
-            {
-                return userSearchResult;
-            }
-
-            return new(ServiceResultType.Success, userSearchResult.Data);
-        }
-
-        public async Task<ServiceResult> UdpateUserPasswordAsync(ClaimsPrincipal httpUserContext, JsonPatchDocument<UserWithPasswordModel> patch)
-        {
-            var user = await GetUserFromClaimsAsync(httpUserContext);
-            var userModel = _mapper.Map<UserWithPasswordModel>(user.Data);
-            patch.ApplyTo(userModel);
-
-            var passwordUpdateResult = await _userRepository.UpdateUserPasswordAsync(user.Data.Id, userModel.Password);
+            var passwordUpdateResult = await _userRepository.UpdateUserPasswordAsync(user.Id, userModel.Password);
 
             return passwordUpdateResult;
         }
 
-        public async Task<ServiceResult<ApplicationUser>> UdpateUserProfileAsync(ClaimsPrincipal httpUserContext, UserModel user)
+        public async Task<ServiceResult<ApplicationUser>> UdpateUserProfileAsync(ClaimsPrincipal contextUser, UserModel user)
         {
-            var getUserIdResult = GetUserIdFromClaims(httpUserContext);
+            var getUserIdResult = _claimsUtility.GetUserIdFromClaims(contextUser);
             if (getUserIdResult.Result is not ServiceResultType.Success)
             {
                 return new(getUserIdResult.Result);

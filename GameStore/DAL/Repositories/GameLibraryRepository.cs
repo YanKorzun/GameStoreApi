@@ -1,11 +1,10 @@
 ﻿using GameStore.DAL.Entities;
-using GameStore.DAL.Interfaces;
 using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.DAL.Repositories
 {
-    public class GameLibraryRepository : BaseRepository<GameLibraries>, IBaseRepository<GameLibraries>
+    public class GameLibraryRepository : BaseRepository<GameLibraries>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSettings _appSettings;

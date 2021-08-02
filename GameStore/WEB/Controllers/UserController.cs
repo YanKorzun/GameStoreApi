@@ -1,5 +1,8 @@
-﻿using GameStore.BL.Enums;
+﻿using AutoMapper;
+using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
 using GameStore.BL.Services;
+using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +18,14 @@ namespace GameStore.WEB.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IClaimsUtility _claimsUtility;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IClaimsUtility claimsUtility, IMapper mapper)
         {
             _userService = userService;
+            _claimsUtility = claimsUtility;
+            _mapper = mapper;
         }
 
         [HttpPut]
@@ -26,7 +33,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser(UserModel user)
         {
-            var profileUpdateResult = await _userService.UdpateUserProfileAsync(HttpContext.User, user);
+            var profileUpdateResult = await _userService.UdpateUserProfileAsync(User, user);
             if (profileUpdateResult.Result is not ServiceResultType.Success)
             {
                 return BadRequest();
@@ -40,7 +47,11 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdatePassword([FromBody] JsonPatchDocument<UserWithPasswordModel> patch)
         {
-            var passwordUpdateResult = await _userService.UdpateUserPasswordAsync(HttpContext.User, patch);
+            var user = await _claimsUtility.GetUserFromClaimsAsync(User);
+            var userModel = _mapper.Map<UserWithPasswordModel>(user.Data);
+            patch.ApplyTo(userModel);
+
+            var passwordUpdateResult = await _userService.UdpateUserPasswordAsync(user.Data, userModel);
             if (passwordUpdateResult.Result is not ServiceResultType.Success)
             {
                 return BadRequest();
@@ -52,9 +63,9 @@ namespace GameStore.WEB.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetInfo()
+        public async Task<ActionResult<ApplicationUser>> GetInfo()
         {
-            var searchResult = await _userService.GetUserFromClaimsAsync(HttpContext.User);
+            var searchResult = await _claimsUtility.GetUserFromClaimsAsync(User);
             if (searchResult.Result is not ServiceResultType.Success)
             {
                 return BadRequest();

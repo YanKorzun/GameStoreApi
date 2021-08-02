@@ -3,13 +3,9 @@ using GameStore.WEB.Settings;
 using GameStore.WEB.Startup.Configuration;
 using GameStore.WEB.StartUp.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Linq;
 
 namespace GameStore.WEB.StartUp
 {
@@ -35,14 +31,8 @@ namespace GameStore.WEB.StartUp
             services.RegisterIdentity();
             services.RegisterAuthSettings(AppSettings.Token);
             services.RegisterHttpContextExtensions();
-            services.AddControllers(
-                options =>
-                {
-                    options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
-                }).AddNewtonsoftJson(
-                options =>
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                ); ;
+            services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -66,21 +56,5 @@ namespace GameStore.WEB.StartUp
                     Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>(),
                     SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings)).Get<SmtpClientSettings>()
                 };
-
-        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
-        {
-            var builder = new ServiceCollection()
-                .AddLogging()
-                .AddMvc()
-                .AddNewtonsoftJson()
-                .Services.BuildServiceProvider();
-
-            return builder
-                .GetRequiredService<IOptions<MvcOptions>>()
-                .Value
-                .InputFormatters
-                .OfType<NewtonsoftJsonPatchInputFormatter>()
-                .First();
-        }
     }
 }
