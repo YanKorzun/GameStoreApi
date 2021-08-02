@@ -1,4 +1,5 @@
-﻿using GameStore.DAL.Entities;
+﻿using GameStore.BL.Constants;
+using GameStore.DAL.Entities;
 using GameStore.DAL.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,11 +23,11 @@ namespace GameStore.WEB.Controllers
 
         [HttpGet("top-platforms")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IList<Product>> GetMostPopularPlatforms() => Ok(_productRepository.GetPopularPlatforms());
+        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms() => Ok(await _productRepository.GetPopularPlatformsAsync(ProductConstants.TopPlatformCount));
 
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms([FromQuery, BindRequired] string term, int limit, int offset) =>
-            Ok(await _productRepository.GetProductsBySearchTerm(term, limit, offset));
+            Ok(await _productRepository.GetProductsBySearchTermAsync(term, limit, offset));
     }
 }

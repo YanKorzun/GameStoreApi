@@ -14,25 +14,20 @@ namespace GameStore.DAL.Repositories
         {
         }
 
-        public ServiceResult<IList<ProductPlatforms>> GetPopularPlatforms()
-        {
-            var topPlatforms = _entity.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).Select(p => p.Key).Take(3).ToList();
+        public async Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount) =>
+            await _entity
+                    .GroupBy(x => x.Platform)
+                    .OrderByDescending(g => g.Count())
+                    .Select(p => p.Key)
+                    .Take(platformCount)
+                    .ToListAsync();
 
-            return new(ServiceResultType.Success, topPlatforms);
-        }
-
-        public async Task<List<Product>> GetProductsBySearchTerm(string searchTerm, int limit, int skipedCount)
-        {
-            var query = from teams in _entity
+        public async Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount) =>
+            await _entity
                     .AsNoTracking()
                     .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
                     .Take(limit)
                     .Skip(skipedCount)
-                        select teams;
-
-            var teamEntities = await query.ToListAsync();
-
-            return teamEntities;
-        }
+                    .Select(x => x).ToListAsync();
     }
 }

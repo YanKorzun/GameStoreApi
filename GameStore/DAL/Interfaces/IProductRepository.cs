@@ -8,8 +8,8 @@ namespace GameStore.DAL.Repositories
 {
     public interface IProductRepository : IBaseRepository<Product>
     {
-        public ServiceResult<IList<ProductPlatforms>> GetPopularPlatforms();
+        public Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount);
 
-        public Task<List<Product>> GetProductsBySearchTerm(string searchTerm, int limit, int skipedCount);
+        public Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount);
     }
 }
