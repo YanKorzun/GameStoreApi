@@ -14,10 +14,10 @@ namespace GameStore.DAL.Repositories
         {
         }
 
-        public async Task<ServiceResult<IList<string>>> GetPopularPlatforms()
+        public async Task<ServiceResult<IList<ProductPlatforms>>> GetPopularPlatforms()
         {
             var products = await _entity.ToListAsync();
-            var topPlatforms = products.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).SelectMany(x => x).ToList().GroupBy(o => o.Platform).Select(p => p.Key.ToString()).Take(3).ToList();
+            var topPlatforms = products.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).Select(p => p.Key).Take(3).ToList();
 
             return new(ServiceResultType.Success, topPlatforms);
         }
