@@ -25,7 +25,9 @@ namespace GameStore.BL.Utilities
 
             bool result = int.TryParse(id, out int number);
             if (!result)
+            {
                 return new(ServiceResultType.InvalidData);
+            }
 
             return new(ServiceResultType.Success, number);
         }
