@@ -1,11 +1,10 @@
 ﻿using GameStore.DAL.Entities;
 using GameStore.DAL.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GameStore.WEB.Controllers
@@ -22,19 +21,12 @@ namespace GameStore.WEB.Controllers
         }
 
         [HttpGet("top-platforms")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms()
-        {
-            var platforms = await _productRepository.GetPopularPlatforms();
-            return Ok(platforms.Data);
-        }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IList<Product>> GetMostPopularPlatforms() => Ok(_productRepository.GetPopularPlatforms());
 
         [HttpGet("search")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms([FromQuery, BindRequired] string term, int limit, int offset)
-        {
-            var platforms = await _productRepository.GetProductsBySearchTerm(term, limit, offset);
-            return Ok(platforms);
-        }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms([FromQuery, BindRequired] string term, int limit, int offset) =>
+            Ok(await _productRepository.GetProductsBySearchTerm(term, limit, offset));
     }
 }

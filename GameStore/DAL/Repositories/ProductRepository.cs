@@ -14,10 +14,9 @@ namespace GameStore.DAL.Repositories
         {
         }
 
-        public async Task<ServiceResult<IList<ProductPlatforms>>> GetPopularPlatforms()
+        public ServiceResult<IList<ProductPlatforms>> GetPopularPlatforms()
         {
-            var products = await _entity.ToListAsync();
-            var topPlatforms = products.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).Select(p => p.Key).Take(3).ToList();
+            var topPlatforms = _entity.GroupBy(x => x.Platform).OrderByDescending(g => g.Count()).Select(p => p.Key).Take(3).ToList();
 
             return new(ServiceResultType.Success, topPlatforms);
         }
@@ -26,10 +25,9 @@ namespace GameStore.DAL.Repositories
         {
             var query = from teams in _entity
                     .AsNoTracking()
-                    .Include(x => x.ProductLibraries)
-                    .ThenInclude(x => x.AppUser)
                     .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
-                    .Take(limit).Skip(skipedCount)
+                    .Take(limit)
+                    .Skip(skipedCount)
                         select teams;
 
             var teamEntities = await query.ToListAsync();
