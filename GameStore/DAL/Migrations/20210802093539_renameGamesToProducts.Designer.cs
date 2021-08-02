@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210730115242_renameLibraryMigration")]
-    partial class renameLibraryMigration
+    [Migration("20210802093539_renameGamesToProducts")]
+    partial class renameGamesToProducts
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -132,18 +132,24 @@ namespace GameStore.DAL.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
+            modelBuilder.Entity("GameStore.DAL.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Developers")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Platform")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("datetime2");
@@ -151,12 +157,17 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("Publishers")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TotalRating")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Game");
+                    b.HasIndex("Name", "Platform", "DateCreated", "TotalRating");
+
+                    b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.GameLibraries", b =>
+            modelBuilder.Entity("GameStore.DAL.Entities.ProductLibraries", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -168,7 +179,7 @@ namespace GameStore.DAL.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("GameLibraries");
+                    b.ToTable("ProductLibraries");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -276,16 +287,16 @@ namespace GameStore.DAL.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.GameLibraries", b =>
+            modelBuilder.Entity("GameStore.DAL.Entities.ProductLibraries", b =>
                 {
-                    b.HasOne("GameStore.DAL.Entities.Game", "Game")
-                        .WithMany("GameLibraries")
+                    b.HasOne("GameStore.DAL.Entities.Product", "Game")
+                        .WithMany("ProductLibraries")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameStore.DAL.Entities.ApplicationUser", "AppUser")
-                        .WithMany("GamesLibraries")
+                        .WithMany("ProductLibraries")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -338,14 +349,14 @@ namespace GameStore.DAL.Migrations
 
             modelBuilder.Entity("GameStore.DAL.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("GamesLibraries");
+                    b.Navigation("ProductLibraries");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
+            modelBuilder.Entity("GameStore.DAL.Entities.Product", b =>
                 {
-                    b.Navigation("GameLibraries");
+                    b.Navigation("ProductLibraries");
                 });
 #pragma warning restore 612, 618
         }

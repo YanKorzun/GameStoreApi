@@ -21,6 +21,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
 
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
         }
     }
 }
