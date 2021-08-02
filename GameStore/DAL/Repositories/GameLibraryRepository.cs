@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.DAL.Repositories
 {
-    public class GameLibraryRepository : BaseRepository<GameLibraries>
+    public class GameLibraryRepository : BaseRepository<ProductLibraries>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSettings _appSettings;

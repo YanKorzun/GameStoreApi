@@ -1,12 +1,12 @@
 ﻿namespace GameStore.DAL.Entities
 {
-    public class GameLibraries
+    public class ProductLibraries
     {
-        public GameLibraries()
+        public ProductLibraries()
         {
         }
 
-        public GameLibraries(int userId, int gameId)
+        public ProductLibraries(int userId, int gameId)
         {
             UserId = userId;
             GameId = gameId;
@@ -16,6 +16,6 @@
         public int GameId { get; set; }
 
         public ApplicationUser AppUser { get; set; }
-        public Game Game { get; set; }
+        public Product Game { get; set; }
     }
 }

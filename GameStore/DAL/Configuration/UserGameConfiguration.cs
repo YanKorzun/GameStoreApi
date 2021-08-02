@@ -4,19 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GameStore.DAL.Configuration
 {
-    public class UserGameConfiguration : IEntityTypeConfiguration<GameLibraries>
+    public class UserGameConfiguration : IEntityTypeConfiguration<ProductLibraries>
     {
-        public void Configure(EntityTypeBuilder<GameLibraries> builder)
+        public void Configure(EntityTypeBuilder<ProductLibraries> builder)
         {
             builder
                  .HasOne(x => x.Game)
-                 .WithMany(x => x.GameLibraries)
+                 .WithMany(x => x.ProductLibraries)
                  .HasForeignKey(x => x.GameId)
                  .HasPrincipalKey(x => x.Id)
                  .IsRequired();
             builder
                 .HasOne(x => x.AppUser)
-                .WithMany(x => x.GamesLibraries)
+                .WithMany(x => x.ProductLibraries)
                 .HasForeignKey(x => x.UserId)
                 .HasPrincipalKey(x => x.Id)
                 .IsRequired();

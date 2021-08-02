@@ -6,6 +6,6 @@ namespace GameStore.DAL.Entities
     public class ApplicationUser : IdentityUser<int>
     {
         public IList<ApplicationUserRole> UserRoles { get; set; }
-        public IList<GameLibraries> GamesLibraries { get; set; } = new List<GameLibraries>();
+        public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();
     }
 }
