@@ -23,7 +23,11 @@ namespace GameStore.BL.Utilities
         {
             var id = contextUser.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return new(ServiceResultType.Success, int.Parse(id));
+            bool result = int.TryParse(id, out int number);
+            if (!result)
+                return new(ServiceResultType.InvalidData);
+
+            return new(ServiceResultType.Success, number);
         }
 
         public async Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal contextUser)
