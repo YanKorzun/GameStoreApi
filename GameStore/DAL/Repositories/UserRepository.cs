@@ -1,0 +1,73 @@
+﻿using GameStore.BL.Enums;
+using GameStore.BL.ResultWrappers;
+using GameStore.DAL.Entities;
+using GameStore.DAL.Interfaces;
+using GameStore.WEB.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+
+namespace GameStore.DAL.Repositories
+{
+    public class UserRepository : BaseRepository<ApplicationUser>, IUserRepository
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IPasswordValidator<ApplicationUser> _passwordValidator;
+        private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
+
+        public UserRepository(
+            IPasswordValidator<ApplicationUser> passwordValidator,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            ApplicationDbContext databaseContext,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            AppSettings appSettings) :
+            base(databaseContext)
+        {
+            _passwordHasher = passwordHasher;
+            _passwordValidator = passwordValidator;
+            _userManager = userManager;
+        }
+
+        public async Task<ServiceResult<ApplicationUser>> UpdateUserAsync(ApplicationUser appUser, int userId)
+        {
+            var existingUser = await _userManager.FindByIdAsync(userId.ToString());
+            existingUser.UserName = appUser.UserName;
+            existingUser.PhoneNumber = appUser.PhoneNumber;
+
+            var updateResult = await _userManager.UpdateAsync(existingUser);
+            if (!updateResult.Succeeded)
+            {
+                return new(ServiceResultType.InternalError);
+            }
+            var fullUser = (await FindUserByIdAsync(userId)).Data;
+            return new(ServiceResultType.Success, fullUser);
+        }
+
+        public async Task<ServiceResult> UpdateUserPasswordAsync(int userId, string newPassword)
+        {
+            var existingUser = await _userManager.FindByIdAsync(userId.ToString());
+
+            var validateResult = await _passwordValidator.ValidateAsync(_userManager, existingUser, newPassword);
+            if (!validateResult.Succeeded)
+            {
+                return new(ServiceResultType.InternalError);
+            }
+            existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, newPassword);
+            await _userManager.UpdateAsync(existingUser);
+
+            return new(ServiceResultType.Success);
+        }
+
+        public async Task<ServiceResult<ApplicationUser>> FindUserByIdAsync(int userId)
+        {
+            var users = await GetUserWithChildrenAsync(o => o.Id == userId);
+            return new(ServiceResultType.Success, users);
+        }
+
+        private async Task<ApplicationUser> GetUserWithChildrenAsync(Expression<Func<ApplicationUser, bool>> expression)
+            => await _entity.AsNoTracking().Include(o => o.GamesLibraries).ThenInclude(o => o.Game).Include(o => o.UserRoles).ThenInclude(o => o.Role).FirstOrDefaultAsync(expression);
+    }
+}

@@ -1,5 +1,4 @@
-﻿using GameStore.BL.Constants;
-using GameStore.BL.Enums;
+﻿using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.Services;
 using GameStore.DAL.Entities;
@@ -32,16 +31,15 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-up")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> SignUp([FromBody] UserModel userDTO)
+        public async Task<ActionResult> SignUp([FromBody] UserWithPasswordModel userDTO)
         {
-            var signUpResult = await _userService.SignUp(userDTO);
+            var signUpResult = await _userService.SignUpAsync(userDTO);
 
             if (signUpResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return BadRequest(signUpResult.ErrorMessage);
             }
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { id = signUpResult.Data.user.Id, signUpResult.Data.confirmToken }, Request.Scheme);
-            await _emailSender.SendEmailAsync(signUpResult.Data.user.Email, EmailSubjects.AccountConfirmation, $"<a href='{confirmationLink}'>confirm</a>");
+            await _userService.SendConfirmationMessageAsync(nameof(ConfirmEmail), "Auth", (signUpResult.Data.user, signUpResult.Data.confirmToken), Request.Scheme);
 
             return CreatedAtAction(nameof(SignUp), signUpResult.Data.user);
         }
@@ -49,26 +47,29 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<string>> SignIn([FromBody] UserModel userDTO)
+        public async Task<ActionResult<string>> SignIn([FromBody] UserWithPasswordModel userDTO)
         {
-            var token = await _userService.SignIn(userDTO, _appSettings);
+            var signInResult = await _userService.SignInAsync(userDTO, _appSettings);
 
-            if (token is not null)
+            if (signInResult.Result is not ServiceResultType.Success)
             {
-                return Ok(token);
+                return StatusCode((int)signInResult.Result, signInResult.ErrorMessage);
             }
-            return Unauthorized();
+
+            return Ok(signInResult.Data);
         }
 
         [HttpGet("email-confirmation")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ConfirmEmail(string id, string confirmToken)
+        public async Task<IActionResult> ConfirmEmail(string id, string token)
         {
-            if (_userService.Confirm(id, confirmToken).Result.Result is not ServiceResultType.Success)
+            var confirmResult = await _userService.ConfirmAsync(id, token);
+            if (confirmResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return StatusCode((int)confirmResult.Result, confirmResult.ErrorMessage);
             }
+
             return NoContent();
         }
 

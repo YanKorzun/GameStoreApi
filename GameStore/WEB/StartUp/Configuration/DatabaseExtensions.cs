@@ -12,6 +12,7 @@ namespace GameStore.WEB.StartUp.Configuration
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 {
+                    options.EnableSensitiveDataLogging();
                     options.UseSqlServer(databaseSettings.ConnectionString);
                     options.UseLoggerFactory(loggerFactory);
                 }, ServiceLifetime.Transient

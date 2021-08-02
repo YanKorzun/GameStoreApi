@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace GameStore.WEB.StartUp
 {
@@ -30,10 +31,13 @@ namespace GameStore.WEB.StartUp
             services.RegisterHealthChecks();
             services.RegisterIdentity();
             services.RegisterAuthSettings(AppSettings.Token);
-            services.AddControllers().AddNewtonsoftJson(
-                options =>
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                ); ;
+            services.RegisterHttpContextExtensions();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            });
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
