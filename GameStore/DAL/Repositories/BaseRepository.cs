@@ -9,7 +9,7 @@ namespace GameStore.DAL.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _dbContext;
+        protected readonly ApplicationDbContext _dbContext;
         protected readonly DbSet<T> _entity;
 
         public BaseRepository(ApplicationDbContext dbContext)

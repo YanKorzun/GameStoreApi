@@ -1,4 +1,4 @@
-﻿namespace GameStore.DAL
+﻿namespace GameStore.DAL.Enums
 {
     public enum ProductPlatforms
     {
