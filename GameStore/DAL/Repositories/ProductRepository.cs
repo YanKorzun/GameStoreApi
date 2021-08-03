@@ -18,7 +18,7 @@ namespace GameStore.DAL.Repositories
         }
 
         public async Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount) =>
-            await _entity
+            await Entity
                     .GroupBy(x => x.Platform)
                     .OrderByDescending(g => g.Count())
                     .Select(p => p.Key)
@@ -26,7 +26,7 @@ namespace GameStore.DAL.Repositories
                     .ToListAsync();
 
         public async Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount) =>
-            await _entity
+            await Entity
                     .AsNoTracking()
                     .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
                     .Take(limit)
@@ -39,7 +39,7 @@ namespace GameStore.DAL.Repositories
         {
             var dbProduct = await GetProductAsync(o => o.Id == newProduct.Id);
 
-            _dbContext.Attach(dbProduct);
+            DbContext.Attach(dbProduct);
 
             dbProduct.Name = newProduct.Name;
             dbProduct.Developers = newProduct.Developers;
@@ -55,7 +55,7 @@ namespace GameStore.DAL.Repositories
             dbProduct.Platform = newProduct.Platform;
             dbProduct.PublicationDate = newProduct.PublicationDate;
 
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
 
             return dbProduct;
         }
@@ -69,17 +69,17 @@ namespace GameStore.DAL.Repositories
             }
 
             dbProduct.isDeleted = true;
-            _dbContext.Entry(dbProduct).Property(x => x.isDeleted).IsModified = true;
+            DbContext.Entry(dbProduct).Property(x => x.isDeleted).IsModified = true;
 
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
 
             return new(ServiceResultType.Success);
         }
 
         private async Task<Product> GetProductWithChildrenAsync(Expression<Func<Product, bool>> expression)
-            => await _entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).FirstOrDefaultAsync(expression);
+            => await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).FirstOrDefaultAsync(expression);
 
         private async Task<Product> GetProductAsync(Expression<Func<Product, bool>> expression)
-            => await _entity.AsNoTracking().FirstOrDefaultAsync(expression);
+            => await Entity.AsNoTracking().FirstOrDefaultAsync(expression);
     }
 }

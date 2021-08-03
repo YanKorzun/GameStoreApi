@@ -2,6 +2,7 @@
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
+using GameStore.DAL.Enums;
 using GameStore.DAL.Repositories;
 using GameStore.WEB.Constants;
 using GameStore.WEB.DTO.ProductModels;
@@ -31,25 +32,25 @@ namespace GameStore.WEB.Controllers
         [AllowAnonymous]
         [HttpGet("top-platforms")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IList<Product>>> GetMostPopularPlatforms() => Ok(await _productRepository.GetPopularPlatformsAsync(ProductConstants.TopPlatformCount));
+        public async Task<ActionResult<List<ProductPlatforms>>> GetMostPopularPlatforms() => Ok(await _productRepository.GetPopularPlatformsAsync(ProductConstants.TopPlatformCount));
 
         [AllowAnonymous]
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IList<Product>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
+        public async Task<ActionResult<List<Product>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
             Ok(await _productRepository.GetProductsBySearchTermAsync(term, limit, offset));
 
         [AllowAnonymous]
         [HttpGet("id/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IList<Product>>> GetProductById(int id)
+        public async Task<ActionResult<Product>> GetProductById(int id)
         {
             return Ok(await _productRepository.FindProductById(id));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<IList<Product>>> CreateNewProduct(ProductModel productModel)
+        public async Task<ActionResult<Product>> CreateNewProduct(ProductModel productModel)
         {
             var createdProduct = await _productService.CreateNewProductAsync(productModel);
 
@@ -58,7 +59,7 @@ namespace GameStore.WEB.Controllers
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IList<Product>>> UpdateProduct(ProductWithIdModel productModel)
+        public async Task<ActionResult<Product>> UpdateProduct(ProductWithIdModel productModel)
         {
             await _productService.UpdateProductAsync(productModel);
 
@@ -68,7 +69,7 @@ namespace GameStore.WEB.Controllers
         [HttpDelete("id/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IList<Product>>> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
             var deleteResult = await _productService.DeleteProductAsync(id);
             if (deleteResult.Result is not ServiceResultType.Success)
