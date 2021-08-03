@@ -17,11 +17,15 @@ namespace GameStore.WEB.StartUp.Configuration
 
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
+
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
+            services.AddTransient<ICloudinaryUtility, CloudinaryUtility>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
         }
     }
 }
