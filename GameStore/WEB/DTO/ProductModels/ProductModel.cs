@@ -1,13 +1,10 @@
 ﻿using GameStore.DAL.Enums;
 using System;
-using System.Collections.Generic;
 
-namespace GameStore.DAL.Entities
+namespace GameStore.WEB.DTO.ProductModels
 {
-    public class Product
+    public class ProductModel
     {
-        public int Id { get; set; }
-        public bool isDeleted { get; set; }
         public string Name { get; set; }
         public string Developers { get; set; }
         public string Publishers { get; set; }
@@ -21,6 +18,5 @@ namespace GameStore.DAL.Entities
         public int TotalRating { get; set; }
         public ProductPlatforms Platform { get; set; }
         public DateTime PublicationDate { get; set; }
-        public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();
     }
 }

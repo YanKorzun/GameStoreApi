@@ -6,5 +6,6 @@ namespace GameStore.DAL.Entities
     public class ApplicationRole : IdentityRole<int>
     {
         public IList<ApplicationUserRole> UserRoles { get; set; }
+        public bool isDeleted { get; set; }
     }
 }

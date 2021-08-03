@@ -12,6 +12,7 @@
             GameId = gameId;
         }
 
+        public bool isDeleted { get; set; }
         public int UserId { get; set; }
         public int GameId { get; set; }
 
