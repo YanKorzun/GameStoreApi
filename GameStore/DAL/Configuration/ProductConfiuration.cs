@@ -9,7 +9,7 @@ namespace GameStore.DAL.Configuration
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder
-                 .HasQueryFilter(m => !m.isDeleted);
+                 .HasQueryFilter(m => !m.IsDeleted);
             builder
                  .HasIndex(o => new { o.Name, o.Platform, o.DateCreated, o.TotalRating });
         }

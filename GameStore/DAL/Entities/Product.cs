@@ -7,7 +7,7 @@ namespace GameStore.DAL.Entities
     public class Product
     {
         public int Id { get; set; }
-        public bool isDeleted { get; set; }
+        public bool IsDeleted { get; set; }
         public string Name { get; set; }
         public string Developers { get; set; }
         public string Publishers { get; set; }

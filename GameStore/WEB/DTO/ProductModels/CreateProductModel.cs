@@ -3,9 +3,8 @@ using System;
 
 namespace GameStore.WEB.DTO.ProductModels
 {
-    public class ProductModel
+    public class CreateProductModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Developers { get; set; }
         public string Publishers { get; set; }
@@ -21,3 +20,8 @@ namespace GameStore.WEB.DTO.ProductModels
         public DateTime PublicationDate { get; set; }
     }
 }
+
+//models
+//1. Create model all properties without id
+//2. Update model - all props without immutable
+//3. ProductModel - just all props

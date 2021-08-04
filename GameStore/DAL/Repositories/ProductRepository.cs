@@ -37,39 +37,23 @@ namespace GameStore.DAL.Repositories
 
         public async Task<Product> UpdateProductAsync(Product newProduct)
         {
-            var dbProduct = await GetProductAsync(o => o.Id == newProduct.Id);
+            var updatedProduct = await UpdateItemAsync(newProduct,
+                x => x.Id,
+                x => x.DateCreated,
+                x => x.PublicationDate);
 
-            DbContext.Attach(dbProduct);
-
-            dbProduct.Name = newProduct.Name;
-            dbProduct.Developers = newProduct.Developers;
-            dbProduct.Publishers = newProduct.Publishers;
-            dbProduct.Genre = newProduct.Genre;
-            dbProduct.Rating = newProduct.Rating;
-            dbProduct.Logo = newProduct.Logo;
-            dbProduct.Background = newProduct.Background;
-            dbProduct.Price = newProduct.Price;
-            dbProduct.Count = newProduct.Count;
-            dbProduct.DateCreated = newProduct.DateCreated;
-            dbProduct.TotalRating = newProduct.TotalRating;
-            dbProduct.Platform = newProduct.Platform;
-            dbProduct.PublicationDate = newProduct.PublicationDate;
-
-            await DbContext.SaveChangesAsync();
-
-            return dbProduct;
+            return updatedProduct;
         }
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
-            var dbProduct = await GetProductAsync(o => o.Id == id);
-            if (dbProduct is null)
+            var dbProduct = new Product()
             {
-                return new(ServiceResultType.InvalidData, $"Product with id {id} doesn't exist");
-            }
+                Id = id,
+                IsDeleted = true
+            };
 
-            dbProduct.isDeleted = true;
-            DbContext.Entry(dbProduct).Property(x => x.isDeleted).IsModified = true;
+            DbContext.Entry(dbProduct).Property(x => x.IsDeleted).IsModified = true;
 
             await DbContext.SaveChangesAsync();
 

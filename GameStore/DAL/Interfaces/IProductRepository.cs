@@ -15,8 +15,8 @@ namespace GameStore.DAL.Repositories
 
         public Task<Product> FindProductById(int productId);
 
-        public Task<Product> UpdateProductAsync(Product newProduct);
-
         public Task<ServiceResult> DeleteProductAsync(int id);
+
+        public Task<Product> UpdateProductAsync(Product newProduct);
     }
 }

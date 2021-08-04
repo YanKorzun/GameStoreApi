@@ -1,7 +1,6 @@
 ﻿using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
-using GameStore.DAL.Entities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Repositories;
 using GameStore.WEB.Constants;
@@ -21,9 +20,9 @@ namespace GameStore.WEB.Controllers
     public class GamesController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductService _productService;
+        private readonly IProductService<CreateProductModel> _productService;
 
-        public GamesController(IProductRepository productRepository, IProductService productService)
+        public GamesController(IProductRepository productRepository, IProductService<CreateProductModel> productService)
         {
             _productRepository = productRepository;
             _productService = productService;
@@ -37,29 +36,29 @@ namespace GameStore.WEB.Controllers
         [AllowAnonymous]
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<Product>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
-            Ok(await _productRepository.GetProductsBySearchTermAsync(term, limit, offset));
+        public async Task<ActionResult<List<ProductModel>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
+            Ok(await _productService.GetProductsBySearchTermAsync(term, limit, offset));
 
         [AllowAnonymous]
         [HttpGet("id/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<ProductModel>> GetProductById(int id)
         {
-            return Ok(await _productRepository.FindProductById(id));
+            return Ok(await _productService.FindProductById(id));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Product>> CreateNewProduct(ProductModel productModel)
+        public async Task<ActionResult<ProductModel>> CreateNewProduct(CreateProductModel productModel)
         {
-            var createdProduct = await _productService.CreateNewProductAsync(productModel);
+            var createdProduct = await _productService.CreateProductAsync(productModel);
 
             return CreatedAtAction(nameof(CreateNewProduct), createdProduct);
         }
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Product>> UpdateProduct(ProductWithIdModel productModel)
+        public async Task<ActionResult<ProductModel>> UpdateProduct(UpdateProductModel productModel)
         {
             await _productService.UpdateProductAsync(productModel);
 

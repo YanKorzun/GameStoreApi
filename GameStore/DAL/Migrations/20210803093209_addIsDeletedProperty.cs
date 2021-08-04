@@ -7,35 +7,35 @@ namespace GameStore.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "ProductLibraries",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Product",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetUsers",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetUserRoles",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetRoles",
                 type: "bit",
                 nullable: false,
@@ -45,23 +45,23 @@ namespace GameStore.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "ProductLibraries");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "Product");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetUserRoles");
 
             migrationBuilder.DropColumn(
-                name: "isDeleted",
+                name: "IsDeleted",
                 table: "AspNetRoles");
         }
     }
