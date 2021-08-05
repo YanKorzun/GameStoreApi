@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.UserModels;
 
 namespace GameStore.BL.Mappers
 {
@@ -8,11 +8,11 @@ namespace GameStore.BL.Mappers
     {
         public UserModelProfile()
         {
-            CreateMap<UserWithPasswordModel, ApplicationUser>().ReverseMap();
+            CreateMap<BasicUserModel, ApplicationUser>().ReverseMap();
 
-            CreateMap<UserWithRoleModel, ApplicationUser>().ReverseMap();
+            CreateMap<BasicUserRoleModel, ApplicationUser>().ReverseMap();
 
-            CreateMap<UserModel, ApplicationUser>().ReverseMap();
+            CreateMap<UpdateUserModel, ApplicationUser>().ReverseMap();
         }
     }
 }

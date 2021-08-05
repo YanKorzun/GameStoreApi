@@ -20,8 +20,3 @@ namespace GameStore.WEB.DTO.ProductModels
         public DateTime PublicationDate { get; set; }
     }
 }
-
-//models
-//1. Create model all properties without id
-//2. Update model - all props without immutable
-//3. ProductModel - just all props

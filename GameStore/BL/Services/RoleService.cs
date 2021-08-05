@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.UserModels;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
@@ -51,9 +53,9 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> EditAsync(UserWithRoleModel userModel)
+        public async Task<ServiceResult> EditAsync(BasicUserRoleModel basicUserRoleModel)
         {
-            var user = await _userManager.FindByEmailAsync(userModel.Email);
+            var user = await _userManager.FindByEmailAsync(basicUserRoleModel.Email);
             if (user is null)
             {
                 return new(ServiceResultType.NotFound);
@@ -63,13 +65,13 @@ namespace GameStore.BL.Services
 
             await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-            var identityRole = await _roleManager.FindByNameAsync(userModel.Role);
+            var identityRole = await _roleManager.FindByNameAsync(basicUserRoleModel.Role);
             if (identityRole is null)
             {
-                await CreateAsync(new(name: userModel.Role));
+                await CreateAsync(new(basicUserRoleModel.Role));
             }
 
-            await _userManager.AddToRoleAsync(user, userModel.Role);
+            await _userManager.AddToRoleAsync(user, basicUserRoleModel.Role);
 
             return new(ServiceResultType.Success);
         }

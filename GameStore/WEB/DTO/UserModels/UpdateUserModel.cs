@@ -2,9 +2,9 @@
 using GameStore.WEB.Constants;
 using System.ComponentModel.DataAnnotations;
 
-namespace GameStore.WEB.DTO
+namespace GameStore.WEB.DTO.UserModels
 {
-    public class UserModel
+    public class UpdateUserModel
     {
         [Required]
         [EmailAddress]
