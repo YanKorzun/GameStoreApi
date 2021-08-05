@@ -9,8 +9,7 @@ namespace GameStore.BL.Mappers
         public ProductModelProfile()
         {
             CreateMap<Product, ProductModel>().ReverseMap();
-            CreateMap<Product, CreateProductModel>().ReverseMap();
-            CreateMap<Product, UpdateProductModel>().ReverseMap();
+            CreateMap<Product, ExtendedProductModel>().ReverseMap();
         }
     }
 }

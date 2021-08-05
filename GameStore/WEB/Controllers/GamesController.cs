@@ -3,7 +3,6 @@ using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Repositories;
-using GameStore.WEB.Constants;
 using GameStore.WEB.DTO.ProductModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameStore.WEB.Constants;
 
 namespace GameStore.WEB.Controllers
 {
@@ -20,9 +20,9 @@ namespace GameStore.WEB.Controllers
     public class GamesController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductService<CreateProductModel> _productService;
+        private readonly IProductService _productService;
 
-        public GamesController(IProductRepository productRepository, IProductService<CreateProductModel> productService)
+        public GamesController(IProductRepository productRepository, IProductService productService)
         {
             _productRepository = productRepository;
             _productService = productService;
@@ -46,7 +46,7 @@ namespace GameStore.WEB.Controllers
         [AllowAnonymous]
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ProductModel>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
+        public async Task<ActionResult<List<ExtendedProductModel>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
             Ok(await _productService.GetProductsBySearchTermAsync(term, limit, offset));
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace GameStore.WEB.Controllers
         [AllowAnonymous]
         [HttpGet("id/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ProductModel>> GetProductById(int id)
+        public async Task<ActionResult<ExtendedProductModel>> GetProductById(int id)
         {
             return Ok(await _productService.FindProductById(id));
         }
@@ -94,7 +94,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<ProductModel>> CreateNewProduct(CreateProductModel productModel)
+        public async Task<ActionResult<ProductModel>> CreateNewProduct([FromForm] InputProductModel productModel)
         {
             var createdProduct = await _productService.CreateProductAsync(productModel);
 
@@ -126,7 +126,7 @@ namespace GameStore.WEB.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="productModel">data transfer object for updating existing product in database</param>
+        /// <param name="basicProductModel">data transfer object for updating existing product in database</param>
         /// <response code="200">Updated successfully</response>
         /// <response code="401">User is not authenticated</response>
         /// <response code="403">User has no access to this resource</response>
@@ -134,9 +134,9 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<ProductModel>> UpdateProduct(ProductModel productModel)
+        public async Task<ActionResult<ExtendedProductModel>> UpdateProduct([FromForm] ExtendedInputProductModel basicProductModel)
         {
-            await _productService.UpdateProductAsync(productModel);
+            await _productService.UpdateProductAsync(basicProductModel);
 
             return Ok();
         }

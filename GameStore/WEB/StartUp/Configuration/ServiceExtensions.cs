@@ -1,9 +1,9 @@
 ﻿using GameStore.BL.Interfaces;
+using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Interfaces;
 using GameStore.DAL.Repositories;
-using GameStore.WEB.DTO.ProductModels;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,11 +18,13 @@ namespace GameStore.WEB.StartUp.Configuration
 
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IProductService<CreateProductModel>, ProductService<CreateProductModel>>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
-            services.AddTransient<ICloudinaryUtility, CloudinaryUtility>();
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
+
+            services.AddTransient<ICustomProductMapper, CustomProductMapper>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();

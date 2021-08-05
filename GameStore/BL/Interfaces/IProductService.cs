@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace GameStore.BL.Interfaces
 {
-    public interface IProductService<T>
+    public interface IProductService
     {
-        public Task<ProductModel> CreateProductAsync(T productModel);
+        public Task<ProductModel> CreateProductAsync(InputProductModel productModel);
 
         public Task<ServiceResult> DeleteProductAsync(int id);
 
-        public Task<ProductModel> UpdateProductAsync(T productModel);
+        public Task<ProductModel> UpdateProductAsync(ExtendedInputProductModel productModel);
 
         public Task<ProductModel> FindProductById(int id);
 

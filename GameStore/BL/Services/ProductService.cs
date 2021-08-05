@@ -10,29 +10,22 @@ using System.Threading.Tasks;
 
 namespace GameStore.BL.Services
 {
-    public class ProductService<T> : IProductService<T>
+    public class ProductService : IProductService
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
+        private readonly ICustomProductMapper _customProductMapper;
 
-        public ProductService(IMapper mapper, IProductRepository productRepository)
+        public ProductService(IMapper mapper, IProductRepository productRepository, ICustomProductMapper customProductMapper)
         {
             _mapper = mapper;
             _productRepository = productRepository;
+            _customProductMapper = customProductMapper;
         }
 
-        public async Task<ProductModel> CreateProductAsync(T model) => await CUMethod(_productRepository.CreateItemAsync, model);
+        public async Task<ProductModel> CreateProductAsync(InputProductModel model) => await HandleProductAsync(_productRepository.CreateItemAsync, model);
 
-        public async Task<ProductModel> UpdateProductAsync(T model) => await CUMethod(_productRepository.UpdateProductAsync, model);
-
-        public async Task<ProductModel> CUMethod(Func<Product, Task<Product>> createUpdate, T model)
-        {
-            var product = _mapper.Map<Product>(model);
-
-            var updatedProduct = await createUpdate(product);
-
-            return _mapper.Map<ProductModel>(updatedProduct);
-        }
+        public async Task<ProductModel> UpdateProductAsync(ExtendedInputProductModel model) => await HandleProductAsync(_productRepository.UpdateProductAsync, model);
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
@@ -52,6 +45,15 @@ namespace GameStore.BL.Services
         {
             var products = await _productRepository.GetProductsBySearchTermAsync(term, limit, offset);
             return _mapper.Map<List<ProductModel>>(products);
+        }
+
+        private async Task<ProductModel> HandleProductAsync(Func<Product, Task<Product>> createUpdate, InputProductModel model)
+        {
+            var product = await _customProductMapper.InputModelToBasic(model);
+
+            var updatedProduct = await createUpdate(product);
+
+            return _mapper.Map<ProductModel>(updatedProduct);
         }
     }
 }

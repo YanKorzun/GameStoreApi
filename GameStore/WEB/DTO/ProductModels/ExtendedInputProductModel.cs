@@ -1,6 +1,6 @@
 ﻿namespace GameStore.WEB.DTO.ProductModels
 {
-    public class ProductModel : CreateProductModel
+    public class ExtendedInputProductModel : InputProductModel
     {
         public int Id { get; set; }
     }
