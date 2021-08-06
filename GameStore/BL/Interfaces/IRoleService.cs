@@ -7,10 +7,10 @@ namespace GameStore.BL.Interfaces
 {
     public interface IRoleService
     {
-        public Task<ServiceResult> CreateAsync(RoleModel roleModel);
+        Task<ServiceResult> CreateAsync(RoleModel roleModel);
 
-        public Task<ServiceResult> DeleteAsync(string id);
+        Task<ServiceResult> DeleteAsync(string id);
 
-        public Task<ServiceResult> EditAsync(BasicUserRoleModel basicUserRoleModel);
+        Task<ServiceResult> EditAsync(BasicUserRoleModel basicUserRoleModel);
     }
 }

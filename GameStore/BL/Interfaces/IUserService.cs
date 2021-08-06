@@ -9,16 +9,16 @@ namespace GameStore.BL.Interfaces
 {
     public interface IUserService
     {
-        public Task<ServiceResult<string>> SignInAsync(BasicUserModel basicUserModel, AppSettings appSettings);
+        Task<ServiceResult<string>> SignInAsync(BasicUserModel basicUserModel, AppSettings appSettings);
 
-        public Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(BasicUserModel basicUserModel);
+        Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(BasicUserModel basicUserModel);
 
-        public Task<ServiceResult> ConfirmAsync(string id, string confirmToken);
+        Task<ServiceResult> ConfirmAsync(string id, string confirmToken);
 
-        public Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserModel userModel);
+        Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserModel userModel);
 
-        public Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(ClaimsPrincipal contextUser, UpdateUserModel updateUser);
+        Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(ClaimsPrincipal contextUser, UpdateUserModel updateUser);
 
-        public Task SendConfirmationMessageAsync(string actionName, string controllerName, (ApplicationUser appUser, string token) data, string scheme);
+        Task SendConfirmationMessageAsync(string actionName, string controllerName, (ApplicationUser appUser, string token) data, string scheme);
     }
 }

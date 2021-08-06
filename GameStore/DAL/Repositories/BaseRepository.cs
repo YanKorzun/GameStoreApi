@@ -12,7 +12,7 @@ namespace GameStore.DAL.Repositories
         protected readonly ApplicationDbContext DbContext;
         protected readonly DbSet<T> Entity;
 
-        public BaseRepository(ApplicationDbContext databaseContext)
+        protected BaseRepository(ApplicationDbContext databaseContext)
         {
             DbContext = databaseContext;
             Entity = this.DbContext.Set<T>();

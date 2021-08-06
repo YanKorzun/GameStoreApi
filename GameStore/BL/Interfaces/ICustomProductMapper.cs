@@ -6,6 +6,6 @@ namespace GameStore.BL.Interfaces
 {
     public interface ICustomProductMapper
     {
-        public Task<Product> InputModelToBasic(InputProductModel inputBasicProductModel);
+        Task<Product> InputModelToBasic(InputProductModel inputBasicProductModel);
     }
 }

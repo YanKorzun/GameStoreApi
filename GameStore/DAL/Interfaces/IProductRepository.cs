@@ -9,14 +9,14 @@ namespace GameStore.DAL.Repositories
 {
     public interface IProductRepository : IBaseRepository<Product>
     {
-        public Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount);
+        Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount);
 
-        public Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount);
+        Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount);
 
-        public Task<Product> FindProductById(int productId);
+        Task<Product> FindProductById(int productId);
 
-        public Task<ServiceResult> DeleteProductAsync(int id);
+        Task<ServiceResult> DeleteProductAsync(int id);
 
-        public Task<Product> UpdateProductAsync(Product newProduct);
+        Task<Product> UpdateProductAsync(Product newProduct);
     }
 }

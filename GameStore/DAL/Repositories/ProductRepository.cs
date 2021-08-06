@@ -25,15 +25,15 @@ namespace GameStore.DAL.Repositories
                     .Take(platformCount)
                     .ToListAsync();
 
-        public async Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skipedCount) =>
+        public async Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skippedCount) =>
             await Entity
                     .AsNoTracking()
                     .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
                     .Take(limit)
-                    .Skip(skipedCount)
+                    .Skip(skippedCount)
                     .Select(x => x).ToListAsync();
 
-        public async Task<Product> FindProductById(int productID) => await GetProductWithChildrenAsync(o => o.Id == productID);
+        public async Task<Product> FindProductById(int productId) => await GetProductWithChildrenAsync(o => o.Id == productId);
 
         public async Task<Product> UpdateProductAsync(Product newProduct)
         {
