@@ -16,6 +16,7 @@ namespace GameStore.BL.Services
     public class CloudinaryService : ICloudinaryService
     {
         private const string FileExtensionException = "File doesn't match needed extension";
+
         private readonly Cloudinary _cloudinary;
 
         public CloudinaryService(AppSettings appSettings)

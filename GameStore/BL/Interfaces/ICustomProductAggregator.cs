@@ -6,6 +6,6 @@ namespace GameStore.BL.Interfaces
 {
     public interface ICustomProductAggregator
     {
-        Product InputModelToBasic(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple);
+        Product AggregateProduct(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple);
     }
 }

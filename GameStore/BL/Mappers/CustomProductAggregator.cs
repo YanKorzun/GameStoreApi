@@ -7,7 +7,7 @@ namespace GameStore.BL.Mappers
 {
     public class CustomProductAggregator : ICustomProductAggregator
     {
-        public Product InputModelToBasic(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple)
+        public Product AggregateProduct(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple)
         {
             var product = new Product();
             if (inputBasicProductModel is ExtendedInputProductModel castResult)

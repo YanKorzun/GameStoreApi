@@ -50,36 +50,36 @@ namespace GameStore.BL.Services
             return _mapper.Map<List<ProductModel>>(products);
         }
 
-        private async Task<ServiceResult<ProductModel>> HandleProductAsync(Func<Product, Task<Product>> createUpdate, InputProductModel model)
+        private async Task<ServiceResult<ProductModel>> HandleProductAsync(Func<Product, Task<Product>> createUpdateAsync, InputProductModel model)
         {
-            var getUrlsResult = await GetUrlFromUploadResult(model);
+            var getUrlsResult = await UploadProductImages(model);
             if (getUrlsResult.Result is not ServiceResultType.Success)
             {
                 return new(getUrlsResult.Result);
             }
 
-            var product = _customProductAggregator.InputModelToBasic(model, getUrlsResult.Data);
+            var product = _customProductAggregator.AggregateProduct(model, getUrlsResult.Data);
 
-            var updatedProduct = await createUpdate(product);
+            var updatedProduct = await createUpdateAsync(product);
 
             return new(getUrlsResult.Result, _mapper.Map<ExtendedProductModel>(updatedProduct));
         }
 
-        private async Task<ServiceResult<(string bgUrl, string logoUrl)>> GetUrlFromUploadResult(InputProductModel model)
+        private async Task<ServiceResult<(string bgUrl, string logoUrl)>> UploadProductImages(InputProductModel model)
         {
-            var first = await _cloudinaryService.Upload(model.Background);
-            var second = await _cloudinaryService.Upload(model.Logo);
+            var backgroundFileUploadResult = await _cloudinaryService.Upload(model.Background);
+            var logoFileUploadResult = await _cloudinaryService.Upload(model.Logo);
 
-            if (first.Result is not ServiceResultType.Success)
+            if (backgroundFileUploadResult.Result is not ServiceResultType.Success)
             {
-                return new(first.Result, first.ErrorMessage);
+                return new(backgroundFileUploadResult.Result, backgroundFileUploadResult.ErrorMessage);
             }
-            else if (second.Result is not ServiceResultType.Success)
+            if (logoFileUploadResult.Result is not ServiceResultType.Success)
             {
-                return new(second.Result, second.ErrorMessage);
+                return new(logoFileUploadResult.Result, logoFileUploadResult.ErrorMessage);
             }
 
-            return new(ServiceResultType.Success, (first.Data.Url.ToString(), second.Data.Url.ToString()));
+            return new(ServiceResultType.Success, (backgroundFileUploadResult.Data.Url.ToString(), logoFileUploadResult.Data.Url.ToString()));
         }
     }
 }
