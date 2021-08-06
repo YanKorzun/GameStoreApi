@@ -1,4 +1,5 @@
-﻿using GameStore.BL.Interfaces;
+﻿using GameStore.BL.Aggregators;
+using GameStore.BL.Interfaces;
 using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.BL.Utilities;
@@ -20,14 +21,16 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IProductRatingService, ProductRatingService>();
             //Utilities
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             //Aggregators
-            services.AddTransient<ICustomProductAggregator, CustomProductAggregator>();
+            services.AddTransient<ICustomProductAggregator, ProductAggregator>();
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
             services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
         }
     }

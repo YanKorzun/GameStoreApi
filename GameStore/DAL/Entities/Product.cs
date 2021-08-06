@@ -12,7 +12,7 @@ namespace GameStore.DAL.Entities
         public string Developers { get; set; }
         public string Publishers { get; set; }
         public string Genre { get; set; }
-        public ProductRating Rating { get; set; }
+        public AgeProductRating AgeRating { get; set; }
         public string Logo { get; set; }
         public string Background { get; set; }
         public decimal Price { get; set; }
@@ -22,5 +22,6 @@ namespace GameStore.DAL.Entities
         public ProductPlatforms Platform { get; set; }
         public DateTime PublicationDate { get; set; }
         public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();
+        public ICollection<ProductRating> Ratings { get; set; }
     }
 }

@@ -22,14 +22,14 @@ namespace GameStore.WEB.StartUp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var AppSettings = RegisterSettings(Configuration);
-            services.RegisterServices(AppSettings);
-            services.RegisterDatabase(AppSettings.Database, LoggerFactory);
+            var appSettings = RegisterSettings(Configuration);
+            services.RegisterServices(appSettings);
+            services.RegisterDatabase(appSettings.Database, LoggerFactory);
             services.RegisterAutoMapper();
             services.RegisterSwagger();
             services.RegisterHealthChecks();
             services.RegisterIdentity();
-            services.RegisterAuthSettings(AppSettings.Token);
+            services.RegisterAuthSettings(appSettings.Token);
             services.RegisterHttpContextExtensions();
             services.AddControllers().AddNewtonsoftJson(options =>
             {

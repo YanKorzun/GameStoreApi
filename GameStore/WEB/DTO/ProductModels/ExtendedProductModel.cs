@@ -1,4 +1,6 @@
-﻿namespace GameStore.WEB.DTO.ProductModels
+﻿using GameStore.DAL.Entities;
+
+namespace GameStore.WEB.DTO.ProductModels
 {
     public class ExtendedProductModel : ProductModel
     {

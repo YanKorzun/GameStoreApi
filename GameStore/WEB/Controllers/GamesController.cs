@@ -11,21 +11,23 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.WEB.Constants;
+using GameStore.WEB.DTO.RatingModels;
 
 namespace GameStore.WEB.Controllers
 {
     [ApiController]
     [Route("api/games")]
-    [Authorize(Roles = UserRoleConstants.Admin)]
     public class GamesController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
         private readonly IProductService _productService;
+        private readonly IProductRatingService _productRatingService;
 
-        public GamesController(IProductRepository productRepository, IProductService productService)
+        public GamesController(IProductRepository productRepository, IProductService productService, IProductRatingService productRatingService)
         {
             _productRepository = productRepository;
             _productService = productService;
+            _productRatingService = productRatingService;
         }
 
         /// <summary>
@@ -105,6 +107,33 @@ namespace GameStore.WEB.Controllers
             }
 
             return CreatedAtAction(nameof(CreateNewProduct), createProductResult.Data);
+        }
+
+        /// <summary>
+        /// Create rating with provided model properties
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST
+        ///     {
+        ///         "productId":12,
+        ///         "rating": 1
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="ratingModel">data transfer object for creating a new product in database</param>
+        /// <response code="201">Created successfully</response>
+        /// <response code="401">User is not authenticated</response>
+        /// <response code="403">User has no access to this resource</response>
+
+        [HttpPost("rating")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateRating([FromBody] RatingModel ratingModel)
+        {
+            var result = await _productRatingService.CreateProductRatingAsync(User, ratingModel);
+            return CreatedAtAction(nameof(CreateRating), result);
         }
 
         /// <summary>

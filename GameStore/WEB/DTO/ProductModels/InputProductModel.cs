@@ -23,7 +23,7 @@ namespace GameStore.WEB.DTO.ProductModels
         [StringLength(50)]
         public string Genre { get; set; }
 
-        public ProductRating Rating { get; set; }
+        public AgeProductRating Rating { get; set; }
         public IFormFile Logo { get; set; }
         public IFormFile Background { get; set; }
         public decimal Price { get; set; }

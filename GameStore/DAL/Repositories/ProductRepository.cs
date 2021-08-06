@@ -61,7 +61,7 @@ namespace GameStore.DAL.Repositories
         }
 
         private async Task<Product> GetProductWithChildrenAsync(Expression<Func<Product, bool>> expression)
-            => await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).FirstOrDefaultAsync(expression);
+            => await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).Include(o => o.Ratings).FirstOrDefaultAsync(expression);
 
         private async Task<Product> GetProductAsync(Expression<Func<Product, bool>> expression)
             => await Entity.AsNoTracking().FirstOrDefaultAsync(expression);
