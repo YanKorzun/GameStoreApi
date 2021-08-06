@@ -58,7 +58,8 @@ namespace GameStore.WEB.StartUp
                 {
                     Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>(),
                     Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>(),
-                    SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings)).Get<SmtpClientSettings>()
+                    SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings)).Get<SmtpClientSettings>(),
+                    CloudinarySettings = configuration.GetSection(nameof(AppSettings.CloudinarySettings)).Get<CloudinarySettings>()
                 };
     }
 }

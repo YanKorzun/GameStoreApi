@@ -43,12 +43,7 @@ namespace GameStore.BL.Utilities
             var userId = parseIdResult.Data;
 
             var userSearchResult = await _userRepository.FindUserByIdAsync(userId);
-            if (userSearchResult.Result is not ServiceResultType.Success)
-            {
-                return userSearchResult;
-            }
-
-            return new(ServiceResultType.Success, userSearchResult.Data);
+            return userSearchResult;
         }
     }
 }

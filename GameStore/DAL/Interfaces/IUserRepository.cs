@@ -6,10 +6,10 @@ namespace GameStore.DAL.Interfaces
 {
     public interface IUserRepository : IBaseRepository<ApplicationUser>
     {
-        public Task<ServiceResult<ApplicationUser>> UpdateUserAsync(ApplicationUser appUser, int userId);
+        Task<ServiceResult<ApplicationUser>> UpdateUserAsync(ApplicationUser appUser, int userId);
 
-        public Task<ServiceResult> UpdateUserPasswordAsync(int userId, string newPasswords);
+        Task<ServiceResult> UpdateUserPasswordAsync(int userId, string newPasswords);
 
-        public Task<ServiceResult<ApplicationUser>> FindUserByIdAsync(int userId);
+        Task<ServiceResult<ApplicationUser>> FindUserByIdAsync(int userId);
     }
 }

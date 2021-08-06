@@ -7,8 +7,8 @@ namespace GameStore.BL.Interfaces
 {
     public interface IClaimsUtility
     {
-        public ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal user);
+        ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal user);
 
-        public Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal user);
+        Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal user);
     }
 }

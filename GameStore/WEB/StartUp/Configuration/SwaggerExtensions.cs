@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace GameStore.WEB.StartUp.Configuration
 {
@@ -12,19 +14,51 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddSwaggerGen(
                 c =>
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo
+                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    c.IncludeXmlComments(xmlPath);
+
+                    c.SwaggerDoc("v1", new()
                     {
                         Version = "v1",
                         Title = "Click on 'TermsOfService' API",
-                        Description = "Lorem ipsum",
-                        TermsOfService = new Uri("../Home/GetInfo", UriKind.Relative),
+                        Description = "Game store web API",
+                        TermsOfService = new Uri("../Home/GetInfo", UriKind.Relative)
+                    });
+
+                    c.CustomSchemaIds(x => x.FullName);
+                    c.AddSecurityDefinition("Bearer", new()
+                    {
+                        Description = "JWT Authorization via Bearer scheme: Bearer {token}",
+                        Scheme = "JWT",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                    c.AddSecurityRequirement(new()
+                    {
+                        {
+                            new()
+                            {
+                                Reference = new()
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            Array.Empty<string>()
+                        }
                     });
                 });
         }
 
         public static void RegisterSwaggerUi(this IApplicationBuilder app)
         {
-            app.UseSwagger();
+            app.UseSwagger(x =>
+            {
+                x.RouteTemplate = "swagger/{documentName}/swagger.json";
+            });
+
             app.UseSwaggerUI(o =>
             {
                 o.SwaggerEndpoint("/swagger/v1/swagger.json", "GameStore API V1");

@@ -9,18 +9,18 @@ namespace GameStore.DAL.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _dbContext;
-        protected readonly DbSet<T> _entity;
+        protected readonly ApplicationDbContext DbContext;
+        protected readonly DbSet<T> Entity;
 
-        public BaseRepository(ApplicationDbContext dbContext)
+        protected BaseRepository(ApplicationDbContext databaseContext)
         {
-            _dbContext = dbContext;
-            _entity = _dbContext.Set<T>();
+            DbContext = databaseContext;
+            Entity = this.DbContext.Set<T>();
         }
 
         public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression)
         {
-            var item = await _entity.AsNoTracking().SingleOrDefaultAsync(expression);
+            var item = await Entity.AsNoTracking().SingleOrDefaultAsync(expression);
 
             return item;
         }
@@ -29,7 +29,7 @@ namespace GameStore.DAL.Repositories
         {
             try
             {
-                var query = _entity.Where(expression).AsNoTracking();
+                var query = Entity.Where(expression).AsNoTracking();
 
                 if (includes.Length != 0)
                 {
@@ -58,13 +58,36 @@ namespace GameStore.DAL.Repositories
 
         public virtual async Task<T> CreateItemAsync(T entity)
         {
-            var createdEntity = await _dbContext.AddAsync(entity);
+            var createdEntity = await DbContext.AddAsync(entity);
 
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
 
             createdEntity.State = EntityState.Detached;
 
             return createdEntity.Entity;
+        }
+
+        public async Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties)
+        {
+            try
+            {
+                Entity.Update(item);
+                foreach (var property in unmodifiedProperties)
+                {
+                    DbContext.Entry(item).Property(property).IsModified = false;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                DbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
         }
     }
 }

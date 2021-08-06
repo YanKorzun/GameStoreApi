@@ -68,6 +68,6 @@ namespace GameStore.DAL.Repositories
         }
 
         private async Task<ApplicationUser> GetUserWithChildrenAsync(Expression<Func<ApplicationUser, bool>> expression)
-            => await _entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.Game).Include(o => o.UserRoles).ThenInclude(o => o.Role).FirstOrDefaultAsync(expression);
+            => await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.Game).Include(o => o.UserRoles).ThenInclude(o => o.Role).FirstOrDefaultAsync(expression);
     }
 }

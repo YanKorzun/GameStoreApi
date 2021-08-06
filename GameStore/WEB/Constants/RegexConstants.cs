@@ -19,5 +19,7 @@
         public const string PhoneRegex = @"\+?\(?\d{3}\)?-?\d{2}-?-?\d{3}-?\d{2}-?\d{2}";
 
         public const string EmailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
+        public const string FileExtensionRegex = @"^\w*\.(jpg|jpeg|png)+$";
     }
 }

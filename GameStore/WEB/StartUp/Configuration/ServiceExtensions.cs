@@ -1,4 +1,5 @@
 ﻿using GameStore.BL.Interfaces;
+using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Interfaces;
@@ -14,14 +15,20 @@ namespace GameStore.WEB.StartUp.Configuration
         public static void RegisterServices(this IServiceCollection services, AppSettings appSettings)
         {
             services.AddSingleton(appSettings);
-
+            //Services
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            //Utilities
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
-
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
+            //Aggregators
+            services.AddTransient<ICustomProductAggregator, CustomProductAggregator>();
+            //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
         }
     }
 }
