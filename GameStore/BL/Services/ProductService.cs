@@ -58,7 +58,7 @@ namespace GameStore.BL.Services
                 return new(getUrlsResult.Result);
             }
 
-            var product = _customProductAggregator.AggregateProduct(model, getUrlsResult.Data);
+            var product = _customProductAggregator.AggregateProduct(model, getUrlsResult.Data.bgUrl, getUrlsResult.Data.logoUrl);
 
             var updatedProduct = await createUpdateAsync(product);
 

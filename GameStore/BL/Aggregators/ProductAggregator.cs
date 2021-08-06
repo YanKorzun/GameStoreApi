@@ -1,13 +1,12 @@
 ﻿using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.ProductModels;
-using System.Threading.Tasks;
 
-namespace GameStore.BL.Mappers
+namespace GameStore.BL.Aggregators
 {
-    public class CustomProductAggregator : ICustomProductAggregator
+    public class ProductAggregator : ICustomProductAggregator
     {
-        public Product AggregateProduct(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple)
+        public Product AggregateProduct(InputProductModel inputBasicProductModel, string backgroundUrl, string logoUrl)
         {
             var product = new Product();
             if (inputBasicProductModel is ExtendedInputProductModel castResult)
@@ -19,7 +18,7 @@ namespace GameStore.BL.Mappers
             product.Developers = inputBasicProductModel.Developers;
             product.Publishers = inputBasicProductModel.Publishers;
             product.Genre = inputBasicProductModel.Genre;
-            product.Rating = inputBasicProductModel.Rating;
+            product.AgeRating = inputBasicProductModel.Rating;
             product.Price = inputBasicProductModel.Price;
             product.Count = inputBasicProductModel.Count;
             product.DateCreated = inputBasicProductModel.DateCreated;
@@ -27,8 +26,8 @@ namespace GameStore.BL.Mappers
             product.Platform = inputBasicProductModel.Platform;
             product.PublicationDate = inputBasicProductModel.PublicationDate;
 
-            product.Background = urlTuple.backgroundUrl;
-            product.Logo = urlTuple.logoUrl;
+            product.Background = backgroundUrl;
+            product.Logo = logoUrl;
 
             return product;
         }
