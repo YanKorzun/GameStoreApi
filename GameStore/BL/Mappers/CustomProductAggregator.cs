@@ -5,17 +5,9 @@ using System.Threading.Tasks;
 
 namespace GameStore.BL.Mappers
 {
-    public class CustomProductMapper : ICustomProductMapper
-
+    public class CustomProductAggregator : ICustomProductAggregator
     {
-        private readonly ICloudinaryService _cloudinary;
-
-        public CustomProductMapper(ICloudinaryService cloudinary)
-        {
-            _cloudinary = cloudinary;
-        }
-
-        public async Task<Product> InputModelToBasic(InputProductModel inputBasicProductModel)
+        public Product InputModelToBasic(InputProductModel inputBasicProductModel, (string backgroundUrl, string logoUrl) urlTuple)
         {
             var product = new Product();
             if (inputBasicProductModel is ExtendedInputProductModel castResult)
@@ -24,7 +16,7 @@ namespace GameStore.BL.Mappers
             }
 
             product.Name = inputBasicProductModel.Name;
-            product.Developers = inputBasicProductModel.Name;
+            product.Developers = inputBasicProductModel.Developers;
             product.Publishers = inputBasicProductModel.Publishers;
             product.Genre = inputBasicProductModel.Genre;
             product.Rating = inputBasicProductModel.Rating;
@@ -35,8 +27,8 @@ namespace GameStore.BL.Mappers
             product.Platform = inputBasicProductModel.Platform;
             product.PublicationDate = inputBasicProductModel.PublicationDate;
 
-            product.Background = (await _cloudinary.Upload(inputBasicProductModel.Background)).Url.ToString();
-            product.Logo = (await _cloudinary.Upload(inputBasicProductModel.Logo)).Url.ToString();
+            product.Background = urlTuple.backgroundUrl;
+            product.Logo = urlTuple.logoUrl;
 
             return product;
         }

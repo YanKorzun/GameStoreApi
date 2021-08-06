@@ -24,7 +24,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
             services.AddTransient<ICloudinaryService, CloudinaryService>();
 
-            services.AddTransient<ICustomProductMapper, CustomProductMapper>();
+            services.AddTransient<ICustomProductAggregator, CustomProductAggregator>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();

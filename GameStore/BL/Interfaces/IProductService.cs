@@ -7,11 +7,11 @@ namespace GameStore.BL.Interfaces
 {
     public interface IProductService
     {
-        Task<ProductModel> CreateProductAsync(InputProductModel productModel);
+        Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel productModel);
 
         Task<ServiceResult> DeleteProductAsync(int id);
 
-        Task<ProductModel> UpdateProductAsync(ExtendedInputProductModel productModel);
+        Task<ServiceResult<ProductModel>> UpdateProductAsync(ExtendedInputProductModel productModel);
 
         Task<ProductModel> FindProductById(int id);
 

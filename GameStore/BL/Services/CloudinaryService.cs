@@ -5,12 +5,17 @@ using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using GameStore.BL.Enums;
+using GameStore.BL.ResultWrappers;
+using GameStore.WEB.Constants;
 
 namespace GameStore.BL.Services
 {
     public class CloudinaryService : ICloudinaryService
     {
+        private const string FileExtensionException = "File doesn't match needed extension";
         private readonly Cloudinary _cloudinary;
 
         public CloudinaryService(AppSettings appSettings)
@@ -23,53 +28,24 @@ namespace GameStore.BL.Services
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<ImageUploadResult> Upload(IFormFile file)
+        public async Task<ServiceResult<ImageUploadResult>> Upload(IFormFile file)
         {
-            var path = string.Empty;
-            if (CheckIfExcelFile(file))
+            ImageUploadResult uploadResult = null;
+            if (!CheckFileExtension(file))
             {
-                path = await WriteFile(file);
+                return new(ServiceResultType.InvalidData, FileExtensionException);
             }
 
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(path)
+                File = new FileDescription(file.FileName, file.OpenReadStream()),
             };
-            var uploadResult = _cloudinary.Upload(uploadParams);
-            return uploadResult;
+
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            return new(ServiceResultType.Success, uploadResult);
         }
 
-        private static bool CheckIfExcelFile(IFormFile file)
-        {
-            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-            return (extension is ".jpg" or ".jpeg" or ".bmp");
-        }
-
-        private static async Task<string> WriteFile(IFormFile file)
-        {
-            var pathToFile = string.Empty;
-            try
-            {
-                var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-                var fileName = DateTime.Now.Ticks + extension;
-
-                var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
-
-                if (!Directory.Exists(pathBuilt))
-                {
-                    Directory.CreateDirectory(pathBuilt);
-                }
-
-                pathToFile = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files",
-                    fileName);
-
-                await using var stream = new FileStream(pathToFile, FileMode.Create);
-                await file.CopyToAsync(stream);
-            }
-            catch (Exception)
-            {
-            }
-            return pathToFile;
-        }
+        private static bool CheckFileExtension(IFormFile file) => Regex.IsMatch(file.FileName, RegexConstants.FileExtensionRegex);
     }
 }

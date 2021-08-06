@@ -7,6 +7,7 @@ using GameStore.WEB.DTO.ProductModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameStore.BL.Enums;
 
 namespace GameStore.BL.Services
 {
@@ -14,18 +15,20 @@ namespace GameStore.BL.Services
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
-        private readonly ICustomProductMapper _customProductMapper;
+        private readonly ICustomProductAggregator _customProductAggregator;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public ProductService(IMapper mapper, IProductRepository productRepository, ICustomProductMapper customProductMapper)
+        public ProductService(IMapper mapper, IProductRepository productRepository, ICustomProductAggregator customProductAggregator, ICloudinaryService cloudinaryService)
         {
             _mapper = mapper;
             _productRepository = productRepository;
-            _customProductMapper = customProductMapper;
+            _customProductAggregator = customProductAggregator;
+            _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<ProductModel> CreateProductAsync(InputProductModel model) => await HandleProductAsync(_productRepository.CreateItemAsync, model);
+        public async Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel model) => await HandleProductAsync(_productRepository.CreateItemAsync, model);
 
-        public async Task<ProductModel> UpdateProductAsync(ExtendedInputProductModel model) => await HandleProductAsync(_productRepository.UpdateProductAsync, model);
+        public async Task<ServiceResult<ProductModel>> UpdateProductAsync(ExtendedInputProductModel model) => await HandleProductAsync(_productRepository.UpdateProductAsync, model);
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
@@ -47,13 +50,36 @@ namespace GameStore.BL.Services
             return _mapper.Map<List<ProductModel>>(products);
         }
 
-        private async Task<ProductModel> HandleProductAsync(Func<Product, Task<Product>> createUpdate, InputProductModel model)
+        private async Task<ServiceResult<ProductModel>> HandleProductAsync(Func<Product, Task<Product>> createUpdate, InputProductModel model)
         {
-            var product = await _customProductMapper.InputModelToBasic(model);
+            var getUrlsResult = await GetUrlFromUploadResult(model);
+            if (getUrlsResult.Result is not ServiceResultType.Success)
+            {
+                return new(getUrlsResult.Result);
+            }
+
+            var product = _customProductAggregator.InputModelToBasic(model, getUrlsResult.Data);
 
             var updatedProduct = await createUpdate(product);
 
-            return _mapper.Map<ProductModel>(updatedProduct);
+            return new(getUrlsResult.Result, _mapper.Map<ExtendedProductModel>(updatedProduct));
+        }
+
+        private async Task<ServiceResult<(string bgUrl, string logoUrl)>> GetUrlFromUploadResult(InputProductModel model)
+        {
+            var first = await _cloudinaryService.Upload(model.Background);
+            var second = await _cloudinaryService.Upload(model.Logo);
+
+            if (first.Result is not ServiceResultType.Success)
+            {
+                return new(first.Result, first.ErrorMessage);
+            }
+            else if (second.Result is not ServiceResultType.Success)
+            {
+                return new(second.Result, second.ErrorMessage);
+            }
+
+            return new(ServiceResultType.Success, (first.Data.Url.ToString(), second.Data.Url.ToString()));
         }
     }
 }

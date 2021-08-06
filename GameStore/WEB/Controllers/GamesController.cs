@@ -54,9 +54,11 @@ namespace GameStore.WEB.Controllers
         /// </summary>
         /// <returns>Returns full product properties model</returns>
         /// <response code="200">Product successfully received</response>
+        /// <response code="404">Product doesn't exist</response>
         [AllowAnonymous]
         [HttpGet("id/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ExtendedProductModel>> GetProductById(int id)
         {
             return Ok(await _productService.FindProductById(id));
@@ -70,17 +72,17 @@ namespace GameStore.WEB.Controllers
         ///
         ///     POST
         ///     {
-        ///         "name": "string",
-        ///         "developers": "string",
-        ///         "publishers": "string",
-        ///         "genre": "string",
-        ///         "rating": 0,
-        ///         "logo": "string",
-        ///         "background": "string",
+        ///         "name": "B",
+        ///         "developers": "Supercell",
+        ///         "publishers": "Supercell",
+        ///         "genre": "MOBA",
+        ///         "rating": 5,
+        ///         "logo": /*your .jpg file*/,
+        ///         "background": /*your .jpg file*/,
         ///         "price": 0,
-        ///         "count": 0,
+        ///         "count": 1337,
         ///         "dateCreated": "2021-08-05T08:13:56.083Z",
-        ///         "totalRating": 0,
+        ///         "totalRating": 10,
         ///         "platform": 0,
         ///         "publicationDate": "2021-08-05T08:13:56.083Z"
         ///     }
@@ -94,11 +96,15 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<ProductModel>> CreateNewProduct([FromForm] InputProductModel productModel)
+        public async Task<IActionResult> CreateNewProduct([FromForm] InputProductModel productModel)
         {
-            var createdProduct = await _productService.CreateProductAsync(productModel);
+            var createProductResult = await _productService.CreateProductAsync(productModel);
+            if (createProductResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)createProductResult.Result, createProductResult.ErrorMessage);
+            }
 
-            return CreatedAtAction(nameof(CreateNewProduct), createdProduct);
+            return CreatedAtAction(nameof(CreateNewProduct), createProductResult.Data);
         }
 
         /// <summary>
@@ -109,20 +115,20 @@ namespace GameStore.WEB.Controllers
         ///
         ///     POST
         ///     {
-        ///         "name": "string",
-        ///         "developers": "string",
-        ///         "publishers": "string",
-        ///         "genre": "string",
-        ///         "rating": 0,
-        ///         "logo": "string",
-        ///         "background": "string",
+        ///         "name": "B",
+        ///         "developers": "Supercell",
+        ///         "publishers": "Supercell",
+        ///         "genre": "MOBA",
+        ///         "rating": 5,
+        ///         "logo": /*your .jpg file*/,
+        ///         "background": /*your .jpg file*/,
         ///         "price": 0,
-        ///         "count": 0,
+        ///         "count": 1337,
         ///         "dateCreated": "2021-08-05T08:13:56.083Z",
-        ///         "totalRating": 0,
+        ///         "totalRating": 10,
         ///         "platform": 0,
         ///         "publicationDate": "2021-08-05T08:13:56.083Z",
-        ///         "id": 0
+        ///         "id": 6
         ///     }
         ///
         /// </remarks>
@@ -136,7 +142,11 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<ExtendedProductModel>> UpdateProduct([FromForm] ExtendedInputProductModel basicProductModel)
         {
-            await _productService.UpdateProductAsync(basicProductModel);
+            var updateResult = await _productService.UpdateProductAsync(basicProductModel);
+            if (updateResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)updateResult.Result, updateResult.ErrorMessage);
+            }
 
             return Ok();
         }

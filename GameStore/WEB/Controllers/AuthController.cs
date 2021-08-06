@@ -73,7 +73,7 @@ namespace GameStore.WEB.Controllers
         /// <param name="userModel">User data transfer object</param>
         /// <returns>Returns a new JWT token</returns>
         /// <response code="200">Token is generated</response>
-        /// <response code="400">Something went wrong</response>
+        /// <response code="400">Unable to authenticate with provided email or password</response>
         [HttpPost("sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

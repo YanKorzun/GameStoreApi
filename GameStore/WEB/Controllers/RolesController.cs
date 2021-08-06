@@ -62,6 +62,7 @@ namespace GameStore.WEB.Controllers
         /// <response code="400">If something went wrong</response>
         /// <response code="401">User is not authenticated</response>
         /// <response code="403">User has no access to this resource</response>
+        /// <response code="404">Role doesn't exist</response>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
