@@ -1,9 +1,12 @@
-﻿using GameStore.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using GameStore.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL.Repositories
 {
@@ -15,7 +18,7 @@ namespace GameStore.DAL.Repositories
         protected BaseRepository(ApplicationDbContext databaseContext)
         {
             DbContext = databaseContext;
-            Entity = this.DbContext.Set<T>();
+            Entity = DbContext.Set<T>();
         }
 
         public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression)
@@ -25,20 +28,19 @@ namespace GameStore.DAL.Repositories
             return item;
         }
 
-        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression,
+            params Expression<Func<T, object>>[] includes)
         {
             try
             {
                 var query = Entity.Where(expression).AsNoTracking();
 
                 if (includes.Length != 0)
-                {
                     query = includes
                         .Aggregate(query,
                             (
                                 current, includeProperty) => current.Include(includeProperty)
                         );
-                }
 
                 var item = await query.SingleOrDefaultAsync();
 
@@ -52,7 +54,7 @@ namespace GameStore.DAL.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new Exception($"Unable to find item in database. Error: {e.Message}");
+                throw new($"Unable to find item in database. Error: {e.Message}");
             }
         }
 
@@ -67,15 +69,46 @@ namespace GameStore.DAL.Repositories
             return createdEntity.Entity;
         }
 
+        public IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString)
+        {
+            if (!entities.Any())
+                return entities;
+
+            if (string.IsNullOrWhiteSpace(orderByQueryString)) return entities;
+
+            var orderParams = orderByQueryString.Trim().Split(',');
+            var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var orderQueryBuilder = new StringBuilder();
+
+            foreach (var param in orderParams)
+            {
+                if (string.IsNullOrWhiteSpace(param))
+                    continue;
+
+                var propertyFromQueryName = param.Split(" ")[0];
+                var objectProperty = propertyInfos.FirstOrDefault(pi =>
+                    pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
+
+                if (objectProperty == null)
+                    continue;
+
+                var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
+
+                orderQueryBuilder.Append($"{objectProperty.Name} {sortingOrder}, ");
+            }
+
+            var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
+
+            return entities.OrderBy(orderQuery);
+        }
+
         public async Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties)
         {
             try
             {
                 Entity.Update(item);
                 foreach (var property in unmodifiedProperties)
-                {
                     DbContext.Entry(item).Property(property).IsModified = false;
-                }
 
                 await DbContext.SaveChangesAsync();
 
@@ -84,7 +117,7 @@ namespace GameStore.DAL.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new Exception($"Unable to update item. Error: {e.Message}");
+                throw new($"Unable to update item. Error: {e.Message}");
             }
 
             return item;

@@ -1,10 +1,10 @@
 ﻿using GameStore.BL.Aggregators;
 using GameStore.BL.Interfaces;
-using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Interfaces;
 using GameStore.DAL.Repositories;
+using GameStore.WEB.Filters.ActionFilters;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +32,8 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
             services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
+            //Action filters
+            services.AddScoped<ValidationFilterAttribute>();
         }
     }
 }

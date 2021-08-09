@@ -20,6 +20,6 @@ namespace GameStore.DAL.Interfaces
 
         Task<Product> UpdateProductAsync(Product newProduct);
 
-        PagedList<Product> GetOwners(ProductParameters productParameters);
+        PagedList<Product> GetPagedProductList(ProductParameters productParameters);
     }
 }

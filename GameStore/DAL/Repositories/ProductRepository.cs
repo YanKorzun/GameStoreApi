@@ -1,16 +1,16 @@
-﻿using GameStore.BL.Enums;
-using GameStore.BL.ResultWrappers;
-using GameStore.DAL.Entities;
-using GameStore.DAL.Enums;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GameStore.BL.Enums;
+using GameStore.BL.ResultWrappers;
 using GameStore.BL.Utilities;
+using GameStore.DAL.Entities;
+using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL.Repositories
 {
@@ -22,21 +22,22 @@ namespace GameStore.DAL.Repositories
 
         public async Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount) =>
             await Entity
-                    .GroupBy(x => x.Platform)
-                    .OrderByDescending(g => g.Count())
-                    .Select(p => p.Key)
-                    .Take(platformCount)
-                    .ToListAsync();
+                .GroupBy(x => x.Platform)
+                .OrderByDescending(g => g.Count())
+                .Select(p => p.Key)
+                .Take(platformCount)
+                .ToListAsync();
 
         public async Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skippedCount) =>
             await Entity
-                    .AsNoTracking()
-                    .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
-                    .Take(limit)
-                    .Skip(skippedCount)
-                    .Select(x => x).ToListAsync();
+                .AsNoTracking()
+                .Where(x => EF.Functions.Like(x.Name, $"{searchTerm}%"))
+                .Take(limit)
+                .Skip(skippedCount)
+                .Select(x => x).ToListAsync();
 
-        public async Task<Product> FindProductById(int productId) => await GetProductWithChildrenAsync(o => o.Id == productId);
+        public async Task<Product> FindProductById(int productId) =>
+            await GetProductWithChildrenAsync(o => o.Id == productId);
 
         public async Task<Product> UpdateProductAsync(Product newProduct)
         {
@@ -48,16 +49,23 @@ namespace GameStore.DAL.Repositories
             return updatedProduct;
         }
 
-        public PagedList<Product> GetOwners(ProductParameters productParameters)
+        public PagedList<Product> GetPagedProductList(ProductParameters productParameters)
         {
-            return PagedList<Product>.ToPagedList(Entity.OrderBy(on => on.Name),
+            var products = Entity.Where(o =>
+                o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating);
+
+            SearchByName(ref products, productParameters.Name);
+
+            var sortedProducts = ApplySort(products, productParameters.OrderBy);
+
+            return PagedList<Product>.ToPagedList(sortedProducts,
                 productParameters.PageNumber,
                 productParameters.PageSize);
         }
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
-            var dbProduct = new Product()
+            var dbProduct = new Product
             {
                 Id = id,
                 IsDeleted = true
@@ -70,10 +78,18 @@ namespace GameStore.DAL.Repositories
             return new(ServiceResultType.Success);
         }
 
-        private async Task<Product> GetProductWithChildrenAsync(Expression<Func<Product, bool>> expression)
-            => await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser).Include(o => o.Ratings).FirstOrDefaultAsync(expression);
+        private async Task<Product> GetProductWithChildrenAsync(Expression<Func<Product, bool>> expression) =>
+            await Entity.AsNoTracking().Include(o => o.ProductLibraries).ThenInclude(o => o.AppUser)
+                .Include(o => o.Ratings).FirstOrDefaultAsync(expression);
 
-        private async Task<Product> GetProductAsync(Expression<Func<Product, bool>> expression)
-            => await Entity.AsNoTracking().FirstOrDefaultAsync(expression);
+        private async Task<Product> GetProductAsync(Expression<Func<Product, bool>> expression) =>
+            await Entity.AsNoTracking().FirstOrDefaultAsync(expression);
+
+        private static void SearchByName(ref IQueryable<Product> products, string productName)
+        {
+            if (!products.Any() || string.IsNullOrWhiteSpace(productName))
+                return;
+            products = products.Where(o => o.Name.ToLower().Contains(productName.Trim().ToLower()));
+        }
     }
 }

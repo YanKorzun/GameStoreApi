@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -8,8 +9,11 @@ namespace GameStore.DAL.Interfaces
     {
         Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression);
 
-        Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes);
+        Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression,
+            params Expression<Func<T, object>>[] includes);
 
         Task<T> CreateItemAsync(T entity);
+
+        IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString);
     }
 }
