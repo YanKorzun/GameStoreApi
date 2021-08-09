@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GameStore.BL.Utilities;
+using GameStore.DAL.Interfaces;
+using GameStore.WEB.DTO;
 
 namespace GameStore.DAL.Repositories
 {
@@ -43,6 +46,13 @@ namespace GameStore.DAL.Repositories
                 x => x.PublicationDate);
 
             return updatedProduct;
+        }
+
+        public PagedList<Product> GetOwners(ProductParameters productParameters)
+        {
+            return PagedList<Product>.ToPagedList(Entity.OrderBy(on => on.Name),
+                productParameters.PageNumber,
+                productParameters.PageSize);
         }
 
         public async Task<ServiceResult> DeleteProductAsync(int id)

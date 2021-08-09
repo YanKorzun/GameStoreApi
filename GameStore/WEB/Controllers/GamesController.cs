@@ -10,8 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameStore.DAL.Interfaces;
 using GameStore.WEB.Constants;
+using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.RatingModels;
+using Newtonsoft.Json;
 
 namespace GameStore.WEB.Controllers
 {
@@ -203,6 +206,24 @@ namespace GameStore.WEB.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("list")]
+        public IActionResult GetProductList([FromQuery] ProductParameters productParameters)
+        {
+            var owners = _productRepository.GetOwners(productParameters);
+            var metadata = new
+            {
+                owners.TotalCount,
+                owners.PageSize,
+                owners.CurrentPage,
+                owners.TotalPages,
+                owners.HasNext,
+                owners.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(owners);
         }
     }
 }

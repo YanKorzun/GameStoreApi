@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.BL.Enums;
+using GameStore.DAL.Interfaces;
 
 namespace GameStore.BL.Services
 {
