@@ -1,10 +1,10 @@
-﻿using GameStore.BL.Enums;
+﻿using System.Threading.Tasks;
+using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.WEB.DTO.UserModels;
 using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace GameStore.WEB.Controllers
 {
@@ -12,8 +12,8 @@ namespace GameStore.WEB.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly AppSettings _appSettings;
+        private readonly IUserService _userService;
 
         public AuthController(AppSettings appSettings, IUserService userService)
         {
@@ -22,19 +22,8 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Creates a new user in database and sends him a confirmation link
+        ///     Creates a new user in database and sends him a confirmation link
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /sign-up
-        ///     {
-        ///         "email": "user@gmail.com",
-        ///         "userName": "newUSerName",
-        ///         "phoneNumber": "+375123456789",
-        ///         "password": "newPas$w0rd"
-        ///     }
-        /// </remarks>
         /// <param name="userModel">User data transfer object</param>
         /// <returns>Returns a new user from database</returns>
         /// <response code="201">Returns the newly created item</response>
@@ -50,26 +39,16 @@ namespace GameStore.WEB.Controllers
             {
                 return BadRequest(signUpResult.ErrorMessage);
             }
-            await _userService.SendConfirmationMessageAsync(nameof(ConfirmEmail), "Auth", (signUpResult.Data.user, signUpResult.Data.confirmToken), Request.Scheme);
+
+            await _userService.SendConfirmationMessageAsync(nameof(ConfirmEmail), "Auth",
+                (signUpResult.Data.user, signUpResult.Data.confirmToken), Request.Scheme);
 
             return CreatedAtAction(nameof(SignUp), signUpResult.Data.user);
         }
 
         /// <summary>
-        /// Returns a new JWT token to registered users
+        ///     Returns a new JWT token to registered users
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /sign-in
-        ///     {
-        ///         "email": "user@gmail.com",
-        ///         "userName": "newUSerName",
-        ///         "phoneNumber": "+375123456789",
-        ///         "password": "newPas$w0rd"
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="userModel">User data transfer object</param>
         /// <returns>Returns a new JWT token</returns>
         /// <response code="200">Token is generated</response>
@@ -90,7 +69,7 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Confirms user email
+        ///     Confirms user email
         /// </summary>
         /// <param name="id">User id</param>
         /// <param name="token">Email confirmation token</param>

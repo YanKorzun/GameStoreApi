@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
@@ -8,8 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace GameStore.WEB.Controllers
 {
@@ -18,9 +18,9 @@ namespace GameStore.WEB.Controllers
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IClaimsUtility _claimsUtility;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
         public UserController(IUserService userService, IClaimsUtility claimsUtility, IMapper mapper)
         {
@@ -30,19 +30,8 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Update user profile with provided information
+        ///     Update user profile with provided information
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /Todo
-        ///     {
-        ///        "id": 1,
-        ///        "name": "Item1",
-        ///        "isComplete": true
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="updateUserModel">User data transfer object</param>
         /// <returns>No content</returns>
         /// <response code="204">Updated successfully</response>
@@ -64,19 +53,8 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Update user password with provided information
+        ///     Update user password with provided information
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     PATCH /password
-        ///     {
-        ///        "op": "replace",
-        ///        "path": "/Password",
-        ///        "value": "MyNewPas$w0rd"
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="patch">Special patch request for updating password</param>
         /// <returns>No content</returns>
         /// <response code="204">Updated successfully</response>
@@ -93,6 +71,7 @@ namespace GameStore.WEB.Controllers
             {
                 return BadRequest();
             }
+
             var userModel = _mapper.Map<BasicUserModel>(user.Data);
             patch.ApplyTo(userModel);
             if (!Regex.IsMatch(userModel.Password, RegexConstants.PasswordRegex))
@@ -110,7 +89,7 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Get information about user
+        ///     Get information about user
         /// </summary>
         /// <returns>Returns information about user</returns>
         /// <response code="200">Information received successfully</response>

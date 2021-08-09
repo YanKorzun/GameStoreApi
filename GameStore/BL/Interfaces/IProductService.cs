@@ -1,7 +1,7 @@
-﻿using GameStore.BL.ResultWrappers;
-using GameStore.WEB.DTO.ProductModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameStore.BL.ResultWrappers;
+using GameStore.WEB.DTO.ProductModels;
 
 namespace GameStore.BL.Interfaces
 {

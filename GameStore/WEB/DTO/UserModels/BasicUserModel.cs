@@ -1,13 +1,18 @@
-﻿using GameStore.BL.Constants;
+﻿using System.ComponentModel.DataAnnotations;
+using GameStore.BL.Constants;
 using GameStore.WEB.Constants;
-using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.WEB.DTO.UserModels
 {
     public class BasicUserModel : UpdateUserModel
     {
+        /// <summary>
+        /// Password of the user
+        /// </summary>
+        /// <example>myNewPas$w0rd</example>
         [Required]
-        [RegularExpression(RegexConstants.PasswordRegex, ErrorMessage = ExceptionMessageConstants.InvalidPasswordString)]
+        [RegularExpression(RegexConstants.PasswordRegex,
+            ErrorMessage = ExceptionMessageConstants.InvalidPasswordString)]
         public string Password { get; set; }
     }
 }

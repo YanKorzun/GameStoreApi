@@ -36,11 +36,13 @@ namespace GameStore.DAL.Repositories
                 var query = Entity.Where(expression).AsNoTracking();
 
                 if (includes.Length != 0)
+                {
                     query = includes
                         .Aggregate(query,
                             (
                                 current, includeProperty) => current.Include(includeProperty)
                         );
+                }
 
                 var item = await query.SingleOrDefaultAsync();
 
@@ -72,9 +74,14 @@ namespace GameStore.DAL.Repositories
         public IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString)
         {
             if (!entities.Any())
+            {
                 return entities;
+            }
 
-            if (string.IsNullOrWhiteSpace(orderByQueryString)) return entities;
+            if (string.IsNullOrWhiteSpace(orderByQueryString))
+            {
+                return entities;
+            }
 
             var orderParams = orderByQueryString.Trim().Split(',');
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -83,14 +90,18 @@ namespace GameStore.DAL.Repositories
             foreach (var param in orderParams)
             {
                 if (string.IsNullOrWhiteSpace(param))
+                {
                     continue;
+                }
 
                 var propertyFromQueryName = param.Split(" ")[0];
                 var objectProperty = propertyInfos.FirstOrDefault(pi =>
                     pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
 
                 if (objectProperty == null)
+                {
                     continue;
+                }
 
                 var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
 
@@ -108,7 +119,9 @@ namespace GameStore.DAL.Repositories
             {
                 Entity.Update(item);
                 foreach (var property in unmodifiedProperties)
+                {
                     DbContext.Entry(item).Property(property).IsModified = false;
+                }
 
                 await DbContext.SaveChangesAsync();
 

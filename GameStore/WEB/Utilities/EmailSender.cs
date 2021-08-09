@@ -1,9 +1,9 @@
-﻿using GameStore.BL.Interfaces;
+﻿using System.Threading.Tasks;
+using GameStore.BL.Interfaces;
 using GameStore.WEB.Settings;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
-using System.Threading.Tasks;
 
 namespace GameStore.WEB.Utilities
 {
@@ -20,7 +20,8 @@ namespace GameStore.WEB.Utilities
         {
             var email = new MimeMessage();
 
-            email.From.Add(new MailboxAddress(_appSettings.SmtpClientSettings.EmailName, _appSettings.SmtpClientSettings.EmailAddress));
+            email.From.Add(new MailboxAddress(_appSettings.SmtpClientSettings.EmailName,
+                _appSettings.SmtpClientSettings.EmailAddress));
             email.To.Add(new MailboxAddress(string.Empty, emailToSend));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html)
@@ -30,8 +31,10 @@ namespace GameStore.WEB.Utilities
 
             using var smtpClient = new SmtpClient();
 
-            await smtpClient.ConnectAsync(_appSettings.SmtpClientSettings.Host, _appSettings.SmtpClientSettings.Port, _appSettings.SmtpClientSettings.UseSsl);
-            await smtpClient.AuthenticateAsync(_appSettings.SmtpClientSettings.EmailAddress, _appSettings.SmtpClientSettings.Password);
+            await smtpClient.ConnectAsync(_appSettings.SmtpClientSettings.Host, _appSettings.SmtpClientSettings.Port,
+                _appSettings.SmtpClientSettings.UseSsl);
+            await smtpClient.AuthenticateAsync(_appSettings.SmtpClientSettings.EmailAddress,
+                _appSettings.SmtpClientSettings.Password);
             await smtpClient.SendAsync(email);
             await smtpClient.DisconnectAsync(true);
         }

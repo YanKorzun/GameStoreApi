@@ -1,6 +1,6 @@
-﻿using GameStore.BL.ResultWrappers;
+﻿using System.Threading.Tasks;
+using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
-using System.Threading.Tasks;
 
 namespace GameStore.DAL.Interfaces
 {

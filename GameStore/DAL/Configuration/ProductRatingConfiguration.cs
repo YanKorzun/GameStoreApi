@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GameStore.DAL.Entities;
+﻿using GameStore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,7 +11,7 @@ namespace GameStore.DAL.Configuration
             builder
                 .HasOne(o => o.Product)
                 .WithMany(o => o.Ratings);
-            builder.HasIndex(o => new { o.UserId, o.ProductId });
+            builder.HasIndex(o => new {o.UserId, o.ProductId});
         }
     }
 }

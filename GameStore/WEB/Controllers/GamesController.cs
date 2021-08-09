@@ -84,7 +84,9 @@ namespace GameStore.WEB.Controllers
         {
             var createProductResult = await _productService.CreateProductAsync(productModel);
             if (createProductResult.Result is not ServiceResultType.Success)
+            {
                 return StatusCode((int)createProductResult.Result, createProductResult.ErrorMessage);
+            }
 
             return CreatedAtAction(nameof(CreateNewProduct), createProductResult.Data);
         }
@@ -121,7 +123,9 @@ namespace GameStore.WEB.Controllers
         {
             var updateResult = await _productService.UpdateProductAsync(basicProductModel);
             if (updateResult.Result is not ServiceResultType.Success)
+            {
                 return StatusCode((int)updateResult.Result, updateResult.ErrorMessage);
+            }
 
             return Ok();
         }
@@ -144,7 +148,9 @@ namespace GameStore.WEB.Controllers
         {
             var deleteResult = await _productService.DeleteProductAsync(id);
             if (deleteResult.Result is not ServiceResultType.Success)
+            {
                 return StatusCode((int)deleteResult.Result, deleteResult.ErrorMessage);
+            }
 
             return NoContent();
         }
@@ -153,7 +159,7 @@ namespace GameStore.WEB.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public IActionResult GetProductList([FromQuery] ProductParameters productParameters)
         {
-            var owners = _productRepository.GetOwners(productParameters);
+            var owners = _productRepository.GetPagedProductList(productParameters);
             var metadata = new
             {
                 owners.TotalCount,

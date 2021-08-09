@@ -88,7 +88,10 @@ namespace GameStore.DAL.Repositories
         private static void SearchByName(ref IQueryable<Product> products, string productName)
         {
             if (!products.Any() || string.IsNullOrWhiteSpace(productName))
+            {
                 return;
+            }
+
             products = products.Where(o => o.Name.ToLower().Contains(productName.Trim().ToLower()));
         }
     }

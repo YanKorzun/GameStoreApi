@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using System;
-
 namespace GameStore.WEB.Controllers
 {
     [ApiController]
@@ -31,9 +29,6 @@ namespace GameStore.WEB.Controllers
         }
 
         [HttpGet("error")]
-        public ActionResult GetError()
-        {
-            throw new Exception("Access denied");
-        }
+        public ActionResult GetError() => throw new("Access denied");
     }
 }

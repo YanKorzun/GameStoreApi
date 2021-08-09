@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GameStore.WEB.DTO.RatingModels
+﻿namespace GameStore.WEB.DTO.RatingModels
 {
     public class RatingModel
     {
@@ -13,7 +8,16 @@ namespace GameStore.WEB.DTO.RatingModels
             Rating = rating;
         }
 
+        /// <summary>
+        /// Id of the product
+        /// </summary>
+        /// <example>file</example>
         public int ProductId { get; set; }
+
+        /// <summary>
+        /// Rating of the product
+        /// </summary>
+        /// <example>file</example>
         public int Rating { get; set; }
     }
 }

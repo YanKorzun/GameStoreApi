@@ -9,12 +9,12 @@ namespace GameStore.DAL.Configuration
         public void Configure(EntityTypeBuilder<ProductLibraries> builder)
         {
             builder
-                 .HasOne(x => x.Game)
-                 .WithMany(x => x.ProductLibraries)
-                 .OnDelete(DeleteBehavior.Cascade)
-                 .HasForeignKey(x => x.GameId)
-                 .HasPrincipalKey(x => x.Id)
-                 .IsRequired();
+                .HasOne(x => x.Game)
+                .WithMany(x => x.ProductLibraries)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasForeignKey(x => x.GameId)
+                .HasPrincipalKey(x => x.Id)
+                .IsRequired();
             builder
                 .HasOne(x => x.AppUser)
                 .WithMany(x => x.ProductLibraries)
@@ -23,7 +23,7 @@ namespace GameStore.DAL.Configuration
                 .HasPrincipalKey(x => x.Id)
                 .IsRequired();
 
-            builder.HasKey(k => new { k.UserId, k.GameId });
+            builder.HasKey(k => new {k.UserId, k.GameId});
             builder.HasQueryFilter(o => !(o.Game.IsDeleted && o.AppUser.IsDeleted));
         }
     }

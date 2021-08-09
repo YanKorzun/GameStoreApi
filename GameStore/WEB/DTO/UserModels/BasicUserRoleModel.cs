@@ -8,6 +8,10 @@
             Email = email;
         }
 
+        /// <summary>
+        /// Name of user's role
+        /// </summary>
+        /// <example>admin</example>
         public string Role { get; set; }
     }
 }

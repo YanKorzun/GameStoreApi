@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
@@ -29,7 +26,8 @@ namespace GameStore.BL.Services
             {
             }
 
-            return await _ratingRepository.CreateRatingAsync(new ProductRating(getUserIdResult.Data, ratingModel.ProductId,
+            return await _ratingRepository.CreateRatingAsync(new(getUserIdResult.Data,
+                ratingModel.ProductId,
                 ratingModel.Rating));
         }
     }

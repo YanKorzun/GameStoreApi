@@ -1,15 +1,13 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using GameStore.BL.Interfaces;
-using GameStore.WEB.Settings;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.WEB.Constants;
+using GameStore.WEB.Settings;
+using Microsoft.AspNetCore.Http;
 
 namespace GameStore.BL.Services
 {
@@ -26,7 +24,7 @@ namespace GameStore.BL.Services
                 appSettings.CloudinarySettings.APIkey,
                 appSettings.CloudinarySettings.APISecret
             );
-            _cloudinary = new Cloudinary(account);
+            _cloudinary = new(account);
         }
 
         public async Task<ServiceResult<ImageUploadResult>> Upload(IFormFile file)
@@ -37,9 +35,9 @@ namespace GameStore.BL.Services
                 return new(ServiceResultType.InvalidData, FileExtensionException);
             }
 
-            var uploadParams = new ImageUploadParams()
+            var uploadParams = new ImageUploadParams
             {
-                File = new FileDescription(file.FileName, file.OpenReadStream()),
+                File = new(file.FileName, file.OpenReadStream())
             };
 
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -47,6 +45,7 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success, uploadResult);
         }
 
-        private static bool CheckFileExtension(IFormFile file) => Regex.IsMatch(file.FileName, RegexConstants.FileExtensionRegex);
+        private static bool CheckFileExtension(IFormFile file) =>
+            Regex.IsMatch(file.FileName, RegexConstants.FileExtensionRegex);
     }
 }

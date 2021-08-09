@@ -8,7 +8,8 @@ namespace GameStore.WEB.StartUp.Configuration
 {
     public static class DatabaseExtensions
     {
-        public static void RegisterDatabase(this IServiceCollection services, DatabaseSettings databaseSettings, ILoggerFactory loggerFactory)
+        public static void RegisterDatabase(this IServiceCollection services, DatabaseSettings databaseSettings,
+            ILoggerFactory loggerFactory)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 {
@@ -16,7 +17,6 @@ namespace GameStore.WEB.StartUp.Configuration
                     options.UseSqlServer(databaseSettings.ConnectionString);
                     options.UseLoggerFactory(loggerFactory);
                 }, ServiceLifetime.Transient
-
             );
             services.AddDatabaseDeveloperPageExceptionFilter();
         }

@@ -1,8 +1,8 @@
-﻿using GameStore.DAL.Entities;
+﻿using System.Reflection;
+using GameStore.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace GameStore.DAL
 {
@@ -15,7 +15,7 @@ namespace GameStore.DAL
         IdentityUserLogin<int>,
         IdentityRoleClaim<int>,
         IdentityUserToken<int>
-   >
+    >
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

@@ -1,6 +1,6 @@
-﻿using GameStore.DAL.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using GameStore.DAL.Enums;
 
 namespace GameStore.DAL.Entities
 {
