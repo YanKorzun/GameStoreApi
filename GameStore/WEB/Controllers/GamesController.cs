@@ -5,6 +5,7 @@ using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
+using GameStore.WEB.Constants;
 using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.ProductModels;
 using GameStore.WEB.DTO.RatingModels;
@@ -13,12 +14,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
 
 namespace GameStore.WEB.Controllers
 {
     [ApiController]
     [Route("api/games")]
+    [Authorize(Roles = UserRoleConstants.Admin)]
     public class GamesController : ControllerBase
     {
         private readonly IProductRatingService _productRatingService;
@@ -155,23 +156,21 @@ namespace GameStore.WEB.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        ///     Get paged list of products from the database
+        /// </summary>
+        /// <param name="productParameters">Provided parameters model</param>
+        /// <returns></returns>
+        /// <response code="200">Products paged successfully</response>
         [HttpGet("list")]
+        [AllowAnonymous]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetProductList([FromQuery] ProductParameters productParameters)
         {
-            var owners = _productRepository.GetPagedProductList(productParameters);
-            var metadata = new
-            {
-                owners.TotalCount,
-                owners.PageSize,
-                owners.CurrentPage,
-                owners.TotalPages,
-                owners.HasNext,
-                owners.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            var products = _productService.GetPagedProductList(productParameters);
 
-            return Ok(owners);
+            return Ok(products);
         }
     }
 }

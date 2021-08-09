@@ -6,12 +6,16 @@ namespace GameStore.BL.Utilities
 {
     public class PagedList<T> : List<T>
     {
+        public PagedList()
+        {
+        }
+
         public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
         {
             TotalCount = count;
             PageSize = pageSize;
             CurrentPage = pageNumber;
-            TotalPages = (int) Math.Ceiling(count / (double) pageSize);
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             AddRange(items);
         }
 

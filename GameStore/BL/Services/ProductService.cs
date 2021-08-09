@@ -5,8 +5,10 @@ using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
+using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
+using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.ProductModels;
 
 namespace GameStore.BL.Services
@@ -51,6 +53,14 @@ namespace GameStore.BL.Services
         {
             var products = await _productRepository.GetProductsBySearchTermAsync(term, limit, offset);
             return _mapper.Map<List<ProductModel>>(products);
+        }
+
+        public PagedList<ProductModel> GetPagedProductList(ProductParameters productParameters)
+        {
+            var products = _productRepository.GetPagedProductList(productParameters);
+
+            var modelsList = _mapper.Map<PagedList<ProductModel>>(products);
+            return modelsList;
         }
 
         private async Task<ServiceResult<ProductModel>> HandleProductAsync(
