@@ -18,7 +18,7 @@ namespace GameStore.BL.Aggregators
             product.Developers = inputBasicProductModel.Developers;
             product.Publishers = inputBasicProductModel.Publishers;
             product.Genre = inputBasicProductModel.Genre;
-            product.AgeRating = inputBasicProductModel.Rating;
+            product.Rating = inputBasicProductModel.Rating;
             product.Price = inputBasicProductModel.Price;
             product.Count = inputBasicProductModel.Count;
             product.DateCreated = inputBasicProductModel.DateCreated;
