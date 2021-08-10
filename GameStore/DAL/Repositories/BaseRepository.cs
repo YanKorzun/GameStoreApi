@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -134,6 +135,30 @@ namespace GameStore.DAL.Repositories
             }
 
             return item;
+        }
+
+        public async Task<List<T>> UpdateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                DbContext.UpdateRange(entitiesList);
+
+                await DbContext.SaveChangesAsync();
+
+                foreach (var entity in entitiesList)
+                {
+                    DbContext.Entry(entity).State = EntityState.Detached;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update items. Error: {e.Message}");
+            }
+
+            return entitiesList;
         }
 
         public async Task<T> UpdateItemWithModifiedPropsAsync(T item,

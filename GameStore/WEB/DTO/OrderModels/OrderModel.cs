@@ -1,0 +1,23 @@
+﻿namespace GameStore.WEB.DTO.OrderModels
+{
+    public class OrderModel
+    {
+        /// <summary>
+        /// Product's id
+        /// </summary>
+        /// <example>8</example>
+        public int ProductId { get; set; }
+
+        /// <summary>
+        /// User's id
+        /// </summary>
+        /// <example>2</example>
+        public int UserId { get; set; }
+
+        /// <summary>
+        /// Products count
+        /// </summary>
+        /// <example>2</example>
+        public int Count { get; set; }
+    }
+}

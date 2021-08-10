@@ -23,7 +23,7 @@ namespace GameStore.DAL.Configuration
                 .HasPrincipalKey(x => x.Id)
                 .IsRequired();
 
-            builder.HasKey(k => new {k.UserId, k.GameId});
+            builder.HasKey(k => new { k.UserId, k.GameId });
             builder.HasQueryFilter(o => !(o.Game.IsDeleted && o.AppUser.IsDeleted));
         }
     }
