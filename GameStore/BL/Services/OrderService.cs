@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,14 +14,17 @@ namespace GameStore.BL.Services
     public class OrderService : IOrderService
     {
         private readonly IClaimsUtility _claimsUtility;
+        private readonly IProductLibraryService _libraryService;
         private readonly IMapper _mapper;
         private readonly IOrderRepository _orderRepository;
 
-        public OrderService(IOrderRepository orderRepository, IClaimsUtility claimsUtility, IMapper mapper)
+        public OrderService(IOrderRepository orderRepository, IClaimsUtility claimsUtility, IMapper mapper,
+            IProductLibraryService libraryService)
         {
             _orderRepository = orderRepository;
             _claimsUtility = claimsUtility;
             _mapper = mapper;
+            _libraryService = libraryService;
         }
 
         public async Task<List<ExtendedOrderModel>> GetOrdersAsync(ClaimsPrincipal user, int? id = null)
@@ -68,12 +72,14 @@ namespace GameStore.BL.Services
 
             var orders = _mapper.Map<ICollection<Order>>(orderModels);
 
-            foreach (var order in orders)
+            foreach (var order in orders.Where(o => o.Status != OrderStatus.Completed))
             {
                 order.Status = OrderStatus.Completed;
             }
 
             var updateResult = await _orderRepository.UpdateItemsAsync(orders);
+
+            orders.ToList().ForEach(o => _libraryService.AddItemToLibrary(o.UserId, o.ProductId));
         }
     }
 }

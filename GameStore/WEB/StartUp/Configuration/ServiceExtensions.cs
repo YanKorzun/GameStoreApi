@@ -20,6 +20,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductLibraryService, ProductLibraryService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IProductRatingService, ProductRatingService>();
