@@ -16,6 +16,8 @@ namespace GameStore.DAL.Repositories
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
+        private const int ProductTakeCount = 100;
+
         public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
@@ -36,7 +38,7 @@ namespace GameStore.DAL.Repositories
                 .Skip(skippedCount)
                 .Select(x => x).ToListAsync();
 
-        public async Task<Product> FindProductById(int productId) =>
+        public async Task<Product> FindProductByIdAsync(int productId) =>
             await GetProductWithChildrenAsync(o => o.Id == productId);
 
         public async Task<Product> UpdateProductAsync(Product newProduct)
@@ -51,8 +53,24 @@ namespace GameStore.DAL.Repositories
 
         public PagedList<Product> GetPagedProductList(ProductParameters productParameters)
         {
-            var products = Entity.Where(o =>
-                o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating);
+            IQueryable<Product> products;
+            if (productParameters.AgeRating == 0)
+            {
+                if (string.IsNullOrWhiteSpace(productParameters.Genre))
+                {
+                    products = Entity.Take(ProductTakeCount);
+                }
+                else
+                {
+                    products = Entity.Where(o =>
+                        o.Genre == productParameters.Genre);
+                }
+            }
+            else
+            {
+                products = Entity.Where(o =>
+                    o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating);
+            }
 
             SearchByName(ref products, productParameters.Name);
 

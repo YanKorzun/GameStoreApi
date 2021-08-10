@@ -135,5 +135,29 @@ namespace GameStore.DAL.Repositories
 
             return item;
         }
+
+        public async Task<T> UpdateItemWithModifiedPropsAsync(T item,
+            params Expression<Func<T, object>>[] modifiedProperties)
+        {
+            try
+            {
+                Entity.Update(item);
+                foreach (var property in modifiedProperties)
+                {
+                    DbContext.Entry(item).Property(property).IsModified = true;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                DbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
+        }
     }
 }

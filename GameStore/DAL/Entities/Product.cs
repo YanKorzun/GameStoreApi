@@ -18,7 +18,7 @@ namespace GameStore.DAL.Entities
         public decimal Price { get; set; }
         public int Count { get; set; }
         public DateTime DateCreated { get; set; }
-        public int TotalRating { get; set; }
+        public double TotalRating { get; set; }
         public ProductPlatforms Platform { get; set; }
         public DateTime PublicationDate { get; set; }
         public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();

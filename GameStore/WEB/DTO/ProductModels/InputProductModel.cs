@@ -77,10 +77,10 @@ namespace GameStore.WEB.DTO.ProductModels
         public DateTime DateCreated { get; set; }
 
         /// <summary>
-        /// The logo background
+        /// Average rating of the product
         /// </summary>
-        /// <example>file</example>
-        public int TotalRating { get; set; }
+        /// <example>9.87</example>
+        public double TotalRating { get; set; }
 
         /// <summary>
         /// Platform of the product

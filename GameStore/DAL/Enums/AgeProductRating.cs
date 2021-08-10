@@ -2,6 +2,7 @@
 {
     public enum AgeProductRating
     {
+        Empty,
         EarlyChildhood,
         Teen,
         Mature,

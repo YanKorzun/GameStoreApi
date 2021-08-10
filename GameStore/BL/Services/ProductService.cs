@@ -44,7 +44,7 @@ namespace GameStore.BL.Services
 
         public async Task<ProductModel> FindProductById(int id)
         {
-            var product = await _productRepository.FindProductById(id);
+            var product = await _productRepository.FindProductByIdAsync(id);
 
             return _mapper.Map<ProductModel>(product);
         }

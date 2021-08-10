@@ -22,5 +22,7 @@
         public const string EmailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
 
         public const string FileExtensionRegex = @"^\w*\.(jpg|jpeg|png)+$";
+
+        public const string OnlyAlphabeticChars = @"[A-Za-z]+$";
     }
 }

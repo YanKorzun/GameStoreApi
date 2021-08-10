@@ -1,19 +1,36 @@
-﻿namespace GameStore.WEB.DTO
+﻿using GameStore.WEB.Constants;
+
+namespace GameStore.WEB.DTO
 {
     public abstract class QueryStringParameters
     {
-        protected const int MaxPageSize = 50;
+        private uint _pageNumber = FiltersConstants.PageNumber;
+        private uint _pageSize = FiltersConstants.PageSize;
 
-        private int _pageSize = 10;
-
-        public int PageNumber { get; set; } = 1;
-
-        public int PageSize
+        /// <summary>
+        ///     Page number
+        /// </summary>
+        /// <example>4</example>
+        public uint PageNumber
         {
-            get => _pageSize;
-            set => _pageSize = value > MaxPageSize ? MaxPageSize : value;
+            get => _pageNumber;
+            set => _pageNumber = value <= 0 ? FiltersConstants.PageNumber : value;
         }
 
+        /// <summary>
+        ///     Page size
+        /// </summary>
+        /// <example>2</example>
+        public uint PageSize
+        {
+            get => _pageSize;
+            set => _pageSize = value > FiltersConstants.MaxPageSize ? FiltersConstants.MaxPageSize : value;
+        }
+
+        /// <summary>
+        ///     Convertible order by query
+        /// </summary>
+        /// <example>Name desc</example>
         public string OrderBy { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
 using GameStore.BL.Utilities;
@@ -14,12 +16,15 @@ namespace GameStore.DAL.Interfaces
 
         Task<List<Product>> GetProductsBySearchTermAsync(string searchTerm, int limit, int skippedCount);
 
-        Task<Product> FindProductById(int productId);
+        Task<Product> FindProductByIdAsync(int productId);
 
         Task<ServiceResult> DeleteProductAsync(int id);
 
         Task<Product> UpdateProductAsync(Product newProduct);
 
         PagedList<Product> GetPagedProductList(ProductParameters productParameters);
+
+        Task<Product> UpdateItemWithModifiedPropsAsync(Product item,
+            params Expression<Func<Product, object>>[] modifiedProperties);
     }
 }
