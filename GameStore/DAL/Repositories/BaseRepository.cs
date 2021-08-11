@@ -1,9 +1,11 @@
-﻿using GameStore.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GameStore.DAL.Enums;
+using GameStore.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL.Repositories
 {
@@ -15,7 +17,7 @@ namespace GameStore.DAL.Repositories
         protected BaseRepository(ApplicationDbContext databaseContext)
         {
             DbContext = databaseContext;
-            Entity = this.DbContext.Set<T>();
+            Entity = DbContext.Set<T>();
         }
 
         public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression)
@@ -25,7 +27,8 @@ namespace GameStore.DAL.Repositories
             return item;
         }
 
-        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression,
+            params Expression<Func<T, object>>[] includes)
         {
             try
             {
@@ -52,7 +55,7 @@ namespace GameStore.DAL.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new Exception($"Unable to find item in database. Error: {e.Message}");
+                throw new($"Unable to find item in database. Error: {e.Message}");
             }
         }
 
@@ -65,6 +68,84 @@ namespace GameStore.DAL.Repositories
             createdEntity.State = EntityState.Detached;
 
             return createdEntity.Entity;
+        }
+
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, TK>> sort,
+            OrderType orderType = OrderType.Asc
+        )
+        {
+            List<T> items;
+
+            if (orderType == OrderType.Asc)
+            {
+                items = await Entity.Where(expression).OrderBy(sort).AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                items = await Entity.Where(expression).OrderByDescending(sort).AsNoTracking().ToListAsync();
+            }
+
+            return items;
+        }
+
+        public async Task<List<T>> SearchForMultipleItemsAsync<K>(
+            Expression<Func<T, bool>> expression,
+            int offset,
+            int limit,
+            Expression<Func<T, K>> sort,
+            OrderType orderType
+        )
+        {
+            List<T> items;
+
+            if (orderType == OrderType.Asc)
+            {
+                if (expression != null)
+                {
+                    items = await Entity
+                        .Where(expression)
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    items = await Entity
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+            }
+            else
+            {
+                if (expression != null)
+                {
+                    items = await Entity
+                        .Where(expression)
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    items = await Entity
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+            }
+
+            return items;
         }
 
         public async Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties)
@@ -84,7 +165,31 @@ namespace GameStore.DAL.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new Exception($"Unable to update item. Error: {e.Message}");
+                throw new($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
+        }
+
+        public async Task<T> UpdateItemWithModifiedPropsAsync(T item,
+            params Expression<Func<T, object>>[] modifiedProperties)
+        {
+            try
+            {
+                Entity.Update(item);
+                foreach (var property in modifiedProperties)
+                {
+                    DbContext.Entry(item).Property(property).IsModified = true;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                DbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update item. Error: {e.Message}");
             }
 
             return item;

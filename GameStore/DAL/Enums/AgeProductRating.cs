@@ -1,7 +1,8 @@
 ﻿namespace GameStore.DAL.Enums
 {
-    public enum ProductRating
+    public enum AgeProductRating
     {
+        Empty,
         EarlyChildhood,
         Teen,
         Mature,

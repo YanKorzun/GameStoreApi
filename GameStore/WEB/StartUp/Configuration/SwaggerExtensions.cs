@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
 namespace GameStore.WEB.StartUp.Configuration
 {
@@ -23,7 +23,7 @@ namespace GameStore.WEB.StartUp.Configuration
                         Version = "v1",
                         Title = "Click on 'TermsOfService' API",
                         Description = "Game store web API",
-                        TermsOfService = new Uri("../Home/GetInfo", UriKind.Relative)
+                        TermsOfService = new("../Home/GetInfo", UriKind.Relative)
                     });
 
                     c.CustomSchemaIds(x => x.FullName);
@@ -54,15 +54,9 @@ namespace GameStore.WEB.StartUp.Configuration
 
         public static void RegisterSwaggerUi(this IApplicationBuilder app)
         {
-            app.UseSwagger(x =>
-            {
-                x.RouteTemplate = "swagger/{documentName}/swagger.json";
-            });
+            app.UseSwagger(x => { x.RouteTemplate = "swagger/{documentName}/swagger.json"; });
 
-            app.UseSwaggerUI(o =>
-            {
-                o.SwaggerEndpoint("/swagger/v1/swagger.json", "GameStore API V1");
-            });
+            app.UseSwaggerUI(o => { o.SwaggerEndpoint("/swagger/v1/swagger.json", "GameStore API V1"); });
         }
     }
 }

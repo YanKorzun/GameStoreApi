@@ -1,18 +1,17 @@
-﻿using GameStore.BL.Enums;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace GameStore.BL.Utilities
 {
     public class ClaimsUtility : IClaimsUtility
     {
-        private readonly IUserRepository _userRepository;
-
         public const string AccountConfirmation = "Account confirmation";
+        private readonly IUserRepository _userRepository;
 
         public ClaimsUtility(IUserRepository userRepository)
         {
@@ -23,7 +22,7 @@ namespace GameStore.BL.Utilities
         {
             var id = contextUser.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            bool result = int.TryParse(id, out int number);
+            var result = int.TryParse(id, out var number);
             if (!result)
             {
                 return new(ServiceResultType.InvalidData);

@@ -30,6 +30,9 @@ namespace GameStore.DAL.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -37,9 +40,6 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -70,6 +70,9 @@ namespace GameStore.DAL.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -104,9 +107,6 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -146,6 +146,9 @@ namespace GameStore.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AgeRating")
+                        .HasColumnType("int");
+
                     b.Property<string>("Background")
                         .HasColumnType("nvarchar(max)");
 
@@ -158,8 +161,11 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("Developers")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Genre")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Logo")
                         .HasColumnType("nvarchar(max)");
@@ -179,14 +185,8 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("Publishers")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalRating")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<double>("TotalRating")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -211,6 +211,31 @@ namespace GameStore.DAL.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("ProductLibraries");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.ProductRating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId", "ProductId");
+
+                    b.ToTable("ProductRating");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -337,6 +362,17 @@ namespace GameStore.DAL.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.ProductRating", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.Product", "Product")
+                        .WithMany("Ratings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("GameStore.DAL.Entities.ApplicationRole", null)
@@ -388,6 +424,8 @@ namespace GameStore.DAL.Migrations
             modelBuilder.Entity("GameStore.DAL.Entities.Product", b =>
                 {
                     b.Navigation("ProductLibraries");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

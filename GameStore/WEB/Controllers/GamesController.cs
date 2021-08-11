@@ -1,16 +1,19 @@
-﻿using GameStore.BL.Constants;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Enums;
-using GameStore.DAL.Repositories;
+using GameStore.DAL.Interfaces;
+using GameStore.WEB.Constants;
+using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.ProductModels;
+using GameStore.WEB.DTO.RatingModels;
+using GameStore.WEB.Filters.ActionFilters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using GameStore.WEB.Constants;
 
 namespace GameStore.WEB.Controllers
 {
@@ -19,38 +22,43 @@ namespace GameStore.WEB.Controllers
     [Authorize(Roles = UserRoleConstants.Admin)]
     public class GamesController : ControllerBase
     {
+        private readonly IProductRatingService _productRatingService;
         private readonly IProductRepository _productRepository;
         private readonly IProductService _productService;
 
-        public GamesController(IProductRepository productRepository, IProductService productService)
+        public GamesController(IProductRepository productRepository, IProductService productService,
+            IProductRatingService productRatingService)
         {
             _productRepository = productRepository;
             _productService = productService;
+            _productRatingService = productRatingService;
         }
 
         /// <summary>
-        /// Get some the most popular platforms
+        ///     Get some the most popular platforms
         /// </summary>
         /// <returns>Returns list of product platforms</returns>
         /// <response code="200">Data successfully taken from a database</response>
         [AllowAnonymous]
         [HttpGet("top-platforms")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ProductPlatforms>>> GetMostPopularPlatforms() => Ok(await _productRepository.GetPopularPlatformsAsync(ProductConstants.TopPlatformCount));
+        public async Task<ActionResult<List<ProductPlatforms>>> GetMostPopularPlatforms() =>
+            Ok(await _productRepository.GetPopularPlatformsAsync(ProductConstants.TopPlatformCount));
 
         /// <summary>
-        /// Filter products by their names, skipped count and offset from the first element
+        ///     Filter products by their names, skipped count and offset from the first element
         /// </summary>
         /// <returns>Returns list of product models</returns>
         /// <response code="200">All products received</response>
         [AllowAnonymous]
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ExtendedProductModel>>> GetProductsByTerm([FromQuery, BindRequired] string term, int limit, int offset) =>
+        public async Task<ActionResult<List<ExtendedProductModel>>> GetProductsByTerm(
+            [FromQuery][BindRequired] string term, int limit, int offset) =>
             Ok(await _productService.GetProductsBySearchTermAsync(term, limit, offset));
 
         /// <summary>
-        /// Get full information about product via its id
+        ///     Get full information about product via its id
         /// </summary>
         /// <returns>Returns full product properties model</returns>
         /// <response code="200">Product successfully received</response>
@@ -59,35 +67,12 @@ namespace GameStore.WEB.Controllers
         [HttpGet("id/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ExtendedProductModel>> GetProductById(int id)
-        {
-            return Ok(await _productService.FindProductById(id));
-        }
+        public async Task<ActionResult<ExtendedProductModel>> GetProductById(int id) =>
+            Ok(await _productService.FindProductById(id));
 
         /// <summary>
-        /// Create product with provided model properties
+        ///     Create product with provided model properties
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST
-        ///     {
-        ///         "name": "B",
-        ///         "developers": "Supercell",
-        ///         "publishers": "Supercell",
-        ///         "genre": "MOBA",
-        ///         "rating": 5,
-        ///         "logo": /*your .jpg file*/,
-        ///         "background": /*your .jpg file*/,
-        ///         "price": 0,
-        ///         "count": 1337,
-        ///         "dateCreated": "2021-08-05T08:13:56.083Z",
-        ///         "totalRating": 10,
-        ///         "platform": 0,
-        ///         "publicationDate": "2021-08-05T08:13:56.083Z"
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="productModel">data transfer object for creating a new product in database</param>
         /// <response code="201">Created successfully</response>
         /// <response code="401">User is not authenticated</response>
@@ -108,30 +93,24 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Updates product with provided model properties
+        ///     Create rating with provided model properties
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST
-        ///     {
-        ///         "name": "B",
-        ///         "developers": "Supercell",
-        ///         "publishers": "Supercell",
-        ///         "genre": "MOBA",
-        ///         "rating": 5,
-        ///         "logo": /*your .jpg file*/,
-        ///         "background": /*your .jpg file*/,
-        ///         "price": 0,
-        ///         "count": 1337,
-        ///         "dateCreated": "2021-08-05T08:13:56.083Z",
-        ///         "totalRating": 10,
-        ///         "platform": 0,
-        ///         "publicationDate": "2021-08-05T08:13:56.083Z",
-        ///         "id": 6
-        ///     }
-        ///
-        /// </remarks>
+        /// <param name="ratingModel">data transfer object for creating a new product in database</param>
+        /// <response code="201">Created successfully</response>
+        /// <response code="401">User is not authenticated</response>
+        /// <response code="403">User has no access to this resource</response>
+        [HttpPost("rating")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateRating([FromBody] RatingModel ratingModel)
+        {
+            var result = await _productRatingService.CreateProductRatingAsync(User, ratingModel);
+            return CreatedAtAction(nameof(CreateRating), result);
+        }
+
+        /// <summary>
+        ///     Updates product with provided model properties
+        /// </summary>
         /// <param name="basicProductModel">data transfer object for updating existing product in database</param>
         /// <response code="200">Updated successfully</response>
         /// <response code="401">User is not authenticated</response>
@@ -140,7 +119,8 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<ExtendedProductModel>> UpdateProduct([FromForm] ExtendedInputProductModel basicProductModel)
+        public async Task<ActionResult<ExtendedProductModel>> UpdateProduct(
+            [FromForm] ExtendedInputProductModel basicProductModel)
         {
             var updateResult = await _productService.UpdateProductAsync(basicProductModel);
             if (updateResult.Result is not ServiceResultType.Success)
@@ -152,7 +132,7 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Mark product as deleted in database
+        ///     Mark product as deleted in database
         /// </summary>
         /// <param name="id">product id</param>
         /// <returns>No content</returns>
@@ -174,6 +154,23 @@ namespace GameStore.WEB.Controllers
             }
 
             return NoContent();
+        }
+
+        /// <summary>
+        ///     Get paged list of products from the database
+        /// </summary>
+        /// <param name="productParameters">Provided parameters model</param>
+        /// <returns></returns>
+        /// <response code="200">Products paged successfully</response>
+        [HttpGet("list")]
+        [AllowAnonymous]
+        [ServiceFilter(typeof(ProductFilter))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProductList([FromQuery] ProductParameters productParameters)
+        {
+            var products = await _productService.GetPagedProductList(productParameters);
+
+            return Ok(products);
         }
     }
 }

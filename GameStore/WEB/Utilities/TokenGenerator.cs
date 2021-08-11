@@ -1,10 +1,10 @@
-﻿using GameStore.WEB.Settings;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using GameStore.WEB.Settings;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GameStore.WEB.Utilities
 {
@@ -24,12 +24,12 @@ namespace GameStore.WEB.Utilities
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Token.SigningKey));
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                    issuer: _appSettings.Token.Issuer,
-                    audience: _appSettings.Token.Audience,
-                    notBefore: now,
-                    claims: claim.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(_appSettings.Token.LifeTime)),
-                    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+                _appSettings.Token.Issuer,
+                _appSettings.Token.Audience,
+                notBefore: now,
+                claims: claim.Claims,
+                expires: now.Add(TimeSpan.FromMinutes(_appSettings.Token.LifeTime)),
+                signingCredentials: new(key, SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
@@ -39,9 +39,9 @@ namespace GameStore.WEB.Utilities
         {
             var claims = new List<Claim>
             {
-                new (ClaimTypes.NameIdentifier, userId.ToString()),
-                new (ClaimTypes.Role, userRole),
-                new (ClaimTypes.Name, userName),
+                new(ClaimTypes.NameIdentifier, userId.ToString()),
+                new(ClaimTypes.Role, userRole),
+                new(ClaimTypes.Name, userName)
             };
 
             var claimsIdentity = new ClaimsIdentity(

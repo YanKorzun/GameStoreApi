@@ -7,15 +7,15 @@ namespace GameStore.DAL.Repositories
 {
     public class ProductLibraryRepository : BaseRepository<ProductLibraries>, IProductLibraryRepository
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSettings _appSettings;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public ProductLibraryRepository
-              (
-              ApplicationDbContext databaseContext,
-              UserManager<ApplicationUser> userManager,
-              AppSettings appSettings
-              ) : base(databaseContext)
+        (
+            ApplicationDbContext databaseContext,
+            UserManager<ApplicationUser> userManager,
+            AppSettings appSettings
+        ) : base(databaseContext)
         {
             _userManager = userManager;
             _appSettings = appSettings;

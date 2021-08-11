@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
@@ -6,17 +7,17 @@ using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.UserModels;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 
 namespace GameStore.BL.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMapper _mapper;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper)
+        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
+            IMapper mapper)
         {
             _roleManager = roleManager;
             _mapper = mapper;

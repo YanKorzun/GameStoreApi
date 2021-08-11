@@ -1,7 +1,7 @@
-﻿using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using CloudinaryDotNet.Actions;
 using GameStore.BL.ResultWrappers;
+using Microsoft.AspNetCore.Http;
 
 namespace GameStore.BL.Interfaces
 {

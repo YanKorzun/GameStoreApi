@@ -13,14 +13,14 @@
         public bool MultiSubnetFailover { get; set; }
 
         public string ConnectionString =>
-          $"Data Source={DataSource};" +
-          $"Initial Catalog={InitialCatalog};" +
-          $"User ID={UserID};" +
-          $"Password={Password};" +
-          $"Connect Timeout={ConnectTimeout};" +
-          $"Encrypt={Encrypt};" +
-          $"TrustServerCertificate={TrustedServerCertificate};" +
-          $"ApplicationIntent={ApplicationIntent};" +
-          $"MultiSubnetFailover={MultiSubnetFailover}";
+            $"Data Source={DataSource};" +
+            $"Initial Catalog={InitialCatalog};" +
+            $"User ID={UserID};" +
+            $"Password={Password};" +
+            $"Connect Timeout={ConnectTimeout};" +
+            $"Encrypt={Encrypt};" +
+            $"TrustServerCertificate={TrustedServerCertificate};" +
+            $"ApplicationIntent={ApplicationIntent};" +
+            $"MultiSubnetFailover={MultiSubnetFailover}";
     }
 }

@@ -1,24 +1,27 @@
-﻿using AutoMapper;
-using GameStore.BL.Interfaces;
-using GameStore.BL.ResultWrappers;
-using GameStore.DAL.Entities;
-using GameStore.DAL.Repositories;
-using GameStore.WEB.DTO.ProductModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
+using GameStore.BL.ResultWrappers;
+using GameStore.BL.Utilities;
+using GameStore.DAL.Entities;
+using GameStore.DAL.Interfaces;
+using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.ProductModels;
 
 namespace GameStore.BL.Services
 {
     public class ProductService : IProductService
     {
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly ICustomProductAggregator _customProductAggregator;
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
-        private readonly ICustomProductAggregator _customProductAggregator;
-        private readonly ICloudinaryService _cloudinaryService;
 
-        public ProductService(IMapper mapper, IProductRepository productRepository, ICustomProductAggregator customProductAggregator, ICloudinaryService cloudinaryService)
+        public ProductService(IMapper mapper, IProductRepository productRepository,
+            ICustomProductAggregator customProductAggregator, ICloudinaryService cloudinaryService)
         {
             _mapper = mapper;
             _productRepository = productRepository;
@@ -26,9 +29,11 @@ namespace GameStore.BL.Services
             _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel model) => await HandleProductAsync(_productRepository.CreateItemAsync, model);
+        public async Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel model) =>
+            await HandleProductAsync(_productRepository.CreateItemAsync, model);
 
-        public async Task<ServiceResult<ProductModel>> UpdateProductAsync(ExtendedInputProductModel model) => await HandleProductAsync(_productRepository.UpdateProductAsync, model);
+        public async Task<ServiceResult<ProductModel>> UpdateProductAsync(ExtendedInputProductModel model) =>
+            await HandleProductAsync(_productRepository.UpdateProductAsync, model);
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
@@ -39,7 +44,7 @@ namespace GameStore.BL.Services
 
         public async Task<ProductModel> FindProductById(int id)
         {
-            var product = await _productRepository.FindProductById(id);
+            var product = await _productRepository.FindProductByIdAsync(id);
 
             return _mapper.Map<ProductModel>(product);
         }
@@ -47,10 +52,26 @@ namespace GameStore.BL.Services
         public async Task<List<ProductModel>> GetProductsBySearchTermAsync(string term, int limit, int offset)
         {
             var products = await _productRepository.GetProductsBySearchTermAsync(term, limit, offset);
+
             return _mapper.Map<List<ProductModel>>(products);
         }
 
-        private async Task<ServiceResult<ProductModel>> HandleProductAsync(Func<Product, Task<Product>> createUpdateAsync, InputProductModel model)
+        public async Task<List<ProductModel>> GetPagedProductList(ProductParameters productParameters)
+        {
+            var sortExpression = ProductPropUtility.GetOrderExpression(productParameters);
+            var filterExpression = ProductPropUtility.GetFilterExpression(productParameters);
+
+            var products = await _productRepository.SearchForMultipleItemsAsync(filterExpression,
+                productParameters.Offset, productParameters.Limit, sortExpression,
+                productParameters.OrderType);
+
+            var modelsList = _mapper.Map<List<ProductModel>>(products);
+
+            return modelsList;
+        }
+
+        private async Task<ServiceResult<ProductModel>> HandleProductAsync(
+            Func<Product, Task<Product>> createUpdateAsync, InputProductModel model)
         {
             var getUrlsResult = await UploadProductImages(model);
             if (getUrlsResult.Result is not ServiceResultType.Success)
@@ -58,11 +79,13 @@ namespace GameStore.BL.Services
                 return new(getUrlsResult.Result);
             }
 
-            var product = _customProductAggregator.AggregateProduct(model, getUrlsResult.Data.bgUrl, getUrlsResult.Data.logoUrl);
+            var product =
+                _customProductAggregator.AggregateProduct(model, getUrlsResult.Data.bgUrl, getUrlsResult.Data.logoUrl);
 
             var updatedProduct = await createUpdateAsync(product);
 
-            return new(getUrlsResult.Result, _mapper.Map<ExtendedProductModel>(updatedProduct));
+            return new(getUrlsResult.Result,
+                _mapper.Map<ExtendedProductModel>(updatedProduct));
         }
 
         private async Task<ServiceResult<(string bgUrl, string logoUrl)>> UploadProductImages(InputProductModel model)
@@ -72,14 +95,18 @@ namespace GameStore.BL.Services
 
             if (backgroundFileUploadResult.Result is not ServiceResultType.Success)
             {
-                return new(backgroundFileUploadResult.Result, backgroundFileUploadResult.ErrorMessage);
-            }
-            if (logoFileUploadResult.Result is not ServiceResultType.Success)
-            {
-                return new(logoFileUploadResult.Result, logoFileUploadResult.ErrorMessage);
+                return new(backgroundFileUploadResult.Result,
+                    backgroundFileUploadResult.ErrorMessage);
             }
 
-            return new(ServiceResultType.Success, (backgroundFileUploadResult.Data.Url.ToString(), logoFileUploadResult.Data.Url.ToString()));
+            if (logoFileUploadResult.Result is not ServiceResultType.Success)
+            {
+                return new(logoFileUploadResult.Result,
+                    logoFileUploadResult.ErrorMessage);
+            }
+
+            return new(ServiceResultType.Success,
+                (backgroundFileUploadResult.Data.Url.ToString(), logoFileUploadResult.Data.Url.ToString()));
         }
     }
 }

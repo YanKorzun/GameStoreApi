@@ -4,6 +4,7 @@ using GameStore.BL.Services;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Interfaces;
 using GameStore.DAL.Repositories;
+using GameStore.WEB.Filters.ActionFilters;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IProductRatingService, ProductRatingService>();
             //Utilities
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
             services.AddTransient<ICloudinaryService, CloudinaryService>();
@@ -28,7 +30,10 @@ namespace GameStore.WEB.StartUp.Configuration
             //Repositories
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
             services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
+            //Action filters
+            services.AddScoped<ProductFilter>();
         }
     }
 }

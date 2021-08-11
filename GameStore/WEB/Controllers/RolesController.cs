@@ -1,11 +1,11 @@
-﻿using GameStore.BL.Enums;
+﻿using System.Threading.Tasks;
+using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace GameStore.WEB.Controllers
 {
@@ -22,17 +22,8 @@ namespace GameStore.WEB.Controllers
         }
 
         /// <summary>
-        /// Create role with provided model properties
+        ///     Create role with provided model properties
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST
-        ///     {
-        ///        "name": "admin"
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="roleModel">data transfer object for creating a new role in database</param>
         /// <response code="201">Created successfully</response>
         /// <response code="400">Something went wrong</response>
@@ -50,11 +41,12 @@ namespace GameStore.WEB.Controllers
             {
                 return BadRequest();
             }
+
             return CreatedAtAction(nameof(Create), result);
         }
 
         /// <summary>
-        /// Deletes role by its id
+        ///     Deletes role by its id
         /// </summary>
         /// <param name="id">role id in database</param>
         /// <returns></returns>
@@ -76,25 +68,13 @@ namespace GameStore.WEB.Controllers
             {
                 return BadRequest();
             }
+
             return NoContent();
         }
 
         /// <summary>
-        /// Edits role with provided model properties
+        ///     Edits role with provided model properties
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     PUT
-        ///     {
-        ///         "email": "user@example.com",
-        ///         "userName": "string",
-        ///         "phoneNumber": "string",
-        ///         "password": "string",
-        ///         "role": "admin"
-        ///     }
-        ///
-        /// </remarks>
         /// <param name="basicUserRoleModel">data transfer object for updating a new role in database</param>
         /// <response code="204">Edited successfully</response>
         /// <response code="401">User is not authenticated</response>
