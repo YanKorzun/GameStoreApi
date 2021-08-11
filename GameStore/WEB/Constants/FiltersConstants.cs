@@ -2,8 +2,8 @@
 {
     public class FiltersConstants
     {
-        public const uint MaxPageSize = 50;
-        public const uint PageSize = 10;
-        public const uint PageNumber = 1;
+        public const int MaxPageSize = 50;
+        public const int PageSize = 10;
+        public const int PageNumber = 1;
     }
 }

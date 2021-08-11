@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
+using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.DTO;
@@ -19,17 +19,14 @@ namespace GameStore.BL.Services
         private readonly ICustomProductAggregator _customProductAggregator;
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
-        private readonly IProductPropUtility _propUtility;
 
         public ProductService(IMapper mapper, IProductRepository productRepository,
-            ICustomProductAggregator customProductAggregator, ICloudinaryService cloudinaryService,
-            IProductPropUtility propUtility)
+            ICustomProductAggregator customProductAggregator, ICloudinaryService cloudinaryService)
         {
             _mapper = mapper;
             _productRepository = productRepository;
             _customProductAggregator = customProductAggregator;
             _cloudinaryService = cloudinaryService;
-            _propUtility = propUtility;
         }
 
         public async Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel model) =>
@@ -61,28 +58,11 @@ namespace GameStore.BL.Services
 
         public async Task<List<ProductModel>> GetPagedProductList(ProductParameters productParameters)
         {
-            Expression<Func<Product, bool>> expression = null;
-            var sortExpression = _propUtility.GetOrderExpression(productParameters);
-            if (productParameters.Genre is not null)
-            {
-                expression = o => o.Genre == productParameters.Genre;
-            }
+            var sortExpression = ProductPropUtility.GetOrderExpression(productParameters);
+            var filterExpression = ProductPropUtility.GetFilterExpression(productParameters);
 
-            if (productParameters.AgeRating is not null)
-            {
-                expression = o => o.AgeRating == productParameters.AgeRating;
-            }
-
-            if (productParameters.Genre is not null && productParameters.AgeRating is not null)
-            {
-                expression = o => o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating;
-            }
-
-            var products = await _productRepository.SearchForMultipleItemsAsync(
-                expression,
-                (int)productParameters.Offset,
-                (int)productParameters.Limit,
-                sortExpression,
+            var products = await _productRepository.SearchForMultipleItemsAsync(filterExpression,
+                productParameters.Offset, productParameters.Limit, sortExpression,
                 productParameters.OrderType);
 
             var modelsList = _mapper.Map<List<ProductModel>>(products);

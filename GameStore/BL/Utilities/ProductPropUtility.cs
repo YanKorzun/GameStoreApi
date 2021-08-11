@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq.Expressions;
-using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO;
 
 namespace GameStore.BL.Utilities
 {
-    public class ProductPropUtility : IProductPropUtility
+    public static class ProductPropUtility
     {
-        public Expression<Func<Product, object>> GetOrderExpression(ProductParameters parameters)
+        public static Expression<Func<Product, object>> GetOrderExpression(ProductParameters parameters)
         {
             return parameters.OrderBy switch
             {
@@ -19,6 +18,28 @@ namespace GameStore.BL.Utilities
                 nameof(Product.Price) => o => o.Price,
                 _ => o => o.Name
             };
+        }
+
+        public static Expression<Func<Product, bool>> GetFilterExpression(ProductParameters parameters)
+        {
+            Expression<Func<Product, bool>> expression = null;
+
+            if (parameters.Genre is not null)
+            {
+                expression = o => o.Genre == parameters.Genre;
+            }
+
+            if (parameters.AgeRating is not null)
+            {
+                expression = o => o.AgeRating == parameters.AgeRating;
+            }
+
+            if (parameters.Genre is not null && parameters.AgeRating is not null)
+            {
+                expression = o => o.Genre == parameters.Genre && o.AgeRating == parameters.AgeRating;
+            }
+
+            return expression;
         }
     }
 }

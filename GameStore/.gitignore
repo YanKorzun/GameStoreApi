@@ -44,7 +44,7 @@ x64/
 *.svclog
 *.scc
 
-# Idea cache files
+# Idea configuration files
 **.idea
 
 # Visual C++ cache files
