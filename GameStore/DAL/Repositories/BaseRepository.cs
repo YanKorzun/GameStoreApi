@@ -70,6 +70,25 @@ namespace GameStore.DAL.Repositories
             return createdEntity.Entity;
         }
 
+        public async Task<List<T>> CreateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                await Entity.AddRangeAsync(entitiesList);
+
+                var res = await DbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Could not create items in database. Error: {e.Message}");
+            }
+
+            return entitiesList;
+        }
+
         public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
             Expression<Func<T, bool>> expression,
             Expression<Func<T, TK>> sort,

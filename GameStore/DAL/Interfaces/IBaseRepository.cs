@@ -15,6 +15,8 @@ namespace GameStore.DAL.Interfaces
 
         Task<T> CreateItemAsync(T entity);
 
+        Task<List<T>> CreateItemsAsync(IEnumerable<T> items);
+
         Task<List<T>> SearchForMultipleItemsAsync<K>
         (
             Expression<Func<T, bool>> expression,

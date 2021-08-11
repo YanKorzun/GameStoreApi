@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GameStore.BL.Interfaces;
+using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 
 namespace GameStore.BL.Services
@@ -13,9 +15,9 @@ namespace GameStore.BL.Services
             _productLibraryRepository = productLibraryRepository;
         }
 
-        public async Task AddItemToLibrary(int userId, int productId)
+        public async Task AddItemsToLibrary(IEnumerable<ProductLibraries> items)
         {
-            await _productLibraryRepository.CreateItemAsync(new(userId, productId));
+            await _productLibraryRepository.CreateItemsAsync(items);
         }
     }
 }

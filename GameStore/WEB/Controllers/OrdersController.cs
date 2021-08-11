@@ -20,7 +20,6 @@ namespace GameStore.WEB.Controllers
             _orderService = orderService;
         }
 
-        // GET: api/Orders/5
         [HttpGet]
         public async Task<IActionResult> GetOrder(int? id = null)
         {
@@ -28,8 +27,6 @@ namespace GameStore.WEB.Controllers
             return Ok(orders);
         }
 
-        // POST: api/Orders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<ExtendedOrderModel>> PostOrder(OrderModel orderModel)
         {
@@ -37,7 +34,6 @@ namespace GameStore.WEB.Controllers
             return CreatedAtAction(nameof(PostOrder), createdOrder);
         }
 
-        // DELETE: api/Orders/5
         [HttpDelete]
         public async Task<IActionResult> DeleteOrder([FromBody] ICollection<ExtendedOrderModel> orders)
         {

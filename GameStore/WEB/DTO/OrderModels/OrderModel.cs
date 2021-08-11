@@ -12,7 +12,7 @@
         /// User's id
         /// </summary>
         /// <example>2</example>
-        public int UserId { get; set; }
+        public int ApplicationUserId { get; set; }
 
         /// <summary>
         /// Products count

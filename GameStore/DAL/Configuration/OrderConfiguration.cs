@@ -11,9 +11,9 @@ namespace GameStore.DAL.Configuration
             builder
                 .HasQueryFilter(m => !m.IsDeleted);
             builder
-                .HasOne(o => o.AppUser)
+                .HasOne(o => o.ApplicationUser)
                 .WithMany(o => o.Orders);
-            builder.HasIndex(o => new { o.UserId, o.ProductId });
+            builder.HasIndex(o => new { UserId = o.ApplicationUserId, o.ProductId });
         }
     }
 }

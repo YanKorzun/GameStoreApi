@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace GameStore.BL.Services
             {
                 searchId = _claimsUtility.GetUserIdFromClaims(user).Data;
 
-                orders = await _orderRepository.GetOrdersAsync(o => o.UserId == searchId);
+                orders = await _orderRepository.GetOrdersAsync(o => o.ApplicationUserId == searchId);
             }
             else
             {
@@ -50,6 +51,7 @@ namespace GameStore.BL.Services
         public async Task<ExtendedOrderModel> CreateOrderAsync(OrderModel orderModel, ClaimsPrincipal user)
         {
             var order = _mapper.Map<Order>(orderModel);
+            order.OrderDate = DateTime.Now;
 
             var createdOrder = await _orderRepository.CreateItemAsync(order);
 
@@ -68,18 +70,22 @@ namespace GameStore.BL.Services
         {
             var searchId = _claimsUtility.GetUserIdFromClaims(user).Data;
 
-            var orderModels = await _orderRepository.GetOrdersAsync(o => o.UserId == searchId);
+            var orderModels = await _orderRepository.GetOrdersAsync(o => o.ApplicationUserId == searchId);
 
             var orders = _mapper.Map<ICollection<Order>>(orderModels);
+
+            List<ProductLibraries> addedGames = new();
 
             foreach (var order in orders.Where(o => o.Status != OrderStatus.Completed))
             {
                 order.Status = OrderStatus.Completed;
+
+                addedGames.Add(new(order.ApplicationUserId, order.ProductId));
             }
 
             var updateResult = await _orderRepository.UpdateItemsAsync(orders);
 
-            orders.ToList().ForEach(o => _libraryService.AddItemToLibrary(o.UserId, o.ProductId));
+            await _libraryService.AddItemsToLibrary(addedGames);
         }
     }
 }
