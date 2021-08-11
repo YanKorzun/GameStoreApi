@@ -4,14 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GameStore.DAL.Configuration
 {
-    public class ProductConfiguration : IEntityTypeConfiguration<Product>
+    public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder
                 .HasQueryFilter(m => !m.IsDeleted);
             builder
-                .HasIndex(o => new { o.Name, o.Platform, o.DateCreated, o.TotalRating });
+                .HasOne(o => o.AppUser)
+                .WithMany(o => o.Orders);
+            builder.HasIndex(o => new { o.UserId, o.ProductId });
         }
     }
 }

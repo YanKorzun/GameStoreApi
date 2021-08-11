@@ -6,7 +6,7 @@ using GameStore.DAL.Entities;
 
 namespace GameStore.DAL.Interfaces
 {
-    public interface IProductRatingRepository
+    public interface IProductRatingRepository : IBaseRepository<ProductRating>
     {
         Task<ProductRating> CreateRatingAsync(ProductRating rating);
 

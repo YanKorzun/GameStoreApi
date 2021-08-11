@@ -78,8 +78,11 @@ namespace GameStore.BL.Services
                 expression = o => o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating;
             }
 
-            var products = await _productRepository.SearchForMultipleItemsAsync(expression,
-                (int)productParameters.Offset, (int)productParameters.Limit, sortExpression,
+            var products = await _productRepository.SearchForMultipleItemsAsync(
+                expression,
+                (int)productParameters.Offset,
+                (int)productParameters.Limit,
+                sortExpression,
                 productParameters.OrderType);
 
             var modelsList = _mapper.Map<List<ProductModel>>(products);

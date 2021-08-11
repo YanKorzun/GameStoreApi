@@ -8,5 +8,6 @@ namespace GameStore.DAL.Entities
         public IList<ApplicationUserRole> UserRoles { get; set; }
         public bool IsDeleted { get; set; }
         public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();
+        public ICollection<Order> Orders { get; set; }
     }
 }
