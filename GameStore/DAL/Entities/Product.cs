@@ -11,7 +11,7 @@ namespace GameStore.DAL.Entities
         public string Name { get; set; }
         public string Developers { get; set; }
         public string Publishers { get; set; }
-        public string Genre { get; set; }
+        public Genre Genre { get; set; }
         public AgeProductRating AgeRating { get; set; }
         public string Logo { get; set; }
         public string Background { get; set; }

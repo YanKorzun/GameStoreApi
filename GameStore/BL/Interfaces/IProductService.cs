@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
-using GameStore.BL.Utilities;
 using GameStore.WEB.DTO;
 using GameStore.WEB.DTO.ProductModels;
 
@@ -19,6 +18,6 @@ namespace GameStore.BL.Interfaces
 
         Task<List<ProductModel>> GetProductsBySearchTermAsync(string term, int limit, int offset);
 
-        PagedList<ProductModel> GetPagedProductList(ProductParameters productParameters);
+        Task<List<ProductModel>> GetPagedProductList(ProductParameters productParameters);
     }
 }

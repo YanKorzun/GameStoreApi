@@ -164,11 +164,11 @@ namespace GameStore.WEB.Controllers
         /// <response code="200">Products paged successfully</response>
         [HttpGet("list")]
         [AllowAnonymous]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ProductFilter))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetProductList([FromQuery] ProductParameters productParameters)
+        public async Task<IActionResult> GetProductList([FromQuery] ProductParameters productParameters)
         {
-            var products = _productService.GetPagedProductList(productParameters);
+            var products = await _productService.GetPagedProductList(productParameters);
 
             return Ok(products);
         }

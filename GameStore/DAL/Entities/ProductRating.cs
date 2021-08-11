@@ -11,7 +11,7 @@ namespace GameStore.DAL.Entities
             Rating = rating;
         }
 
-        [Key] public int RatingId { get; set; }
+        public int RatingId { get; set; }
 
         public int ProductId { get; set; }
         public Product Product { get; set; }

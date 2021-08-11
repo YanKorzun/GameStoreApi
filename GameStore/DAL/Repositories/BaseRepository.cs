@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
+using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,46 +70,82 @@ namespace GameStore.DAL.Repositories
             return createdEntity.Entity;
         }
 
-        public IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString)
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, TK>> sort,
+            OrderType orderType = OrderType.Asc
+        )
         {
-            if (!entities.Any())
+            List<T> items;
+
+            if (orderType == OrderType.Asc)
             {
-                return entities;
+                items = await Entity.Where(expression).OrderBy(sort).AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                items = await Entity.Where(expression).OrderByDescending(sort).AsNoTracking().ToListAsync();
             }
 
-            if (string.IsNullOrWhiteSpace(orderByQueryString))
-            {
-                return entities;
-            }
+            return items;
+        }
 
-            var orderParams = orderByQueryString.Trim().Split(',');
-            var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            var orderQueryBuilder = new StringBuilder();
+        public async Task<List<T>> SearchForMultipleItemsAsync<K>(
+            Expression<Func<T, bool>> expression,
+            int offset,
+            int limit,
+            Expression<Func<T, K>> sort,
+            OrderType orderType
+        )
+        {
+            List<T> items;
 
-            foreach (var param in orderParams)
+            if (orderType == OrderType.Asc)
             {
-                if (string.IsNullOrWhiteSpace(param))
+                if (expression != null)
                 {
-                    continue;
+                    items = await Entity
+                        .Where(expression)
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
                 }
-
-                var propertyFromQueryName = param.Split(" ")[0];
-                var objectProperty = propertyInfos.FirstOrDefault(pi =>
-                    pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
-
-                if (objectProperty == null)
+                else
                 {
-                    continue;
+                    items = await Entity
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
                 }
-
-                var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
-
-                orderQueryBuilder.Append($"{objectProperty.Name} {sortingOrder}, ");
+            }
+            else
+            {
+                if (expression != null)
+                {
+                    items = await Entity
+                        .Where(expression)
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    items = await Entity
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
             }
 
-            var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
-
-            return entities.OrderBy(orderQuery);
+            return items;
         }
 
         public async Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties)

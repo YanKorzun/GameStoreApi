@@ -25,6 +25,7 @@ namespace GameStore.WEB.StartUp.Configuration
             //Utilities
             services.AddTransient<IClaimsUtility, ClaimsUtility>();
             services.AddTransient<ICloudinaryService, CloudinaryService>();
+            services.AddTransient<IProductPropUtility, ProductPropUtility>();
             //Aggregators
             services.AddTransient<ICustomProductAggregator, ProductAggregator>();
             //Repositories
@@ -33,7 +34,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
             services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
             //Action filters
-            services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<ProductFilter>();
         }
     }
 }

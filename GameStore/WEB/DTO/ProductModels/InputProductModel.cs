@@ -34,10 +34,8 @@ namespace GameStore.WEB.DTO.ProductModels
         /// <summary>
         /// The genre of the product
         /// </summary>
-        /// <example>Moba</example>
         [Required]
-        [StringLength(50)]
-        public string Genre { get; set; }
+        public Genre Genre { get; set; }
 
         /// <summary>
         /// The age rating of the product

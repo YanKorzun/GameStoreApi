@@ -5,19 +5,15 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.ResultWrappers;
-using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
-using GameStore.WEB.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL.Repositories
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        private const int ProductTakeCount = 100;
-
         public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
@@ -51,36 +47,6 @@ namespace GameStore.DAL.Repositories
             return updatedProduct;
         }
 
-        public PagedList<Product> GetPagedProductList(ProductParameters productParameters)
-        {
-            IQueryable<Product> products;
-            if (productParameters.AgeRating == 0)
-            {
-                if (string.IsNullOrWhiteSpace(productParameters.Genre))
-                {
-                    products = Entity.Take(ProductTakeCount);
-                }
-                else
-                {
-                    products = Entity.Where(o =>
-                        o.Genre == productParameters.Genre);
-                }
-            }
-            else
-            {
-                products = Entity.Where(o =>
-                    o.Genre == productParameters.Genre && o.AgeRating == productParameters.AgeRating);
-            }
-
-            SearchByName(ref products, productParameters.Name);
-
-            var sortedProducts = ApplySort(products, productParameters.OrderBy);
-
-            return PagedList<Product>.ToPagedList(sortedProducts,
-                productParameters.PageNumber,
-                productParameters.PageSize);
-        }
-
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
             var dbProduct = new Product
@@ -102,15 +68,5 @@ namespace GameStore.DAL.Repositories
 
         private async Task<Product> GetProductAsync(Expression<Func<Product, bool>> expression) =>
             await Entity.AsNoTracking().FirstOrDefaultAsync(expression);
-
-        private static void SearchByName(ref IQueryable<Product> products, string productName)
-        {
-            if (!products.Any() || string.IsNullOrWhiteSpace(productName))
-            {
-                return;
-            }
-
-            products = products.Where(o => o.Name.ToLower().Contains(productName.Trim().ToLower()));
-        }
     }
 }

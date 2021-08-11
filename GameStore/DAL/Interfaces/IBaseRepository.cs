@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GameStore.DAL.Enums;
 
 namespace GameStore.DAL.Interfaces
 {
@@ -14,6 +15,20 @@ namespace GameStore.DAL.Interfaces
 
         Task<T> CreateItemAsync(T entity);
 
-        IQueryable<T> ApplySort(IQueryable<T> entities, string orderByQueryString);
+        Task<List<T>> SearchForMultipleItemsAsync<K>
+        (
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, K>> sort,
+            OrderType orderType = OrderType.Asc
+        );
+
+        Task<List<T>> SearchForMultipleItemsAsync<TK>
+        (
+            Expression<Func<T, bool>> expression,
+            int offset,
+            int limit,
+            Expression<Func<T, TK>> sort,
+            OrderType orderType
+        );
     }
 }

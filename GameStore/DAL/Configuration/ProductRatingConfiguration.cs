@@ -11,7 +11,10 @@ namespace GameStore.DAL.Configuration
             builder
                 .HasOne(o => o.Product)
                 .WithMany(o => o.Ratings);
-            builder.HasIndex(o => new {o.UserId, o.ProductId});
+            builder
+                .HasIndex(o => new { o.UserId, o.ProductId });
+            builder
+                .HasKey(o => o.RatingId);
         }
     }
 }
