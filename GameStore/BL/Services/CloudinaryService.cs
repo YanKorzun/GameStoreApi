@@ -21,15 +21,14 @@ namespace GameStore.BL.Services
         {
             var account = new Account(
                 appSettings.CloudinarySettings.Name,
-                appSettings.CloudinarySettings.APIkey,
-                appSettings.CloudinarySettings.APISecret
+                appSettings.CloudinarySettings.ApiKey,
+                appSettings.CloudinarySettings.ApiSecret
             );
             _cloudinary = new(account);
         }
 
         public async Task<ServiceResult<ImageUploadResult>> Upload(IFormFile file)
         {
-            ImageUploadResult uploadResult = null;
             if (!CheckFileExtension(file))
             {
                 return new(ServiceResultType.InvalidData, FileExtensionException);
@@ -40,7 +39,7 @@ namespace GameStore.BL.Services
                 File = new(file.FileName, file.OpenReadStream())
             };
 
-            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             return new(ServiceResultType.Success, uploadResult);
         }

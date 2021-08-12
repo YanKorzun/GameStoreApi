@@ -7,14 +7,14 @@ namespace GameStore.BL.Interfaces
 {
     public interface IOrderService
     {
-        Task<List<OutOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null);
+        Task<List<OutputOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null);
 
-        Task<ServiceResult<OutOrderDto>> CreateOrderAsync(BasicOrderDto order);
+        Task<ServiceResult<OutputOrderDto>> CreateOrderAsync(BasicOrderDto order);
 
         Task DeleteOrders(ICollection<ExtendedOrderDto> orders);
 
         Task<ServiceResult> CompleteOrders(int userId);
 
-        Task<OutOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto);
+        Task<OutputOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto);
     }
 }

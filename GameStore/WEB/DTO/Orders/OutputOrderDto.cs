@@ -6,7 +6,7 @@ namespace GameStore.WEB.DTO.Orders
     /// <summary>
     /// Order model for presentation order data to user
     /// </summary>
-    public class OutOrderDto : ExtendedOrderDto
+    public class OutputOrderDto : ExtendedOrderDto
     {
         public OrderStatus Status { get; set; }
 

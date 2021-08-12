@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL
 {
-    public class ApplicationDbContext : IdentityDbContext<
+    public sealed class ApplicationDbContext : IdentityDbContext<
         ApplicationUser,
         ApplicationRole,
         int,

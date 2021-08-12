@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using GameStore.WEB.Settings;
 
 namespace GameStore.BL.Interfaces

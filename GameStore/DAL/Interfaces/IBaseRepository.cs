@@ -17,10 +17,10 @@ namespace GameStore.DAL.Interfaces
 
         Task<List<T>> CreateItemsAsync(IEnumerable<T> items);
 
-        Task<List<T>> SearchForMultipleItemsAsync<K>
+        Task<List<T>> SearchForMultipleItemsAsync<TK>
         (
             Expression<Func<T, bool>> expression,
-            Expression<Func<T, K>> sort,
+            Expression<Func<T, TK>> sort,
             OrderType orderType = OrderType.Asc
         );
 

@@ -37,7 +37,7 @@ namespace GameStore.WEB.StartUp
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config) => { config.AddEnvironmentVariables(); })
+                .ConfigureAppConfiguration(config => { config.AddEnvironmentVariables(); })
                 .UseStartup<Startup>()
                 .UseSerilog();
         }

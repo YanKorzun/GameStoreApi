@@ -2,7 +2,7 @@
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.WEB.DTO.Roles;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

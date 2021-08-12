@@ -109,11 +109,11 @@ namespace GameStore.DAL.Repositories
             return items;
         }
 
-        public async Task<List<T>> SearchForMultipleItemsAsync<K>(
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
             Expression<Func<T, bool>> expression,
             int offset,
             int limit,
-            Expression<Func<T, K>> sort,
+            Expression<Func<T, TK>> sort,
             OrderType orderType
         )
         {

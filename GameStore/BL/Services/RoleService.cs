@@ -5,7 +5,7 @@ using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Roles;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.BL.Services

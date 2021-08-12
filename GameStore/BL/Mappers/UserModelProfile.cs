@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 
 namespace GameStore.BL.Mappers
 {

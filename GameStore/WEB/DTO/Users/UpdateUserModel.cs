@@ -2,7 +2,7 @@
 using GameStore.BL.Constants;
 using GameStore.WEB.Constants;
 
-namespace GameStore.WEB.DTO.UserModels
+namespace GameStore.WEB.DTO.Users
 {
     public class UpdateUserModel
     {

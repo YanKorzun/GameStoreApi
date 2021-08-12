@@ -12,7 +12,7 @@ namespace GameStore.WEB.Controllers
     {
         private readonly ILogger _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger logger)
         {
             _logger = logger;
         }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace GameStore.Startup.Configuration
+namespace GameStore.WEB.StartUp.Configuration
 {
     public static class AuthenticationExtensions
     {

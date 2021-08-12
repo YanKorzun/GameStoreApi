@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
 using GameStore.WEB.DTO.Roles;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 
 namespace GameStore.BL.Interfaces
 {

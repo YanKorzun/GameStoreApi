@@ -10,7 +10,7 @@ using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.Constants;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Utilities;
 using Microsoft.AspNetCore.Identity;

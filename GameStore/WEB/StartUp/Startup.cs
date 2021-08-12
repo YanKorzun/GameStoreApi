@@ -1,4 +1,3 @@
-using GameStore.Startup.Configuration;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Startup.Configuration;
 using GameStore.WEB.StartUp.Configuration;

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GameStore.DAL.Entities
+﻿namespace GameStore.DAL.Entities
 {
     public class ProductRating
     {

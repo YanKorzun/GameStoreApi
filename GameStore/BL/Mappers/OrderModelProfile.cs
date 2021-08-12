@@ -9,7 +9,7 @@ namespace GameStore.BL.Mappers
         public OrderModelProfile()
         {
             CreateMap<Order, BasicOrderDto>().ReverseMap();
-            CreateMap<Order, OutOrderDto>().ReverseMap();
+            CreateMap<Order, OutputOrderDto>().ReverseMap();
             CreateMap<Order, ExtendedOrderDto>().ReverseMap();
         }
     }

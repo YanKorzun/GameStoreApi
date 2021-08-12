@@ -29,7 +29,7 @@ namespace GameStore.BL.Services
             _libraryService = libraryService;
         }
 
-        public async Task<List<OutOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null)
+        public async Task<List<OutputOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null)
         {
             Expression<Func<Order, bool>> expression;
             if (ordersId is null)
@@ -43,7 +43,7 @@ namespace GameStore.BL.Services
 
             var orders = await _orderRepository.GetOrdersAsync(expression);
 
-            var orderModels = orders.Select(_mapper.Map<OutOrderDto>).ToList();
+            var orderModels = orders.Select(_mapper.Map<OutputOrderDto>).ToList();
 
             return orderModels;
         }
@@ -69,21 +69,19 @@ namespace GameStore.BL.Services
 
             try
             {
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                uncompleted.ForEach(order =>
                 {
-                    uncompleted.ForEach(order =>
-                    {
-                        order.Status = OrderStatus.Completed;
+                    order.Status = OrderStatus.Completed;
 
-                        addedGames.Add(new(order.ApplicationUserId, order.ProductId));
-                    });
+                    addedGames.Add(new(order.ApplicationUserId, order.ProductId));
+                });
 
-                    await _orderRepository.UpdateItemsAsync(uncompleted);
+                await _orderRepository.UpdateItemsAsync(uncompleted);
 
-                    await _libraryService.AddItemsToLibrary(addedGames);
+                await _libraryService.AddItemsToLibrary(addedGames);
 
-                    scope.Complete();
-                }
+                scope.Complete();
             }
             catch (Exception e)
             {
@@ -93,7 +91,7 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<OutOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto)
+        public async Task<OutputOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto)
         {
             var order = _mapper.Map<Order>(orderDto);
             order.UpdateOrderDate = DateTime.Now;
@@ -102,10 +100,10 @@ namespace GameStore.BL.Services
 
             var updatedOrder = (await _orderRepository.GetOrdersAsync(o => o.Id == order.Id)).FirstOrDefault();
 
-            return _mapper.Map<OutOrderDto>(updatedOrder);
+            return _mapper.Map<OutputOrderDto>(updatedOrder);
         }
 
-        public async Task<ServiceResult<OutOrderDto>> CreateOrderAsync(BasicOrderDto orderDto)
+        public async Task<ServiceResult<OutputOrderDto>> CreateOrderAsync(BasicOrderDto orderDto)
         {
             var order = _mapper.Map<Order>(orderDto);
             order.CreateOrderDate = DateTime.Now;
@@ -121,7 +119,7 @@ namespace GameStore.BL.Services
 
             var createdOrder = await _orderRepository.CreateItemAsync(order);
 
-            var createdOrderModel = _mapper.Map<OutOrderDto>(createdOrder);
+            var createdOrderModel = _mapper.Map<OutputOrderDto>(createdOrder);
 
             return new(ServiceResultType.Success, createdOrderModel);
         }

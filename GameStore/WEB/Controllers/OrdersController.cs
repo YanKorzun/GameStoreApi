@@ -62,13 +62,13 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderDto>> CreateOrder(BasicOrderDto orderDto)
+        public async Task<ActionResult<OutputOrderDto>> CreateOrder(BasicOrderDto orderDto)
         {
             var createResult = await _orderService.CreateOrderAsync(orderDto);
 
             return
                 createResult.Result is not ServiceResultType.Success
-                    ? StatusCode((int)createResult.Result, createResult.ErrorMessage)
+                    ? StatusCode((int) createResult.Result, createResult.ErrorMessage)
                     : CreatedAtAction(nameof(CreateOrder), createResult.Data);
         }
 
@@ -81,7 +81,7 @@ namespace GameStore.WEB.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderDto>> UpdateOrder([FromBody] ExtendedOrderDto order)
+        public async Task<ActionResult<OutputOrderDto>> UpdateOrder([FromBody] ExtendedOrderDto order)
         {
             var result = await _orderService.UpdateItemsAsync(order);
 
@@ -118,14 +118,14 @@ namespace GameStore.WEB.Controllers
         [HttpPost("buy")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderDto>> OrderPayment()
+        public async Task<ActionResult<OutputOrderDto>> OrderPayment()
         {
             var userId = _claimsUtility.GetUserIdFromClaims(User).Data;
 
             var result = await _orderService.CompleteOrders(userId);
             if (result.Result is not ServiceResultType.Success)
             {
-                return StatusCode((int)result.Result, result.ErrorMessage);
+                return StatusCode((int) result.Result, result.ErrorMessage);
             }
 
             return NoContent();
