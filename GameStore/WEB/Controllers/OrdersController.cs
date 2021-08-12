@@ -68,7 +68,7 @@ namespace GameStore.WEB.Controllers
 
             return
                 createResult.Result is not ServiceResultType.Success
-                    ? StatusCode((int) createResult.Result, createResult.ErrorMessage)
+                    ? StatusCode((int)createResult.Result, createResult.ErrorMessage)
                     : CreatedAtAction(nameof(CreateOrder), createResult.Data);
         }
 
@@ -114,7 +114,7 @@ namespace GameStore.WEB.Controllers
         /// <returns>No content</returns>
         /// <response code="204">Orders completed successfully</response>
         /// <response code="401">User is not authenticated</response>
-        /// <response code="500">Transaction wasn't completed</response>
+        /// <response code="500">Unable to perform payment</response>
         [HttpPost("buy")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -125,7 +125,7 @@ namespace GameStore.WEB.Controllers
             var result = await _orderService.CompleteOrders(userId);
             if (result.Result is not ServiceResultType.Success)
             {
-                return StatusCode((int) result.Result, result.ErrorMessage);
+                return StatusCode((int)result.Result, result.ErrorMessage);
             }
 
             return NoContent();
