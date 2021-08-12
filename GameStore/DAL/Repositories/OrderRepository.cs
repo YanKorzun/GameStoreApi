@@ -18,15 +18,18 @@ namespace GameStore.DAL.Repositories
         public async Task<List<Order>> GetOrdersAsync(Expression<Func<Order, bool>> expression) =>
             await Entity.AsNoTracking().Where(expression).ToListAsync();
 
-        public async Task RemoveOrderRange(ICollection<Order> orders)
+        public async Task SoftRangeRemoveAsync(ICollection<Order> orders)
         {
-            foreach (var order in orders)
+            orders.ToList().ForEach(o =>
             {
-                await RemoveOrderAsync(order.Id);
-            }
+                o.IsDeleted = true;
+                DbContext.Entry(o).Property(x => x.IsDeleted).IsModified = true;
+            });
+
+            await DbContext.SaveChangesAsync();
         }
 
-        public async Task RemoveOrderAsync(int id)
+        public async Task SoftOrderRemoveAsync(int id)
         {
             var dbProduct = new Order
             {

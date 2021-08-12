@@ -32,5 +32,7 @@ namespace GameStore.DAL.Interfaces
             Expression<Func<T, TK>> sort,
             OrderType orderType
         );
+
+        Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties);
     }
 }

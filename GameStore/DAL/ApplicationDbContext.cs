@@ -28,7 +28,5 @@ namespace GameStore.DAL
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
-
-        public DbSet<GameStore.DAL.Entities.Order> Order { get; set; }
     }
 }

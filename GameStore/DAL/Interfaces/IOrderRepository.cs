@@ -10,8 +10,12 @@ namespace GameStore.DAL.Interfaces
     {
         Task<List<Order>> GetOrdersAsync(Expression<Func<Order, bool>> expression);
 
-        Task RemoveOrderRange(ICollection<Order> orders);
+        Task SoftRangeRemoveAsync(ICollection<Order> orders);
+
+        Task SoftOrderRemoveAsync(int id);
 
         Task<List<Order>> UpdateItemsAsync(IEnumerable<Order> items);
+
+        //Task<List<Order>> UpdateItemsAsync(IEnumerable<Order> items);
     }
 }

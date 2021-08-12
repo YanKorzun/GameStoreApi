@@ -1,6 +1,17 @@
 ﻿namespace GameStore.WEB.DTO.OrderModels
 {
-    public class OrderModel
+    /// <summary>
+    /// Basic order model for  creating and updating entities
+    /// <remarks>
+    /// <para>
+    /// Contains public fields:
+    /// </para>
+    /// Product id<br/>
+    /// ApplicationUserId<br/>
+    /// Count
+    /// </remarks>
+    /// </summary>
+    public class BasicOrderModel
     {
         /// <summary>
         /// Product's id
