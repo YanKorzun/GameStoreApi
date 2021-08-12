@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using GameStore.DAL.Entities;
 
-namespace GameStore.WEB.DTO.ProductModels
+namespace GameStore.WEB.DTO.Products
 {
-    public class ProductModel : InputProductModel
+    public class ProductDto : InputProductDto
     {
         /// <summary>
         /// Ratings of the product

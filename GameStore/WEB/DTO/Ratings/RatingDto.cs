@@ -1,8 +1,8 @@
-﻿namespace GameStore.WEB.DTO.RatingModels
+﻿namespace GameStore.WEB.DTO.Ratings
 {
-    public class RatingModel
+    public class RatingDto
     {
-        public RatingModel(int productId, int rating)
+        public RatingDto(int productId, int rating)
         {
             ProductId = productId;
             Rating = rating;

@@ -1,4 +1,4 @@
-﻿namespace GameStore.WEB.DTO.OrderModels
+﻿namespace GameStore.WEB.DTO.Orders
 {
     /// <summary>
     /// Basic order model for  creating and updating entities
@@ -11,7 +11,7 @@
     /// Count
     /// </remarks>
     /// </summary>
-    public class BasicOrderModel
+    public class BasicOrderDto
     {
         /// <summary>
         /// Product's id

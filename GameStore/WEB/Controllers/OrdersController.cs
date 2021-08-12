@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
-using GameStore.WEB.DTO.OrderModels;
+using GameStore.WEB.DTO.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,7 +53,7 @@ namespace GameStore.WEB.Controllers
         ///     Create new order with provided properties model
         /// </summary>
         /// <remark>By default, id is application user id</remark>
-        /// <param name="orderModel">Order properties model</param>
+        /// <param name="orderDto">Order properties model</param>
         /// <returns>Extended order properties model</returns>
         /// <response code="201">Order created successfully</response>
         /// <response code="401">User is not authenticated</response>
@@ -62,9 +62,9 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderModel>> CreateOrder(BasicOrderModel orderModel)
+        public async Task<ActionResult<OutOrderDto>> CreateOrder(BasicOrderDto orderDto)
         {
-            var createResult = await _orderService.CreateOrderAsync(orderModel);
+            var createResult = await _orderService.CreateOrderAsync(orderDto);
 
             return
                 createResult.Result is not ServiceResultType.Success
@@ -81,7 +81,7 @@ namespace GameStore.WEB.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderModel>> UpdateOrder([FromBody] ExtendedOrderModel order)
+        public async Task<ActionResult<OutOrderDto>> UpdateOrder([FromBody] ExtendedOrderDto order)
         {
             var result = await _orderService.UpdateItemsAsync(order);
 
@@ -101,7 +101,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteOrder([FromBody] ICollection<ExtendedOrderModel> orders)
+        public async Task<IActionResult> DeleteOrder([FromBody] ICollection<ExtendedOrderDto> orders)
         {
             await _orderService.DeleteOrders(orders);
 
@@ -118,7 +118,7 @@ namespace GameStore.WEB.Controllers
         [HttpPost("buy")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutOrderModel>> OrderPayment()
+        public async Task<ActionResult<OutOrderDto>> OrderPayment()
         {
             var userId = _claimsUtility.GetUserIdFromClaims(User).Data;
 

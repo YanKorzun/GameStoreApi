@@ -1,8 +1,8 @@
-﻿namespace GameStore.WEB.DTO
+﻿namespace GameStore.WEB.DTO.Roles
 {
-    public class RoleModel
+    public class RoleDto
     {
-        public RoleModel(string name)
+        public RoleDto(string name)
         {
             Name = name;
         }

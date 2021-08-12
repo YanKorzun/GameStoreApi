@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Roles;
 using GameStore.WEB.DTO.UserModels;
 
 namespace GameStore.BL.Interfaces
 {
     public interface IRoleService
     {
-        Task<ServiceResult> CreateAsync(RoleModel roleModel);
+        Task<ServiceResult> CreateAsync(RoleDto roleDto);
 
         Task<ServiceResult> DeleteAsync(string id);
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO.OrderModels;
+using GameStore.WEB.DTO.Orders;
 
 namespace GameStore.BL.Mappers
 {
@@ -8,9 +8,9 @@ namespace GameStore.BL.Mappers
     {
         public OrderModelProfile()
         {
-            CreateMap<Order, BasicOrderModel>().ReverseMap();
-            CreateMap<Order, OutOrderModel>().ReverseMap();
-            CreateMap<Order, ExtendedOrderModel>().ReverseMap();
+            CreateMap<Order, BasicOrderDto>().ReverseMap();
+            CreateMap<Order, OutOrderDto>().ReverseMap();
+            CreateMap<Order, ExtendedOrderDto>().ReverseMap();
         }
     }
 }

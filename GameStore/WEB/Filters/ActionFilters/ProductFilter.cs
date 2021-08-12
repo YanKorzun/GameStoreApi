@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Parameters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -16,7 +16,7 @@ namespace GameStore.WEB.Filters.ActionFilters
                 return;
             }
 
-            var orderProp = GetValueFromQuery(context, nameof(ProductParameters.OrderBy));
+            var orderProp = GetValueFromQuery(context, nameof(ProductParametersDto.OrderBy));
             if (!string.IsNullOrWhiteSpace(orderProp))
             {
                 var props = typeof(Product).GetProperties().ToList()

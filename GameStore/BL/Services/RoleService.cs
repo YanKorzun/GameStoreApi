@@ -4,7 +4,7 @@ using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Roles;
 using GameStore.WEB.DTO.UserModels;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,9 +24,9 @@ namespace GameStore.BL.Services
             _userManager = userManager;
         }
 
-        public async Task<ServiceResult> CreateAsync(RoleModel roleModel)
+        public async Task<ServiceResult> CreateAsync(RoleDto roleDto)
         {
-            var applicationRole = _mapper.Map<ApplicationRole>(roleModel);
+            var applicationRole = _mapper.Map<ApplicationRole>(roleDto);
 
             var result = await _roleManager.CreateAsync(applicationRole);
             if (!result.Succeeded)

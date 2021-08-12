@@ -1,9 +1,9 @@
-﻿namespace GameStore.WEB.DTO.OrderModels
+﻿namespace GameStore.WEB.DTO.Orders
 {
     /// <summary>
     /// Extends basic order model by Id property
     /// </summary>
-    public class ExtendedOrderModel : BasicOrderModel
+    public class ExtendedOrderDto : BasicOrderDto
     {
         /// <summary>
         /// Order id

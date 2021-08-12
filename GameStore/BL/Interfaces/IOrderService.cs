@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
-using GameStore.WEB.DTO.OrderModels;
+using GameStore.WEB.DTO.Orders;
 
 namespace GameStore.BL.Interfaces
 {
     public interface IOrderService
     {
-        Task<List<OutOrderModel>> GetOrdersAsync(int userId, int[] ordersId = null);
+        Task<List<OutOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null);
 
-        Task<ServiceResult<OutOrderModel>> CreateOrderAsync(BasicOrderModel order);
+        Task<ServiceResult<OutOrderDto>> CreateOrderAsync(BasicOrderDto order);
 
-        Task DeleteOrders(ICollection<ExtendedOrderModel> orders);
+        Task DeleteOrders(ICollection<ExtendedOrderDto> orders);
 
         Task<ServiceResult> CompleteOrders(int userId);
 
-        Task<OutOrderModel> UpdateItemsAsync(ExtendedOrderModel orderModel);
+        Task<OutOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto);
     }
 }

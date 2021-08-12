@@ -12,10 +12,6 @@ namespace GameStore.DAL.Interfaces
 
         Task SoftRangeRemoveAsync(ICollection<Order> orders);
 
-        Task SoftOrderRemoveAsync(int id);
-
         Task<List<Order>> UpdateItemsAsync(IEnumerable<Order> items);
-
-        //Task<List<Order>> UpdateItemsAsync(IEnumerable<Order> items);
     }
 }

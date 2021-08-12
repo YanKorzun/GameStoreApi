@@ -11,7 +11,7 @@ using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
-using GameStore.WEB.DTO.OrderModels;
+using GameStore.WEB.DTO.Orders;
 
 namespace GameStore.BL.Services
 {
@@ -29,7 +29,7 @@ namespace GameStore.BL.Services
             _libraryService = libraryService;
         }
 
-        public async Task<List<OutOrderModel>> GetOrdersAsync(int userId, int[] ordersId = null)
+        public async Task<List<OutOrderDto>> GetOrdersAsync(int userId, int[] ordersId = null)
         {
             Expression<Func<Order, bool>> expression;
             if (ordersId is null)
@@ -43,12 +43,12 @@ namespace GameStore.BL.Services
 
             var orders = await _orderRepository.GetOrdersAsync(expression);
 
-            var orderModels = orders.Select(_mapper.Map<OutOrderModel>).ToList();
+            var orderModels = orders.Select(_mapper.Map<OutOrderDto>).ToList();
 
             return orderModels;
         }
 
-        public async Task DeleteOrders(ICollection<ExtendedOrderModel> orderModels)
+        public async Task DeleteOrders(ICollection<ExtendedOrderDto> orderModels)
         {
             var orders = orderModels.Select(_mapper.Map<Order>).ToList();
             await _orderRepository.SoftRangeRemoveAsync(orders);
@@ -78,7 +78,7 @@ namespace GameStore.BL.Services
                         addedGames.Add(new(order.ApplicationUserId, order.ProductId));
                     });
 
-                    await UpdateItemsAsync(uncompleted);
+                    await _orderRepository.UpdateItemsAsync(uncompleted);
 
                     await _libraryService.AddItemsToLibrary(addedGames);
 
@@ -93,42 +93,37 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<OutOrderModel> UpdateItemsAsync(ExtendedOrderModel orderModel)
+        public async Task<OutOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto)
         {
-            var order = _mapper.Map<Order>(orderModel);
+            var order = _mapper.Map<Order>(orderDto);
             order.UpdateOrderDate = DateTime.Now;
 
             await _orderRepository.UpdateItemAsync(order, o => o.CreateOrderDate);
 
             var updatedOrder = (await _orderRepository.GetOrdersAsync(o => o.Id == order.Id)).FirstOrDefault();
 
-            var outOrderModel = _mapper.Map<OutOrderModel>(updatedOrder);
-
-            return outOrderModel;
+            return _mapper.Map<OutOrderDto>(updatedOrder);
         }
 
-        public async Task<ServiceResult<OutOrderModel>> CreateOrderAsync(BasicOrderModel orderModel)
+        public async Task<ServiceResult<OutOrderDto>> CreateOrderAsync(BasicOrderDto orderDto)
         {
-            var order = _mapper.Map<Order>(orderModel);
+            var order = _mapper.Map<Order>(orderDto);
             order.CreateOrderDate = DateTime.Now;
 
-            var unexpectedOrders = await _orderRepository.GetOrdersAsync(o =>
-                o.ProductId == orderModel.ProductId && o.ApplicationUserId == orderModel.ApplicationUserId &&
+            var unexpectedOrder = await _orderRepository.SearchForSingleItemAsync(o =>
+                o.ProductId == orderDto.ProductId && o.ApplicationUserId == orderDto.ApplicationUserId &&
                 o.Status != OrderStatus.Completed);
-            if (unexpectedOrders.Any())
+            if (unexpectedOrder is not null)
             {
                 return new(ServiceResultType.InternalError,
-                    $"This order is already exists, its id is '{unexpectedOrders.FirstOrDefault().Id}'\nYou can edit it and then complete your order");
+                    $"This order is already exists, its id is '{unexpectedOrder.Id}'\nYou can edit it and then complete your order");
             }
 
             var createdOrder = await _orderRepository.CreateItemAsync(order);
 
-            var createdOrderModel = _mapper.Map<OutOrderModel>(createdOrder);
+            var createdOrderModel = _mapper.Map<OutOrderDto>(createdOrder);
 
             return new(ServiceResultType.Success, createdOrderModel);
         }
-
-        private async Task<List<Order>> UpdateItemsAsync(IEnumerable<Order> orders) =>
-            await _orderRepository.UpdateItemsAsync(orders);
     }
 }

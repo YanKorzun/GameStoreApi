@@ -1,8 +1,8 @@
 ﻿using GameStore.DAL.Enums;
 
-namespace GameStore.WEB.DTO
+namespace GameStore.WEB.DTO.Parameters
 {
-    public class ProductParameters : QueryStringParameters
+    public class ProductParametersDto : QueryStringParametersDto
     {
         public AgeProductRating? AgeRating { get; set; }
 

@@ -28,18 +28,5 @@ namespace GameStore.DAL.Repositories
 
             await DbContext.SaveChangesAsync();
         }
-
-        public async Task SoftOrderRemoveAsync(int id)
-        {
-            var dbProduct = new Order
-            {
-                Id = id,
-                IsDeleted = true
-            };
-
-            DbContext.Entry(dbProduct).Property(x => x.IsDeleted).IsModified = true;
-
-            await DbContext.SaveChangesAsync();
-        }
     }
 }

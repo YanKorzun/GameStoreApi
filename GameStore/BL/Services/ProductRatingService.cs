@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
-using GameStore.WEB.DTO.RatingModels;
+using GameStore.WEB.DTO.Ratings;
 
 namespace GameStore.BL.Services
 {
@@ -22,16 +22,16 @@ namespace GameStore.BL.Services
             _productRepository = productRepository;
         }
 
-        public async Task<ProductRating> CreateProductRatingAsync(ClaimsPrincipal contextUser, RatingModel ratingModel)
+        public async Task<ProductRating> CreateProductRatingAsync(ClaimsPrincipal contextUser, RatingDto ratingDto)
         {
             var getUserIdResult = _claimsUtility.GetUserIdFromClaims(contextUser);
             var updatedRating = await _ratingRepository.CreateRatingAsync(new(getUserIdResult.Data,
-                ratingModel.ProductId,
-                ratingModel.Rating));
+                ratingDto.ProductId,
+                ratingDto.Rating));
 
-            var ratings = await _ratingRepository.GetRatingsAsync(o => o.ProductId == ratingModel.ProductId);
+            var ratings = await _ratingRepository.GetRatingsAsync(o => o.ProductId == ratingDto.ProductId);
 
-            var product = await _productRepository.FindProductByIdAsync(ratingModel.ProductId);
+            var product = await _productRepository.FindProductByIdAsync(ratingDto.ProductId);
 
             product.TotalRating = ratings.Average(o => o.Rating);
 

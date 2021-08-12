@@ -1,30 +1,30 @@
 ﻿using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO.ProductModels;
+using GameStore.WEB.DTO.Products;
 
 namespace GameStore.BL.Aggregators
 {
     public class ProductAggregator : ICustomProductAggregator
     {
-        public Product AggregateProduct(InputProductModel inputBasicProductModel, string backgroundUrl, string logoUrl)
+        public Product AggregateProduct(InputProductDto inputBasicProductDto, string backgroundUrl, string logoUrl)
         {
             var product = new Product();
-            if (inputBasicProductModel is ExtendedInputProductModel castResult)
+            if (inputBasicProductDto is ExtendedInputProductDto castResult)
             {
                 product.Id = castResult.Id;
             }
 
-            product.Name = inputBasicProductModel.Name;
-            product.Developers = inputBasicProductModel.Developers;
-            product.Publishers = inputBasicProductModel.Publishers;
-            product.Genre = inputBasicProductModel.Genre;
-            product.AgeRating = inputBasicProductModel.Rating;
-            product.Price = inputBasicProductModel.Price;
-            product.Count = inputBasicProductModel.Count;
-            product.DateCreated = inputBasicProductModel.DateCreated;
-            product.TotalRating = inputBasicProductModel.TotalRating;
-            product.Platform = inputBasicProductModel.Platform;
-            product.PublicationDate = inputBasicProductModel.PublicationDate;
+            product.Name = inputBasicProductDto.Name;
+            product.Developers = inputBasicProductDto.Developers;
+            product.Publishers = inputBasicProductDto.Publishers;
+            product.Genre = inputBasicProductDto.Genre;
+            product.AgeRating = inputBasicProductDto.Rating;
+            product.Price = inputBasicProductDto.Price;
+            product.Count = inputBasicProductDto.Count;
+            product.DateCreated = inputBasicProductDto.DateCreated;
+            product.TotalRating = inputBasicProductDto.TotalRating;
+            product.Platform = inputBasicProductDto.Platform;
+            product.PublicationDate = inputBasicProductDto.PublicationDate;
 
             product.Background = backgroundUrl;
             product.Logo = logoUrl;
