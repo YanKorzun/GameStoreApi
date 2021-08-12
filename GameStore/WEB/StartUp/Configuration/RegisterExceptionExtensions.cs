@@ -42,10 +42,10 @@ namespace GameStore.WEB.StartUp.Configuration
             );
         }
 
-        private class ExceptionResponse
+        private record ExceptionResponse
         {
-            public string Status { get; set; }
-            public string Message { get; set; }
+            public string Status { get; init; }
+            public string Message { get; init; }
         }
     }
 }

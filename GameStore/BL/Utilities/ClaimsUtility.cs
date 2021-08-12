@@ -10,7 +10,6 @@ namespace GameStore.BL.Utilities
 {
     public class ClaimsUtility : IClaimsUtility
     {
-        public const string AccountConfirmation = "Account confirmation";
         private readonly IUserRepository _userRepository;
 
         public ClaimsUtility(IUserRepository userRepository)

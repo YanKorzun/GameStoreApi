@@ -70,6 +70,25 @@ namespace GameStore.DAL.Repositories
             return createdEntity.Entity;
         }
 
+        public async Task<List<T>> CreateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                await Entity.AddRangeAsync(entitiesList);
+
+                var res = await DbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Could not create items in database. Error: {e.Message}");
+            }
+
+            return entitiesList;
+        }
+
         public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
             Expression<Func<T, bool>> expression,
             Expression<Func<T, TK>> sort,
@@ -90,11 +109,11 @@ namespace GameStore.DAL.Repositories
             return items;
         }
 
-        public async Task<List<T>> SearchForMultipleItemsAsync<K>(
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
             Expression<Func<T, bool>> expression,
             int offset,
             int limit,
-            Expression<Func<T, K>> sort,
+            Expression<Func<T, TK>> sort,
             OrderType orderType
         )
         {
@@ -169,6 +188,30 @@ namespace GameStore.DAL.Repositories
             }
 
             return item;
+        }
+
+        public async Task<List<T>> UpdateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                DbContext.UpdateRange(entitiesList);
+
+                await DbContext.SaveChangesAsync();
+
+                foreach (var entity in entitiesList)
+                {
+                    DbContext.Entry(entity).State = EntityState.Detached;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update items. Error: {e.Message}");
+            }
+
+            return entitiesList;
         }
 
         public async Task<T> UpdateItemWithModifiedPropsAsync(T item,

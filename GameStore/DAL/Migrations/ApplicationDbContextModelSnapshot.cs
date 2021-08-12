@@ -139,6 +139,41 @@ namespace GameStore.DAL.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateOrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateOrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId", "ProductId");
+
+                    b.ToTable("Order");
+                });
+
             modelBuilder.Entity("GameStore.DAL.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -205,6 +240,9 @@ namespace GameStore.DAL.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "GameId");
 
@@ -343,6 +381,17 @@ namespace GameStore.DAL.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.Order", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("Orders")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("GameStore.DAL.Entities.ProductLibraries", b =>
                 {
                     b.HasOne("GameStore.DAL.Entities.Product", "Game")
@@ -416,6 +465,8 @@ namespace GameStore.DAL.Migrations
 
             modelBuilder.Entity("GameStore.DAL.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("ProductLibraries");
 
                     b.Navigation("UserRoles");

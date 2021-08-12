@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -62,7 +62,7 @@ namespace GameStore.WEB.Controllers
 
             if (signInResult.Result is not ServiceResultType.Success)
             {
-                return StatusCode((int)signInResult.Result, signInResult.ErrorMessage);
+                return StatusCode((int) signInResult.Result, signInResult.ErrorMessage);
             }
 
             return Ok(signInResult.Data);
@@ -84,7 +84,7 @@ namespace GameStore.WEB.Controllers
             var confirmResult = await _userService.ConfirmAsync(id, token);
             if (confirmResult.Result is not ServiceResultType.Success)
             {
-                return StatusCode((int)confirmResult.Result, confirmResult.ErrorMessage);
+                return StatusCode((int) confirmResult.Result, confirmResult.ErrorMessage);
             }
 
             return NoContent();

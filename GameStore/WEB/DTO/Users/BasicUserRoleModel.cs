@@ -1,4 +1,4 @@
-﻿namespace GameStore.WEB.DTO.UserModels
+﻿namespace GameStore.WEB.DTO.Users
 {
     public class BasicUserRoleModel : BasicUserModel
     {

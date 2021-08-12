@@ -5,7 +5,7 @@ using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
 using GameStore.WEB.Constants;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;

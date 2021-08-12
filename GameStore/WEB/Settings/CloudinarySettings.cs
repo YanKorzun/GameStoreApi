@@ -3,7 +3,7 @@
     public class CloudinarySettings
     {
         public string Name { get; set; }
-        public string APIkey { get; set; }
-        public string APISecret { get; set; }
+        public string ApiKey { get; set; }
+        public string ApiSecret { get; set; }
     }
 }

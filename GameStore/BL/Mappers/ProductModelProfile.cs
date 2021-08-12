@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO.ProductModels;
+using GameStore.WEB.DTO.Products;
 
 namespace GameStore.BL.Mappers
 {
@@ -9,10 +8,8 @@ namespace GameStore.BL.Mappers
     {
         public ProductModelProfile()
         {
-            CreateMap<Product, ProductModel>().ReverseMap();
-            CreateMap<Product, ExtendedProductModel>().ReverseMap();
-
-            CreateMap<List<Product>, ProductModel>().ReverseMap();
+            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<Product, ExtendedProductDto>().ReverseMap();
         }
     }
 }

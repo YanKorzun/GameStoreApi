@@ -19,6 +19,8 @@ namespace GameStore.WEB.StartUp.Configuration
             //Services
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductLibraryService, ProductLibraryService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IProductRatingService, ProductRatingService>();
@@ -31,6 +33,7 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductRatingRepository, ProductRatingRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IProductLibraryRepository, ProductLibraryRepository>();
             //Action filters
             services.AddScoped<ProductFilter>();

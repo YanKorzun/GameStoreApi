@@ -15,10 +15,12 @@ namespace GameStore.DAL.Interfaces
 
         Task<T> CreateItemAsync(T entity);
 
-        Task<List<T>> SearchForMultipleItemsAsync<K>
+        Task<List<T>> CreateItemsAsync(IEnumerable<T> items);
+
+        Task<List<T>> SearchForMultipleItemsAsync<TK>
         (
             Expression<Func<T, bool>> expression,
-            Expression<Func<T, K>> sort,
+            Expression<Func<T, TK>> sort,
             OrderType orderType = OrderType.Asc
         );
 
@@ -30,5 +32,7 @@ namespace GameStore.DAL.Interfaces
             Expression<Func<T, TK>> sort,
             OrderType orderType
         );
+
+        Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties);
     }
 }

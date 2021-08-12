@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using GameStore.DAL.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace GameStore.WEB.DTO.ProductModels
+namespace GameStore.WEB.DTO.Products
 {
-    public class InputProductModel
+    public class InputProductDto
     {
         /// <summary>
         /// The name of the product

@@ -1,9 +1,9 @@
 ﻿using GameStore.DAL.Enums;
 using GameStore.WEB.Constants;
 
-namespace GameStore.WEB.DTO
+namespace GameStore.WEB.DTO.Parameters
 {
-    public abstract class QueryStringParameters
+    public abstract class QueryStringParametersDto
     {
         public int Limit { get; set; } = FiltersConstants.PageSize;
         public int Offset { get; set; }

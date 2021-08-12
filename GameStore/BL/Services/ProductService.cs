@@ -8,8 +8,8 @@ using GameStore.BL.ResultWrappers;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
-using GameStore.WEB.DTO;
-using GameStore.WEB.DTO.ProductModels;
+using GameStore.WEB.DTO.Parameters;
+using GameStore.WEB.DTO.Products;
 
 namespace GameStore.BL.Services
 {
@@ -29,11 +29,11 @@ namespace GameStore.BL.Services
             _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<ServiceResult<ProductModel>> CreateProductAsync(InputProductModel model) =>
-            await HandleProductAsync(_productRepository.CreateItemAsync, model);
+        public async Task<ServiceResult<ProductDto>> CreateProductAsync(InputProductDto dto) =>
+            await HandleProductAsync(_productRepository.CreateItemAsync, dto);
 
-        public async Task<ServiceResult<ProductModel>> UpdateProductAsync(ExtendedInputProductModel model) =>
-            await HandleProductAsync(_productRepository.UpdateProductAsync, model);
+        public async Task<ServiceResult<ProductDto>> UpdateProductAsync(ExtendedInputProductDto dto) =>
+            await HandleProductAsync(_productRepository.UpdateProductAsync, dto);
 
         public async Task<ServiceResult> DeleteProductAsync(int id)
         {
@@ -42,56 +42,56 @@ namespace GameStore.BL.Services
             return result;
         }
 
-        public async Task<ProductModel> FindProductById(int id)
+        public async Task<ProductDto> FindProductById(int id)
         {
             var product = await _productRepository.FindProductByIdAsync(id);
 
-            return _mapper.Map<ProductModel>(product);
+            return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<List<ProductModel>> GetProductsBySearchTermAsync(string term, int limit, int offset)
+        public async Task<List<ProductDto>> GetProductsBySearchTermAsync(string term, int limit, int offset)
         {
             var products = await _productRepository.GetProductsBySearchTermAsync(term, limit, offset);
 
-            return _mapper.Map<List<ProductModel>>(products);
+            return _mapper.Map<List<ProductDto>>(products);
         }
 
-        public async Task<List<ProductModel>> GetPagedProductList(ProductParameters productParameters)
+        public async Task<List<ProductDto>> GetPagedProductList(ProductParametersDto productParametersDto)
         {
-            var sortExpression = ProductPropUtility.GetOrderExpression(productParameters);
-            var filterExpression = ProductPropUtility.GetFilterExpression(productParameters);
+            var sortExpression = ProductPropUtility.GetOrderExpression(productParametersDto);
+            var filterExpression = ProductPropUtility.GetFilterExpression(productParametersDto);
 
             var products = await _productRepository.SearchForMultipleItemsAsync(filterExpression,
-                productParameters.Offset, productParameters.Limit, sortExpression,
-                productParameters.OrderType);
+                productParametersDto.Offset, productParametersDto.Limit, sortExpression,
+                productParametersDto.OrderType);
 
-            var modelsList = _mapper.Map<List<ProductModel>>(products);
+            var modelsList = _mapper.Map<List<ProductDto>>(products);
 
             return modelsList;
         }
 
-        private async Task<ServiceResult<ProductModel>> HandleProductAsync(
-            Func<Product, Task<Product>> createUpdateAsync, InputProductModel model)
+        private async Task<ServiceResult<ProductDto>> HandleProductAsync(
+            Func<Product, Task<Product>> createUpdateAsync, InputProductDto dto)
         {
-            var getUrlsResult = await UploadProductImages(model);
+            var getUrlsResult = await UploadProductImages(dto);
             if (getUrlsResult.Result is not ServiceResultType.Success)
             {
                 return new(getUrlsResult.Result);
             }
 
             var product =
-                _customProductAggregator.AggregateProduct(model, getUrlsResult.Data.bgUrl, getUrlsResult.Data.logoUrl);
+                _customProductAggregator.AggregateProduct(dto, getUrlsResult.Data.bgUrl, getUrlsResult.Data.logoUrl);
 
             var updatedProduct = await createUpdateAsync(product);
 
             return new(getUrlsResult.Result,
-                _mapper.Map<ExtendedProductModel>(updatedProduct));
+                _mapper.Map<ExtendedProductDto>(updatedProduct));
         }
 
-        private async Task<ServiceResult<(string bgUrl, string logoUrl)>> UploadProductImages(InputProductModel model)
+        private async Task<ServiceResult<(string bgUrl, string logoUrl)>> UploadProductImages(InputProductDto dto)
         {
-            var backgroundFileUploadResult = await _cloudinaryService.Upload(model.Background);
-            var logoFileUploadResult = await _cloudinaryService.Upload(model.Logo);
+            var backgroundFileUploadResult = await _cloudinaryService.Upload(dto.Background);
+            var logoFileUploadResult = await _cloudinaryService.Upload(dto.Logo);
 
             if (backgroundFileUploadResult.Result is not ServiceResultType.Success)
             {

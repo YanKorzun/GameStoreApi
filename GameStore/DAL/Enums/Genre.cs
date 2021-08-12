@@ -5,7 +5,7 @@
         Fighting,
         Shooter,
         Race,
-        MOBA,
+        Moba,
         Slasher,
         Simulator,
         Survival,

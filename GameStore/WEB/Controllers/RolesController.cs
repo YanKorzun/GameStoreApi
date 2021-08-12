@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
-using GameStore.WEB.DTO;
-using GameStore.WEB.DTO.UserModels;
+using GameStore.WEB.DTO.Roles;
+using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ namespace GameStore.WEB.Controllers
         /// <summary>
         ///     Create role with provided model properties
         /// </summary>
-        /// <param name="roleModel">data transfer object for creating a new role in database</param>
+        /// <param name="roleDto">data transfer object for creating a new role in database</param>
         /// <response code="201">Created successfully</response>
         /// <response code="400">Something went wrong</response>
         /// <response code="401">User is not authenticated</response>
@@ -34,9 +34,9 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create([FromBody] RoleModel roleModel)
+        public async Task<IActionResult> Create([FromBody] RoleDto roleDto)
         {
-            var result = await _roleService.CreateAsync(roleModel);
+            var result = await _roleService.CreateAsync(roleDto);
             if (result.Result is not ServiceResultType.Success)
             {
                 return BadRequest();

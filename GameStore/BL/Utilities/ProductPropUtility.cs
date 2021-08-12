@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq.Expressions;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Parameters;
 
 namespace GameStore.BL.Utilities
 {
     public static class ProductPropUtility
     {
-        public static Expression<Func<Product, object>> GetOrderExpression(ProductParameters parameters)
+        public static Expression<Func<Product, object>> GetOrderExpression(ProductParametersDto parametersDto)
         {
-            return parameters.OrderBy switch
+            return parametersDto.OrderBy switch
             {
                 nameof(Product.Name) => o => o.Name,
                 nameof(Product.Genre) => o => o.Genre,
@@ -20,23 +20,23 @@ namespace GameStore.BL.Utilities
             };
         }
 
-        public static Expression<Func<Product, bool>> GetFilterExpression(ProductParameters parameters)
+        public static Expression<Func<Product, bool>> GetFilterExpression(ProductParametersDto parametersDto)
         {
             Expression<Func<Product, bool>> expression = null;
 
-            if (parameters.Genre is not null)
+            if (parametersDto.Genre is not null)
             {
-                expression = o => o.Genre == parameters.Genre;
+                expression = o => o.Genre == parametersDto.Genre;
             }
 
-            if (parameters.AgeRating is not null)
+            if (parametersDto.AgeRating is not null)
             {
-                expression = o => o.AgeRating == parameters.AgeRating;
+                expression = o => o.AgeRating == parametersDto.AgeRating;
             }
 
-            if (parameters.Genre is not null && parameters.AgeRating is not null)
+            if (parametersDto.Genre is not null && parametersDto.AgeRating is not null)
             {
-                expression = o => o.Genre == parameters.Genre && o.AgeRating == parameters.AgeRating;
+                expression = o => o.Genre == parametersDto.Genre && o.AgeRating == parametersDto.AgeRating;
             }
 
             return expression;

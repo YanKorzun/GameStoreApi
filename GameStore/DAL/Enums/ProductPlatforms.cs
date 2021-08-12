@@ -3,7 +3,7 @@
     public enum ProductPlatforms
     {
         Windows,
-        MacOS,
+        MacOs,
         Linux,
         Xbox,
         PlayStation

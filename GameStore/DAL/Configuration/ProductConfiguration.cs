@@ -11,7 +11,7 @@ namespace GameStore.DAL.Configuration
             builder
                 .HasQueryFilter(m => !m.IsDeleted);
             builder
-                .HasIndex(o => new {o.Name, o.Platform, o.DateCreated, o.TotalRating});
+                .HasIndex(o => new { o.Name, o.Platform, o.DateCreated, o.TotalRating });
         }
     }
 }
