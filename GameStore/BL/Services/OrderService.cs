@@ -113,7 +113,8 @@ namespace GameStore.BL.Services
             order.CreateOrderDate = DateTime.Now;
 
             var unexpectedOrders = await _orderRepository.GetOrdersAsync(o =>
-                o.ProductId == orderModel.ProductId && o.ApplicationUserId == orderModel.ApplicationUserId);
+                o.ProductId == orderModel.ProductId && o.ApplicationUserId == orderModel.ApplicationUserId &&
+                o.Status != OrderStatus.Completed);
             if (unexpectedOrders.Any())
             {
                 return new(ServiceResultType.InternalError,
