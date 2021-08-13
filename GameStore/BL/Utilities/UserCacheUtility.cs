@@ -25,13 +25,13 @@ namespace GameStore.BL.Utilities
             return new(ServiceResultType.NotFound);
         }
 
-        public void Set(int id, T entity) =>
+        public void SetEntity(int id, T entity) =>
             _memory.Set(id, entity, new MemoryCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             });
 
-        public ServiceResult Remove(int id)
+        public ServiceResult RemoveEntity(int id)
         {
             try
             {

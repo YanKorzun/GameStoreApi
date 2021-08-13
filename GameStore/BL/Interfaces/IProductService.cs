@@ -14,10 +14,10 @@ namespace GameStore.BL.Interfaces
 
         Task<ServiceResult<ProductDto>> UpdateProductAsync(ExtendedInputProductDto productDto);
 
-        Task<ProductDto> FindProductByIdAsync(int id);
+        Task<ExtendedProductDto> FindProductByIdAsync(int id);
 
-        Task<List<ProductDto>> GetProductsBySearchTermAsync(string term, int limit, int offset);
+        Task<List<ExtendedProductDto>> GetProductsBySearchTermAsync(string term, int limit, int offset);
 
-        Task<List<ProductDto>> GetPagedProductListAsync(ProductParametersDto productParametersDto);
+        Task<List<ExtendedProductDto>> GetPagedProductListAsync(ProductParametersDto productParametersDto);
     }
 }

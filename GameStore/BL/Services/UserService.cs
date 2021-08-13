@@ -131,7 +131,7 @@ namespace GameStore.BL.Services
         {
             var passwordUpdateResult = await _userRepository.UpdateUserPasswordAsync(user.Id, updateUserModel.Password);
 
-            _cacheService.Remove(user.Id);
+            _cacheService.RemoveEntity(user.Id);
 
             return passwordUpdateResult;
         }
@@ -143,7 +143,10 @@ namespace GameStore.BL.Services
 
             var profileUpdateResult = await _userRepository.UpdateUserAsync(newApplicationUser, userId);
 
-            _cacheService.Remove(userId);
+            if (profileUpdateResult.Result is ServiceResultType.Success)
+            {
+                _cacheService.SetEntity(profileUpdateResult.Data.Id, profileUpdateResult.Data);
+            }
 
             return profileUpdateResult;
         }

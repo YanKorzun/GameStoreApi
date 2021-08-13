@@ -42,21 +42,21 @@ namespace GameStore.BL.Services
             return result;
         }
 
-        public async Task<ProductDto> FindProductByIdAsync(int id)
+        public async Task<ExtendedProductDto> FindProductByIdAsync(int id)
         {
             var product = await _productRepository.FindProductByIdAsync(id);
 
-            return _mapper.Map<ProductDto>(product);
+            return _mapper.Map<ExtendedProductDto>(product);
         }
 
-        public async Task<List<ProductDto>> GetProductsBySearchTermAsync(string term, int limit, int offset)
+        public async Task<List<ExtendedProductDto>> GetProductsBySearchTermAsync(string term, int limit, int offset)
         {
             var products = await _productRepository.GetProductsBySearchTermAsync(term, limit, offset);
 
-            return _mapper.Map<List<ProductDto>>(products);
+            return _mapper.Map<List<ExtendedProductDto>>(products);
         }
 
-        public async Task<List<ProductDto>> GetPagedProductListAsync(ProductParametersDto productParametersDto)
+        public async Task<List<ExtendedProductDto>> GetPagedProductListAsync(ProductParametersDto productParametersDto)
         {
             var sortExpression = ProductPropUtility.GetOrderExpression(productParametersDto);
             var filterExpression = ProductPropUtility.GetFilterExpression(productParametersDto);
@@ -65,7 +65,7 @@ namespace GameStore.BL.Services
                 productParametersDto.Offset, productParametersDto.Limit, sortExpression,
                 productParametersDto.OrderType);
 
-            var modelsList = _mapper.Map<List<ProductDto>>(products);
+            var modelsList = _mapper.Map<List<ExtendedProductDto>>(products);
 
             return modelsList;
         }
