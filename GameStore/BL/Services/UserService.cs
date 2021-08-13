@@ -165,7 +165,7 @@ namespace GameStore.BL.Services
                 return new(ServiceResultType.NotFound);
             }
 
-            _cacheService.Set(id, userSearchResult.Data);
+            _cacheService.SetEntity(id, userSearchResult.Data);
 
             return userSearchResult;
         }
