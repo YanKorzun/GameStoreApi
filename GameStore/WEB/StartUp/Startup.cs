@@ -32,6 +32,7 @@ namespace GameStore.WEB.StartUp
             services.RegisterIdentity();
             services.RegisterAuthSettings(appSettings.Token);
             services.RegisterHttpContextExtensions();
+            services.RegisterCompression();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -42,6 +43,7 @@ namespace GameStore.WEB.StartUp
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            app.RegisterCompression();
             app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
             app.RegisterHealthChecks();
