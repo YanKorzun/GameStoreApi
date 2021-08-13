@@ -7,6 +7,6 @@ namespace GameStore.BL.Interfaces
 {
     public interface ICloudinaryService
     {
-        Task<ServiceResult<ImageUploadResult>> Upload(IFormFile file);
+        Task<ServiceResult<ImageUploadResult>> UploadAsync(IFormFile file);
     }
 }

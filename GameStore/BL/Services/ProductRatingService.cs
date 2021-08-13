@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using GameStore.BL.Interfaces;
 using GameStore.DAL.Entities;
@@ -10,22 +9,19 @@ namespace GameStore.BL.Services
 {
     public class ProductRatingService : IProductRatingService
     {
-        private readonly IClaimsUtility _claimsUtility;
         private readonly IProductRepository _productRepository;
         private readonly IProductRatingRepository _ratingRepository;
 
-        public ProductRatingService(IClaimsUtility claimsUtility, IProductRatingRepository ratingRepository,
+        public ProductRatingService(IProductRatingRepository ratingRepository,
             IProductRepository productRepository)
         {
-            _claimsUtility = claimsUtility;
             _ratingRepository = ratingRepository;
             _productRepository = productRepository;
         }
 
-        public async Task<ProductRating> CreateProductRatingAsync(ClaimsPrincipal contextUser, RatingDto ratingDto)
+        public async Task<ProductRating> CreateProductRatingAsync(int userId, RatingDto ratingDto)
         {
-            var getUserIdResult = _claimsUtility.GetUserIdFromClaims(contextUser);
-            var updatedRating = await _ratingRepository.CreateRatingAsync(new(getUserIdResult.Data,
+            var updatedRating = await _ratingRepository.CreateRatingAsync(new(userId,
                 ratingDto.ProductId,
                 ratingDto.Rating));
 

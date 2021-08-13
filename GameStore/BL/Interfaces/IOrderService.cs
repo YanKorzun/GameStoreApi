@@ -11,9 +11,9 @@ namespace GameStore.BL.Interfaces
 
         Task<ServiceResult<OutputOrderDto>> CreateOrderAsync(BasicOrderDto order);
 
-        Task DeleteOrders(ICollection<ExtendedOrderDto> orders);
+        Task DeleteOrdersAsync(ICollection<ExtendedOrderDto> orders);
 
-        Task<ServiceResult> CompleteOrders(int userId);
+        Task<ServiceResult> CompleteOrdersAsync(int userId);
 
         Task<OutputOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto);
     }

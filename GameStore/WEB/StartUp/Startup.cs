@@ -32,20 +32,22 @@ namespace GameStore.WEB.StartUp
             services.RegisterIdentity();
             services.RegisterAuthSettings(appSettings.Token);
             services.RegisterHttpContextExtensions();
+            services.RegisterCompression();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            app.RegisterCompression();
             app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
             app.RegisterHealthChecks();
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.RegisterExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
             app.UseRouting();

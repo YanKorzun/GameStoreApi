@@ -48,13 +48,13 @@ namespace GameStore.BL.Services
             return orderModels;
         }
 
-        public async Task DeleteOrders(ICollection<ExtendedOrderDto> orderModels)
+        public async Task DeleteOrdersAsync(ICollection<ExtendedOrderDto> orderModels)
         {
             var orders = orderModels.Select(_mapper.Map<Order>).ToList();
             await _orderRepository.SoftRangeRemoveAsync(orders);
         }
 
-        public async Task<ServiceResult> CompleteOrders(int userId)
+        public async Task<ServiceResult> CompleteOrdersAsync(int userId)
         {
             var orders = await _orderRepository.GetOrdersAsync(o => o.ApplicationUserId == userId);
 
@@ -79,7 +79,7 @@ namespace GameStore.BL.Services
 
                 await _orderRepository.UpdateItemsAsync(uncompleted);
 
-                await _libraryService.AddItemsToLibrary(addedGames);
+                await _libraryService.AddItemsToLibraryAsync(addedGames);
 
                 scope.Complete();
             }

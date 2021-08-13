@@ -15,7 +15,7 @@ namespace GameStore.BL.Services
             _productLibraryRepository = productLibraryRepository;
         }
 
-        public async Task AddItemsToLibrary(IEnumerable<ProductLibraries> items)
+        public async Task AddItemsToLibraryAsync(IEnumerable<ProductLibraries> items)
         {
             await _productLibraryRepository.CreateItemsAsync(items);
         }

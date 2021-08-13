@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Utilities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.Constants;
@@ -54,8 +55,8 @@ namespace GameStore.WEB.Controllers
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ExtendedProductDto>>> GetProductsByTerm(
-            [FromQuery][BindRequired] string term, int limit, int offset) =>
-            Ok(await _productService.GetProductsBySearchTermAsync(term, limit, offset));
+            [FromQuery] [BindRequired] string term, int limit, int offset) =>
+            await _productService.GetProductsBySearchTermAsync(term, limit, offset);
 
         /// <summary>
         ///     Get full information about product via its id
@@ -68,7 +69,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ExtendedProductDto>> GetProductById(int id) =>
-            Ok(await _productService.FindProductById(id));
+            await _productService.FindProductByIdAsync(id);
 
         /// <summary>
         ///     Create product with provided model properties
@@ -104,7 +105,13 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateRating([FromBody] RatingDto ratingDto)
         {
-            var result = await _productRatingService.CreateProductRatingAsync(User, ratingDto);
+            var userIdSearchResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdSearchResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdSearchResult.Result, ExceptionMessageConstants.MissingUser);
+            }
+
+            var result = await _productRatingService.CreateProductRatingAsync(userIdSearchResult.Data, ratingDto);
             return CreatedAtAction(nameof(CreateRating), result);
         }
 
@@ -168,7 +175,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductList([FromQuery] ProductParametersDto productParametersDto)
         {
-            var products = await _productService.GetPagedProductList(productParametersDto);
+            var products = await _productService.GetPagedProductListAsync(productParametersDto);
 
             return Ok(products);
         }
