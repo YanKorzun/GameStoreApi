@@ -20,6 +20,7 @@ namespace GameStore.DAL.Repositories
 
         public async Task<List<ProductPlatforms>> GetPopularPlatformsAsync(int platformCount) =>
             await Entity
+                .AsNoTracking()
                 .GroupBy(x => x.Platform)
                 .OrderByDescending(g => g.Count())
                 .Select(p => p.Key)
