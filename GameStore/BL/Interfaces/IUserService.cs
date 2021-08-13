@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Users;
@@ -17,10 +16,12 @@ namespace GameStore.BL.Interfaces
 
         Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserModel userModel);
 
-        Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(ClaimsPrincipal contextUser,
+        Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(int userId,
             UpdateUserModel updateUser);
 
         Task SendConfirmationMessageAsync(string actionName, string controllerName,
             (ApplicationUser appUser, string token) data, string scheme);
+
+        Task<ServiceResult<ApplicationUser>> GetUserAsync(int id);
     }
 }

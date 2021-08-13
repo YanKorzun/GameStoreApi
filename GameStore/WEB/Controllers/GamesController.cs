@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Utilities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.Constants;
@@ -104,7 +105,13 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateRating([FromBody] RatingDto ratingDto)
         {
-            var result = await _productRatingService.CreateProductRatingAsync(User, ratingDto);
+            var userIdSearchResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdSearchResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdSearchResult.Result, ExceptionMessageConstants.MissingUser);
+            }
+
+            var result = await _productRatingService.CreateProductRatingAsync(userIdSearchResult.Data, ratingDto);
             return CreatedAtAction(nameof(CreateRating), result);
         }
 

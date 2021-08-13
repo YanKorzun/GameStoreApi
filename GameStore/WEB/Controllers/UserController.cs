@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.WEB.Constants;
 using GameStore.WEB.DTO.Users;
@@ -18,14 +19,12 @@ namespace GameStore.WEB.Controllers
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private readonly IClaimsUtility _claimsUtility;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService, IClaimsUtility claimsUtility, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
-            _claimsUtility = claimsUtility;
             _mapper = mapper;
         }
 
@@ -43,7 +42,14 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateUser(UpdateUserModel updateUserModel)
         {
-            var profileUpdateResult = await _userService.UpdateUserProfileAsync(User, updateUserModel);
+            var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
+            }
+
+
+            var profileUpdateResult = await _userService.UpdateUserProfileAsync(userIdResult.Data, updateUserModel);
             if (profileUpdateResult.Result is not ServiceResultType.Success)
             {
                 return BadRequest();
@@ -66,7 +72,13 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdatePassword([FromBody] JsonPatchDocument<BasicUserModel> patch)
         {
-            var user = await _claimsUtility.GetUserFromClaimsAsync(User);
+            var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
+            }
+
+            var user = await _userService.GetUserAsync(userIdResult.Data);
             if (user.Result is not ServiceResultType.Success)
             {
                 return BadRequest();
@@ -101,7 +113,14 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ApplicationUser>> GetInfo()
         {
-            var searchResult = await _claimsUtility.GetUserFromClaimsAsync(User);
+            var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
+            }
+
+            var searchResult = await _userService.GetUserAsync(userIdResult.Data);
+
             if (searchResult.Result is not ServiceResultType.Success)
             {
                 return BadRequest();

@@ -1,23 +1,12 @@
 ﻿using System.Security.Claims;
-using System.Threading.Tasks;
 using GameStore.BL.Enums;
-using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
-using GameStore.DAL.Entities;
-using GameStore.DAL.Interfaces;
 
 namespace GameStore.BL.Utilities
 {
-    public class ClaimsUtility : IClaimsUtility
+    public static class ClaimsUtility
     {
-        private readonly IUserRepository _userRepository;
-
-        public ClaimsUtility(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        public ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal contextUser)
+        public static ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal contextUser)
         {
             var id = contextUser.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -28,20 +17,6 @@ namespace GameStore.BL.Utilities
             }
 
             return new(ServiceResultType.Success, number);
-        }
-
-        public async Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal contextUser)
-        {
-            var parseIdResult = GetUserIdFromClaims(contextUser);
-            if (parseIdResult.Result is not ServiceResultType.Success)
-            {
-                return new(parseIdResult.Result);
-            }
-
-            var userId = parseIdResult.Data;
-
-            var userSearchResult = await _userRepository.FindUserByIdAsync(userId);
-            return userSearchResult;
         }
     }
 }

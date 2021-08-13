@@ -39,6 +39,7 @@ namespace GameStore.WEB.StartUp
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using AutoMapper;
@@ -21,7 +20,7 @@ namespace GameStore.BL.Services
     public class UserService : IUserService
     {
         public const string AccountConfirmation = "Account confirmation";
-        private readonly IClaimsUtility _claimsUtility;
+        private readonly ICacheService<ApplicationUser> _cacheService;
         private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
@@ -32,16 +31,16 @@ namespace GameStore.BL.Services
 
         public UserService(UserManager<ApplicationUser> userManager, IUserRepository userRepository,
             SignInManager<ApplicationUser> signInManager, IMapper mapper, IRoleService roleService,
-            IUrlHelper urlHelper, IEmailSender emailSender, IClaimsUtility claimsUtility)
+            IUrlHelper urlHelper, IEmailSender emailSender, ICacheService<ApplicationUser> cacheService)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
+            _cacheService = cacheService;
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _roleService = roleService;
             _urlHelper = urlHelper;
-            _claimsUtility = claimsUtility;
         }
 
         public async Task<ServiceResult<string>> SignInAsync(BasicUserModel basicUserModel, AppSettings appSettings)
@@ -111,7 +110,7 @@ namespace GameStore.BL.Services
             (ApplicationUser appUser, string token) data, string scheme)
         {
             var confirmationLink =
-                _urlHelper.Action(actionName, controllerName, new {data.appUser.Id, data.token}, scheme);
+                _urlHelper.Action(actionName, controllerName, new { data.appUser.Id, data.token }, scheme);
 
             await _emailSender.SendEmailAsync(data.appUser.Email, AccountConfirmation,
                 $"<a href='{confirmationLink}'>confirm</a>");
@@ -132,23 +131,40 @@ namespace GameStore.BL.Services
         {
             var passwordUpdateResult = await _userRepository.UpdateUserPasswordAsync(user.Id, updateUserModel.Password);
 
+            _cacheService.Remove(user.Id);
+
             return passwordUpdateResult;
         }
 
-        public async Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(ClaimsPrincipal contextUser,
+        public async Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(int userId,
             UpdateUserModel updateUser)
         {
-            var getUserIdResult = _claimsUtility.GetUserIdFromClaims(contextUser);
-            if (getUserIdResult.Result is not ServiceResultType.Success)
-            {
-                return new(getUserIdResult.Result);
-            }
-
             var newApplicationUser = _mapper.Map<ApplicationUser>(updateUser);
 
-            var profileUpdateResult = await _userRepository.UpdateUserAsync(newApplicationUser, getUserIdResult.Data);
+            var profileUpdateResult = await _userRepository.UpdateUserAsync(newApplicationUser, userId);
+
+            _cacheService.Remove(userId);
 
             return profileUpdateResult;
+        }
+
+        public async Task<ServiceResult<ApplicationUser>> GetUserAsync(int id)
+        {
+            var userSearchResult = _cacheService.GetEntity(id);
+            if (userSearchResult.Result is ServiceResultType.Success)
+            {
+                return userSearchResult;
+            }
+
+            userSearchResult = await _userRepository.FindUserByIdAsync(id);
+            if (userSearchResult.Result is not ServiceResultType.Success)
+            {
+                return new(ServiceResultType.NotFound);
+            }
+
+            _cacheService.Set(id, userSearchResult.Data);
+
+            return userSearchResult;
         }
     }
 }

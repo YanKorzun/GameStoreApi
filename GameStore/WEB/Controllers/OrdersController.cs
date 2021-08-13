@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Utilities;
 using GameStore.WEB.DTO.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,13 +16,11 @@ namespace GameStore.WEB.Controllers
     [Authorize]
     public class OrdersController : ControllerBase
     {
-        private readonly IClaimsUtility _claimsUtility;
         private readonly IOrderService _orderService;
 
-        public OrdersController(IOrderService orderService, IClaimsUtility claimsUtility)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
-            _claimsUtility = claimsUtility;
         }
 
         /// <summary>
@@ -38,9 +37,13 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetOrderList([FromQuery] int[] id = null)
         {
-            var userId = _claimsUtility.GetUserIdFromClaims(User);
+            var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
+            }
 
-            var orders = await _orderService.GetOrdersAsync(userId.Data, id);
+            var orders = await _orderService.GetOrdersAsync(userIdResult.Data, id);
             if (!orders.Any())
             {
                 return NotFound();
@@ -118,11 +121,15 @@ namespace GameStore.WEB.Controllers
         [HttpPost("buy")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<OutputOrderDto>> OrderPayment()
+        public async Task<IActionResult> OrderPayment()
         {
-            var userId = _claimsUtility.GetUserIdFromClaims(User).Data;
+            var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
+            if (userIdResult.Result is not ServiceResultType.Success)
+            {
+                return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
+            }
 
-            var result = await _orderService.CompleteOrdersAsync(userId);
+            var result = await _orderService.CompleteOrdersAsync(userIdResult.Data);
             if (result.Result is not ServiceResultType.Success)
             {
                 return StatusCode((int)result.Result, result.ErrorMessage);

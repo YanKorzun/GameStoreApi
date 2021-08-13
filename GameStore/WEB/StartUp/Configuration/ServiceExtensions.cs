@@ -23,9 +23,9 @@ namespace GameStore.WEB.StartUp.Configuration
             services.AddTransient<IProductLibraryService, ProductLibraryService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient(typeof(ICacheService<>), typeof(CacheService<>));
             services.AddTransient<IProductRatingService, ProductRatingService>();
             //Utilities
-            services.AddTransient<IClaimsUtility, ClaimsUtility>();
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             //Aggregators
             services.AddTransient<ICustomProductAggregator, ProductAggregator>();
