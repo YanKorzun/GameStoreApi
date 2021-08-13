@@ -54,7 +54,7 @@ namespace GameStore.WEB.Controllers
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ExtendedProductDto>>> GetProductsByTerm(
-            [FromQuery][BindRequired] string term, int limit, int offset) =>
+            [FromQuery] [BindRequired] string term, int limit, int offset) =>
             Ok(await _productService.GetProductsBySearchTermAsync(term, limit, offset));
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ExtendedProductDto>> GetProductById(int id) =>
-            Ok(await _productService.FindProductById(id));
+            Ok(await _productService.FindProductByIdAsync(id));
 
         /// <summary>
         ///     Create product with provided model properties
@@ -168,7 +168,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductList([FromQuery] ProductParametersDto productParametersDto)
         {
-            var products = await _productService.GetPagedProductList(productParametersDto);
+            var products = await _productService.GetPagedProductListAsync(productParametersDto);
 
             return Ok(products);
         }

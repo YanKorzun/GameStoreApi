@@ -42,7 +42,7 @@ namespace GameStore.BL.Services
             return result;
         }
 
-        public async Task<ProductDto> FindProductById(int id)
+        public async Task<ProductDto> FindProductByIdAsync(int id)
         {
             var product = await _productRepository.FindProductByIdAsync(id);
 
@@ -56,7 +56,7 @@ namespace GameStore.BL.Services
             return _mapper.Map<List<ProductDto>>(products);
         }
 
-        public async Task<List<ProductDto>> GetPagedProductList(ProductParametersDto productParametersDto)
+        public async Task<List<ProductDto>> GetPagedProductListAsync(ProductParametersDto productParametersDto)
         {
             var sortExpression = ProductPropUtility.GetOrderExpression(productParametersDto);
             var filterExpression = ProductPropUtility.GetFilterExpression(productParametersDto);
@@ -90,8 +90,8 @@ namespace GameStore.BL.Services
 
         private async Task<ServiceResult<(string bgUrl, string logoUrl)>> UploadProductImages(InputProductDto dto)
         {
-            var backgroundFileUploadResult = await _cloudinaryService.Upload(dto.Background);
-            var logoFileUploadResult = await _cloudinaryService.Upload(dto.Logo);
+            var backgroundFileUploadResult = await _cloudinaryService.UploadAsync(dto.Background);
+            var logoFileUploadResult = await _cloudinaryService.UploadAsync(dto.Logo);
 
             if (backgroundFileUploadResult.Result is not ServiceResultType.Success)
             {

@@ -6,6 +6,6 @@ namespace GameStore.BL.Interfaces
 {
     public interface IProductLibraryService
     {
-        Task AddItemsToLibrary(IEnumerable<ProductLibraries> items);
+        Task AddItemsToLibraryAsync(IEnumerable<ProductLibraries> items);
     }
 }

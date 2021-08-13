@@ -45,7 +45,6 @@ namespace GameStore.WEB.StartUp
             app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
             app.RegisterHealthChecks();
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.RegisterExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
             app.UseRouting();

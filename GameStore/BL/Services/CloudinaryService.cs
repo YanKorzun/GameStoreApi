@@ -27,7 +27,7 @@ namespace GameStore.BL.Services
             _cloudinary = new(account);
         }
 
-        public async Task<ServiceResult<ImageUploadResult>> Upload(IFormFile file)
+        public async Task<ServiceResult<ImageUploadResult>> UploadAsync(IFormFile file)
         {
             if (!CheckFileExtension(file))
             {

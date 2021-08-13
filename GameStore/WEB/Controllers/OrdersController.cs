@@ -103,7 +103,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOrder([FromBody] ICollection<ExtendedOrderDto> orders)
         {
-            await _orderService.DeleteOrders(orders);
+            await _orderService.DeleteOrdersAsync(orders);
 
             return NoContent();
         }
@@ -122,7 +122,7 @@ namespace GameStore.WEB.Controllers
         {
             var userId = _claimsUtility.GetUserIdFromClaims(User).Data;
 
-            var result = await _orderService.CompleteOrders(userId);
+            var result = await _orderService.CompleteOrdersAsync(userId);
             if (result.Result is not ServiceResultType.Success)
             {
                 return StatusCode((int)result.Result, result.ErrorMessage);
