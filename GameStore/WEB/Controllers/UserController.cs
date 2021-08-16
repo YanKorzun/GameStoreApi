@@ -120,10 +120,9 @@ namespace GameStore.WEB.Controllers
             }
 
             var searchResult = await _userService.GetUserAsync(userIdResult.Data);
-
             if (searchResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return StatusCode((int)searchResult.Result, searchResult.ErrorMessage);
             }
 
             return Ok(searchResult.Data);

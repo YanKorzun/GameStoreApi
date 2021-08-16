@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.ResultWrappers;
 
@@ -13,7 +14,7 @@ namespace GameStore.BL.Utilities
             var result = int.TryParse(id, out var number);
             if (!result)
             {
-                return new(ServiceResultType.InvalidData);
+                return new(ServiceResultType.InvalidData, ExceptionMessageConstants.InvalidClaimsId);
             }
 
             return new(ServiceResultType.Success, number);

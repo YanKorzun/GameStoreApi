@@ -162,7 +162,7 @@ namespace GameStore.BL.Services
             userSearchResult = await _userRepository.FindUserByIdAsync(id);
             if (userSearchResult.Result is not ServiceResultType.Success)
             {
-                return new(ServiceResultType.NotFound);
+                return new(ServiceResultType.NotFound, ExceptionMessageConstants.MissingUser);
             }
 
             _cacheService.SetEntity(id, userSearchResult.Data);
