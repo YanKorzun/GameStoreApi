@@ -86,7 +86,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<OutputOrderDto>> UpdateOrder([FromBody] ExtendedOrderDto order)
         {
-            var result = await _orderService.UpdateItemsAsync(order);
+            var result = await _orderService.UpdateItemAsync(order);
 
             return Ok(result);
         }

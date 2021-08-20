@@ -11,6 +11,6 @@ namespace GameStore.BL.Interfaces
 
         Task<ServiceResult> DeleteAsync(string id);
 
-        Task<ServiceResult> EditAsync(BasicUserRoleModel basicUserRoleModel);
+        Task<ServiceResult> EditAsync(BasicUserRoleDto basicUserRoleModel);
     }
 }

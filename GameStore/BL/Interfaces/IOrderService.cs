@@ -15,6 +15,6 @@ namespace GameStore.BL.Interfaces
 
         Task<ServiceResult> CompleteOrdersAsync(int userId);
 
-        Task<OutputOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto);
+        Task<OutputOrderDto> UpdateItemAsync(ExtendedOrderDto orderDto);
     }
 }

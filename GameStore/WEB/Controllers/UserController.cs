@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
 using GameStore.BL.Utilities;
@@ -11,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace GameStore.WEB.Controllers
 {
@@ -40,7 +40,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdateUser(UpdateUserModel updateUserModel)
+        public async Task<IActionResult> UpdateUser(UpdateUserDto updateUserModel)
         {
             var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
             if (userIdResult.Result is not ServiceResultType.Success)
@@ -52,7 +52,8 @@ namespace GameStore.WEB.Controllers
             var profileUpdateResult = await _userService.UpdateUserProfileAsync(userIdResult.Data, updateUserModel);
             if (profileUpdateResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+
+                return StatusCode((int)profileUpdateResult.Result);
             }
 
             return NoContent();
@@ -70,7 +71,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdatePassword([FromBody] JsonPatchDocument<BasicUserModel> patch)
+        public async Task<IActionResult> UpdatePassword([FromBody] JsonPatchDocument<BasicUserDto> patch)
         {
             var userIdResult = ClaimsUtility.GetUserIdFromClaims(User);
             if (userIdResult.Result is not ServiceResultType.Success)
@@ -78,23 +79,23 @@ namespace GameStore.WEB.Controllers
                 return StatusCode((int)userIdResult.Result, userIdResult.ErrorMessage);
             }
 
-            var user = await _userService.GetUserAsync(userIdResult.Data);
-            if (user.Result is not ServiceResultType.Success)
+            var userSearchResult = await _userService.GetUserAsync(userIdResult.Data);
+            if (userSearchResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return StatusCode((int)userSearchResult.Result, userSearchResult.ErrorMessage);
             }
 
-            var userModel = _mapper.Map<BasicUserModel>(user.Data);
+            var userModel = _mapper.Map<BasicUserDto>(userSearchResult.Data);
             patch.ApplyTo(userModel);
             if (!Regex.IsMatch(userModel.Password, RegexConstants.PasswordRegex))
             {
                 return BadRequest();
             }
 
-            var passwordUpdateResult = await _userService.UpdateUserPasswordAsync(user.Data, userModel);
+            var passwordUpdateResult = await _userService.UpdateUserPasswordAsync(userSearchResult.Data, userModel);
             if (passwordUpdateResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return StatusCode((int)passwordUpdateResult.Result);
             }
 
             return NoContent();
@@ -120,10 +121,9 @@ namespace GameStore.WEB.Controllers
             }
 
             var searchResult = await _userService.GetUserAsync(userIdResult.Data);
-
             if (searchResult.Result is not ServiceResultType.Success)
             {
-                return BadRequest();
+                return StatusCode((int)searchResult.Result, searchResult.ErrorMessage);
             }
 
             return Ok(searchResult.Data);

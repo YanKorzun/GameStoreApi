@@ -4,7 +4,7 @@ using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace GameStore.BL.Utilities
+namespace GameStore.BL.Services
 {
     public class CacheService<T> : ICacheService<T>
     {
@@ -40,7 +40,7 @@ namespace GameStore.BL.Utilities
             }
             catch (Exception)
             {
-                return new(ServiceResultType.NotFound);
+                return new(ServiceResultType.InternalError);
             }
         }
     }

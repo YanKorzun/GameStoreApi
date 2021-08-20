@@ -1,8 +1,8 @@
 ﻿namespace GameStore.WEB.DTO.Users
 {
-    public class BasicUserRoleModel : BasicUserModel
+    public class BasicUserRoleDto : BasicUserDto
     {
-        public BasicUserRoleModel(string role, string email)
+        public BasicUserRoleDto(string role, string email)
         {
             Role = role;
             Email = email;

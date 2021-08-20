@@ -4,7 +4,7 @@ using GameStore.WEB.Constants;
 
 namespace GameStore.WEB.DTO.Users
 {
-    public class BasicUserModel : UpdateUserModel
+    public class BasicUserDto : UpdateUserDto
     {
         /// <summary>
         /// Password of the user

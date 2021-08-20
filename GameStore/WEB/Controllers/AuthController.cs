@@ -31,7 +31,7 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-up")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> SignUp([FromBody] BasicUserModel userModel)
+        public async Task<ActionResult> SignUp([FromBody] BasicUserDto userModel)
         {
             var signUpResult = await _userService.SignUpAsync(userModel);
 
@@ -56,7 +56,7 @@ namespace GameStore.WEB.Controllers
         [HttpPost("sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<string>> SignIn([FromBody] BasicUserModel userModel)
+        public async Task<ActionResult<string>> SignIn([FromBody] BasicUserDto userModel)
         {
             var signInResult = await _userService.SignInAsync(userModel, _appSettings);
 
