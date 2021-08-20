@@ -8,16 +8,16 @@ namespace GameStore.BL.Interfaces
 {
     public interface IUserService
     {
-        Task<ServiceResult<string>> SignInAsync(BasicUserModel basicUserModel, AppSettings appSettings);
+        Task<ServiceResult<string>> SignInAsync(BasicUserDto basicUserModel, AppSettings appSettings);
 
-        Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(BasicUserModel basicUserModel);
+        Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(BasicUserDto basicUserModel);
 
         Task<ServiceResult> ConfirmAsync(string id, string confirmToken);
 
-        Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserModel userModel);
+        Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserDto userModel);
 
         Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(int userId,
-            UpdateUserModel updateUser);
+            UpdateUserDto updateUser);
 
         Task SendConfirmationMessageAsync(string actionName, string controllerName,
             (ApplicationUser appUser, string token) data, string scheme);

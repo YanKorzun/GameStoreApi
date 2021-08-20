@@ -43,7 +43,7 @@ namespace GameStore.BL.Services
             _urlHelper = urlHelper;
         }
 
-        public async Task<ServiceResult<string>> SignInAsync(BasicUserModel basicUserModel, AppSettings appSettings)
+        public async Task<ServiceResult<string>> SignInAsync(BasicUserDto basicUserModel, AppSettings appSettings)
         {
             var user = await _userManager.FindByEmailAsync(basicUserModel.Email);
             if (user is null)
@@ -77,7 +77,7 @@ namespace GameStore.BL.Services
         }
 
         public async Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(
-            BasicUserModel basicUserModel)
+            BasicUserDto basicUserModel)
         {
             var previousUser = await _userManager.FindByEmailAsync(basicUserModel.Email);
             if (previousUser is not null)
@@ -99,7 +99,7 @@ namespace GameStore.BL.Services
             var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             var confirmTokenEncoded = HttpUtility.UrlEncode(confirmToken);
 
-            await _roleService.EditAsync(new(UserRoleConstants.User, identityUser.Email));
+            await _roleService.EditAsync(new(UserRoleConstants.User, user.Email));
             await _signInManager.SignInAsync(identityUser, false);
 
             return new(ServiceResultType.Success,
@@ -127,7 +127,7 @@ namespace GameStore.BL.Services
                 : new ServiceResult(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserModel updateUserModel)
+        public async Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserDto updateUserModel)
         {
             var passwordUpdateResult = await _userRepository.UpdateUserPasswordAsync(user.Id, updateUserModel.Password);
 
@@ -137,7 +137,7 @@ namespace GameStore.BL.Services
         }
 
         public async Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(int userId,
-            UpdateUserModel updateUser)
+            UpdateUserDto updateUser)
         {
             var newApplicationUser = _mapper.Map<ApplicationUser>(updateUser);
 

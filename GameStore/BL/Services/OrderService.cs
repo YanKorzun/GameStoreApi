@@ -91,7 +91,7 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<OutputOrderDto> UpdateItemsAsync(ExtendedOrderDto orderDto)
+        public async Task<OutputOrderDto> UpdateItemAsync(ExtendedOrderDto orderDto)
         {
             var order = _mapper.Map<Order>(orderDto);
             order.UpdateOrderDate = DateTime.Now;

@@ -83,7 +83,7 @@ namespace GameStore.WEB.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Edit([FromBody] BasicUserRoleModel basicUserRoleModel)
+        public async Task<IActionResult> Edit([FromBody] BasicUserRoleDto basicUserRoleModel)
         {
             await _roleService.EditAsync(basicUserRoleModel);
 

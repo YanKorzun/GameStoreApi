@@ -4,7 +4,7 @@ using GameStore.WEB.Constants;
 
 namespace GameStore.WEB.DTO.Users
 {
-    public class UpdateUserModel
+    public class UpdateUserDto
     {
         /// <summary>
         /// User's email

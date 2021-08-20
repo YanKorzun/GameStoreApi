@@ -54,7 +54,7 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> EditAsync(BasicUserRoleModel basicUserRoleModel)
+        public async Task<ServiceResult> EditAsync(BasicUserRoleDto basicUserRoleModel)
         {
             var user = await _userManager.FindByEmailAsync(basicUserRoleModel.Email);
             if (user is null)

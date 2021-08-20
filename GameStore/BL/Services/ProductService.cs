@@ -76,7 +76,7 @@ namespace GameStore.BL.Services
             var getUrlsResult = await UploadProductImages(dto);
             if (getUrlsResult.Result is not ServiceResultType.Success)
             {
-                return new(getUrlsResult.Result);
+                return new(getUrlsResult.Result, getUrlsResult.ErrorMessage);
             }
 
             var product =
