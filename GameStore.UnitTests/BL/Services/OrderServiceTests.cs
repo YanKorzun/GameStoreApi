@@ -3,6 +3,7 @@ using AutoMapper;
 using FakeItEasy;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Enums;
@@ -24,20 +25,19 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var orders = new List<Order>() { fixture.Create<Order>() };
+            var orders = new List<Order> { fixture.Create<Order>() };
             var userId = fixture.Create<int>();
 
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
-
 
             //Act
             var result = await orderService.GetOrdersAsync(userId);
@@ -47,7 +47,8 @@ namespace GameStore.UnitTests.BL.Services
 
             Assert.IsType<List<OutputOrderDto>>(result);
 
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -55,21 +56,20 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var orders = new List<Order>() { fixture.Create<Order>() };
+            var orders = new List<Order> { fixture.Create<Order>() };
             var userId = fixture.Create<int>();
             var ordersId = fixture.Create<int[]>();
 
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
-
 
             //Act
             var result = await orderService.GetOrdersAsync(userId, ordersId);
@@ -79,29 +79,26 @@ namespace GameStore.UnitTests.BL.Services
 
             Assert.IsType<List<OutputOrderDto>>(result);
 
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
         }
 
 
         [Fact]
-        public async Task ShouldBeCalledOneTimeInDeleteOrderAsync()
+        public async Task ShouldPerformSoftRemove()
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var orders = new List<ExtendedOrderDto>() { fixture.Create<ExtendedOrderDto>() };
-            var userId = fixture.Create<int>();
-
-            A.CallTo(() => orderRepository.SoftRangeRemoveAsync(A<ICollection<Order>>._));
-
+            var orders = new List<ExtendedOrderDto> { fixture.Create<ExtendedOrderDto>() };
 
             //Act
             await orderService.DeleteOrdersAsync(orders);
@@ -111,39 +108,35 @@ namespace GameStore.UnitTests.BL.Services
         }
 
 
-
-
-
         [Fact]
         public async Task ShouldCompleteAllOrders()
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-
             var userId = fixture.Create<int>();
-            var orders = new List<Order>() { fixture.Build<Order>().With(o => o.ApplicationUserId, userId).Create() };
+            var orders = new List<Order> { fixture.Build<Order>().With(o => o.ApplicationUserId, userId).Create() };
 
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
             A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).Returns(orders);
-
 
             //Act
             var result = await orderService.CompleteOrdersAsync(userId);
 
             //Assert
-
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => libraryService.AddItemsToLibraryAsync(A<List<ProductLibraries>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => libraryService.AddItemsToLibraryAsync(A<List<ProductLibraries>>._))
+                .MustHaveHappenedOnceExactly();
             Assert.Equal(ServiceResultType.Success, result.Result);
         }
 
@@ -151,34 +144,32 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldThrowsErrorInTransactionFromCompleteOrdersAsync()
         {
             //Arrange
-            const string exceptionstring = "Transaction failed";
+            const string exceptionMessage = "Transaction failed";
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-
             var userId = fixture.Create<int>();
-            var orders = new List<Order>() { fixture.Build<Order>().With(o => o.ApplicationUserId, userId).Create() };
-            var excpectedException = new Exception(exceptionstring);
-
+            var orders = new List<Order> { fixture.Build<Order>().With(o => o.ApplicationUserId, userId).Create() };
+            var expectedException = new Exception(exceptionMessage);
 
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
-            A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).Throws(excpectedException);
-
+            A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).Throws(expectedException);
 
             //Act
             var result = await orderService.CompleteOrdersAsync(userId);
 
             //Assert
-            Assert.Equal(exceptionstring, result.ErrorMessage);
+            Assert.Equal(exceptionMessage, result.ErrorMessage);
 
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => libraryService.AddItemsToLibraryAsync(A<List<ProductLibraries>>._)).MustNotHaveHappened();
         }
@@ -188,22 +179,23 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-
             var userId = fixture.Create<int>();
-            var orders = new List<Order>() { fixture.Build<Order>().With(o => o.ApplicationUserId, userId).With(o => o.Status, OrderStatus.Completed).Create() };
-
+            var orders = new List<Order>
+            {
+                fixture.Build<Order>().With(o => o.ApplicationUserId, userId).With(o => o.Status, OrderStatus.Completed)
+                    .Create()
+            };
 
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
-
 
             //Act
             var result = await orderService.CompleteOrdersAsync(userId);
@@ -211,7 +203,8 @@ namespace GameStore.UnitTests.BL.Services
             //Assert
             Assert.Equal(ServiceResultType.InternalError, result.Result);
 
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => orderRepository.UpdateItemsAsync(A<List<Order>>._)).MustNotHaveHappened();
             A.CallTo(() => libraryService.AddItemsToLibraryAsync(A<List<ProductLibraries>>._)).MustNotHaveHappened();
         }
@@ -221,18 +214,17 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
             var extendedOrder = fixture.Create<ExtendedOrderDto>();
-            var orders = JsonConvert.DeserializeObject<List<Order>>(JsonConvert.SerializeObject(new List<ExtendedOrderDto>() { extendedOrder }));
-
+            var orders = new List<Order> { mapper.Map<Order>(extendedOrder) };
             A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).Returns(orders);
 
             //Act
@@ -241,10 +233,11 @@ namespace GameStore.UnitTests.BL.Services
             //Assert
             Assert.NotNull(result);
 
-            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => orderRepository.UpdateItemAsync(A<Order>._, A<Expression<Func<Order, object>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.GetOrdersAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.UpdateItemAsync(A<Order>._, A<Expression<Func<Order, object>>>._))
+                .MustHaveHappenedOnceExactly();
         }
-
 
 
         [Fact]
@@ -252,18 +245,19 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
 
             var basicOrder = fixture.Create<BasicOrderDto>();
 
-            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._)).Returns(Task.FromResult<Order>(null));
+            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._))
+                .Returns(Task.FromResult<Order>(null));
 
             //Act
             var result = await orderService.CreateOrderAsync(basicOrder);
@@ -271,7 +265,8 @@ namespace GameStore.UnitTests.BL.Services
             //Assert
             Assert.Equal(ServiceResultType.Success, result.Result);
 
-            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => orderRepository.CreateItemAsync(A<Order>._)).MustHaveHappenedOnceExactly();
         }
 
@@ -280,11 +275,11 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -293,7 +288,8 @@ namespace GameStore.UnitTests.BL.Services
 
             var order = fixture.Create<Order>();
 
-            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._)).Returns(Task.FromResult(order));
+            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._))
+                .Returns(Task.FromResult(order));
 
             //Act
             var result = await orderService.CreateOrderAsync(basicOrder);
@@ -301,7 +297,8 @@ namespace GameStore.UnitTests.BL.Services
             //Assert
             Assert.Equal(ServiceResultType.InternalError, result.Result);
 
-            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => orderRepository.SearchForSingleItemAsync(A<Expression<Func<Order, bool>>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => orderRepository.CreateItemAsync(A<Order>._)).MustNotHaveHappened();
         }
     }

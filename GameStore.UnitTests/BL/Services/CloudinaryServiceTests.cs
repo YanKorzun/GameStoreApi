@@ -1,33 +1,24 @@
-﻿using AutoFixture;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using FakeItEasy;
+﻿using System.IO;
+using System.Threading.Tasks;
+using AutoFixture;
 using GameStore.BL.Enums;
 using GameStore.BL.Services;
 using GameStore.WEB.Settings;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Services
 {
     public class CloudinaryServiceTests
     {
-
         [Fact]
         public async Task ShouldReturnUploadResultFromUploadAsync()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
-                Behaviors = { new NullRecursionBehavior()}
+                Behaviors = { new NullRecursionBehavior() }
             };
-
 
             var settings = fixture.Create<AppSettings>();
             var cloudinaryService = new CloudinaryService(settings);
@@ -36,11 +27,11 @@ namespace GameStore.UnitTests.BL.Services
             var stream = new MemoryStream();
             var writer = new StreamWriter(stream);
 
-            writer.Write(filename);
-            writer.Flush();
-            stream.Position = 0;
+            await writer.WriteAsync(filename);
+            await writer.FlushAsync();
+            stream.Position = default;
 
-            var file = new FormFile(stream, 0, 0, filename, filename + ".jpg");
+            var file = new FormFile(stream, default, default, filename, filename + ".jpg");
 
             //Act
             var result = await cloudinaryService.UploadAsync(file);
@@ -53,24 +44,23 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldReturnInternalErrorOnWrongExtensionFromUploadAsync()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
-
 
             var settings = fixture.Create<AppSettings>();
             var cloudinaryService = new CloudinaryService(settings);
 
             var filename = fixture.Create<string>();
-            var stream = new MemoryStream();
+            var stream = new MemoryStream(); 
             var writer = new StreamWriter(stream);
 
-            writer.Write(filename);
-            writer.Flush();
+            await writer.WriteAsync(filename);
+            await writer.FlushAsync();
             stream.Position = 0;
 
-            var file = new FormFile(stream, 0, 0, filename, filename + ".");
+            var file = new FormFile(stream, default, default, filename, filename + ".");
 
             //Act
             var result = await cloudinaryService.UploadAsync(file);

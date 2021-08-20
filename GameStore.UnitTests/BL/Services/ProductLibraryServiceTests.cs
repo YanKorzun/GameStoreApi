@@ -1,19 +1,15 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using FakeItEasy;
 using GameStore.BL.Services;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Services
 {
     public class ProductLibraryServiceTests
     {
-
         [Fact]
         public async Task ShouldBeCalledOnce()
         {
@@ -22,15 +18,14 @@ namespace GameStore.UnitTests.BL.Services
 
             var libService = new ProductLibraryService(libraryRepository);
 
-            var library = new List<ProductLibraries> { new ProductLibraries(1, 2) };
-
-            A.CallTo(() => libraryRepository.CreateItemsAsync(A<IEnumerable<ProductLibraries>>._));
+            var library = new List<ProductLibraries> { new(1, 2) };
 
             //Act
             await libService.AddItemsToLibraryAsync(library);
 
             //Assert
-            A.CallTo(() => libraryRepository.CreateItemsAsync(A<IEnumerable<ProductLibraries>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => libraryRepository.CreateItemsAsync(A<IEnumerable<ProductLibraries>>._))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -8,6 +7,7 @@ using FakeItEasy;
 using GameStore.BL.Constants;
 using GameStore.BL.Enums;
 using GameStore.BL.Interfaces;
+using GameStore.BL.Mappers;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Users;
@@ -22,7 +22,6 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 {
     public class UserControllerTests
     {
-       
         [Fact]
         public async Task ShouldUpdatePassword()
         {
@@ -32,7 +31,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var patch = new JsonPatchDocument<BasicUserDto>
@@ -57,34 +56,35 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
             };
 
             var curUser = fixture.Build<ApplicationUser>().With(o => o.Id, userId).Create();
-            var patchedUser = JsonConvert.DeserializeObject<ApplicationUser>(JsonConvert.SerializeObject(curUser));
+            var patchedUser = mapper.Map<ApplicationUser>(curUser);
 
             patchedUser.PasswordHash = fixture.Create<string>();
 
-            var getUserResult = new ServiceResult<ApplicationUser>(ServiceResultType.Success, curUser);
-            var getPatchedUserResult = new ServiceResult<ApplicationUser>(ServiceResultType.Success, patchedUser);
+            var userResult = new ServiceResult<ApplicationUser>(ServiceResultType.Success, curUser);
+            var patchedUserResult = new ServiceResult<ApplicationUser>(ServiceResultType.Success, patchedUser);
 
-            A.CallTo(() => userService.GetUserAsync(A<int>._)).Returns(getUserResult);
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).Returns(getPatchedUserResult);
+            A.CallTo(() => userService.GetUserAsync(A<int>._)).Returns(userResult);
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .Returns(patchedUserResult);
 
             //Act
             var result = await userController.UpdatePassword(patch);
-
 
             //Assert
             Assert.IsType<NoContentResult>(result);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Arrange
             const string wrongId = "KirillNoobSlayer2009";
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(new UserModelProfile())));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -115,9 +115,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -132,7 +132,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
             Assert.NotNull(objectResult.StatusCode);
 
-            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
             Assert.Equal(ExceptionMessageConstants.InvalidClaimsId, objectResult.Value);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustNotHaveHappened();
@@ -143,7 +143,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         {
             //Arrange
             var id = new Fixture().Create<int>();
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -160,10 +160,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                     User = contextUser
                 }
             };
-         
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -188,11 +188,12 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
             Assert.NotNull(objectResult.StatusCode);
 
-            Assert.Equal(HttpStatusCode.NotFound, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
             Assert.Equal(ExceptionMessageConstants.MissingUser, objectResult.Value);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).MustNotHaveHappened();
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .MustNotHaveHappened();
         }
 
         [Fact]
@@ -205,7 +206,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             };
 
             var id = new Fixture().Create<int>();
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -222,9 +223,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -249,11 +250,12 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Assert
             var objectResult = Assert.IsType<BadRequestResult>(result);
 
-            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
 
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).MustNotHaveHappened();
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .MustNotHaveHappened();
         }
 
 
@@ -268,7 +270,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
 
             var id = new Fixture().Create<int>();
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -285,9 +287,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -306,7 +308,8 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             var updatePasswordResult = new ServiceResult(ServiceResultType.InternalError);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).Returns(searchResult);
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).Returns(updatePasswordResult);
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .Returns(updatePasswordResult);
 
             //Act
             var result = await userController.UpdatePassword(patch);
@@ -314,13 +317,13 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Assert
             var objectResult = Assert.IsType<StatusCodeResult>(result);
 
-            Assert.Equal(HttpStatusCode.InternalServerError, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.UpdateUserPasswordAsync(A<ApplicationUser>._, A<BasicUserDto>._))
+                .MustHaveHappenedOnceExactly();
         }
 
-        
 
         [Fact]
         public async Task ShouldReturnApplicationUser()
@@ -331,7 +334,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var appUser = fixture.Create<ApplicationUser>();
@@ -350,9 +353,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -385,7 +388,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Arrange
             const string wrongId = "KirillNoobSlayer2009";
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -403,9 +406,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -420,11 +423,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
             Assert.NotNull(objectResult.StatusCode);
 
-            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
             Assert.Equal(ExceptionMessageConstants.InvalidClaimsId, objectResult.Value);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustNotHaveHappened();
-
         }
 
 
@@ -433,7 +435,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         {
             //Arrange
             var id = new Fixture().Create<int>();
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -451,9 +453,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -473,7 +475,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
             Assert.NotNull(objectResult.StatusCode);
 
-            Assert.Equal(HttpStatusCode.NotFound, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
             Assert.Equal(ExceptionMessageConstants.MissingUser, objectResult.Value);
 
             A.CallTo(() => userService.GetUserAsync(A<int>._)).MustHaveHappenedOnceExactly();
@@ -489,7 +491,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var userId = fixture.Create<int>();
@@ -508,15 +510,15 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
             };
 
-            var curUserDto = fixture.Build<UpdateUserDto>().With(x=>x.Email, "KirillNoobSlayer@gmail.com").Create();
+            var curUserDto = fixture.Build<UpdateUserDto>().With(x => x.Email, "KirillNoobSlayer@gmail.com").Create();
             var curUser = fixture.Build<ApplicationUser>().With(o => o.Id, userId).Create();
 
             curUser.UserName = curUserDto.UserName;
@@ -534,7 +536,8 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Assert
             Assert.IsType<NoContentResult>(result);
 
-            A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -543,7 +546,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Arrange
             const string wrongId = "KirillNoobSlayer2009";
 
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -562,9 +565,9 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
@@ -579,7 +582,7 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
             Assert.NotNull(objectResult.StatusCode);
 
-            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
             Assert.Equal(ExceptionMessageConstants.InvalidClaimsId, objectResult.Value);
 
             A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._)).MustNotHaveHappened();
@@ -589,13 +592,13 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         public async Task ShouldReturnInternalErrorOnUpdateProfileFailure()
         {
             //Arrange
-            var autoMapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
                 new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
-                    new(ClaimTypes.NameIdentifier, (new Fixture().Create<int>()).ToString())
+                    new(ClaimTypes.NameIdentifier, new Fixture().Create<int>().ToString())
                 }));
 
             var uselessUser = new Fixture().Build<UpdateUserDto>().With(o => o.Email, "coolemail@gmail.com").Create();
@@ -608,16 +611,17 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 }
             };
 
-            var userController = new WEB.Controllers.UserController(userService, autoMapper)
+            var userController = new WEB.Controllers.UserController(userService, mapper)
             {
-                ControllerContext = new()
+                ControllerContext = new ControllerContext
                 {
                     HttpContext = httpContextAccessor.HttpContext
                 }
             };
 
             var searchResult =
-                new ServiceResult<ApplicationUser>(ServiceResultType.InternalError, ExceptionMessageConstants.MissingUser);
+                new ServiceResult<ApplicationUser>(ServiceResultType.InternalError,
+                    ExceptionMessageConstants.MissingUser);
 
             A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._)).Returns(searchResult);
 
@@ -628,10 +632,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Assert
             var objectResult = Assert.IsType<StatusCodeResult>(result);
 
-            Assert.NotEqual(HttpStatusCode.NoContent, (HttpStatusCode)objectResult.StatusCode);
+            Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
-            A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.UpdateUserProfileAsync(A<int>._, A<UpdateUserDto>._))
+                .MustHaveHappenedOnceExactly();
         }
-
     }
 }

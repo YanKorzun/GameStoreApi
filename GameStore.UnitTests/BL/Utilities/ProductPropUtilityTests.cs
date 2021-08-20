@@ -1,14 +1,9 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Linq.Expressions;
+using AutoFixture;
 using GameStore.BL.Utilities;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Parameters;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Utilities
@@ -19,7 +14,7 @@ namespace GameStore.UnitTests.BL.Utilities
         public void ShouldReturnDefaultExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -32,14 +27,13 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
 
         [Fact]
         public void ShouldReturnOrderByNameExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -52,14 +46,13 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
 
         [Fact]
         public void ShouldReturnOrderByGenreExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -72,14 +65,13 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
 
         [Fact]
         public void ShouldReturnOrderByTotalRatingExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -92,14 +84,13 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
 
         [Fact]
         public void ShouldReturnOrderByPriceExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -112,14 +103,13 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
 
         [Fact]
         public void ShouldReturnOrderByCountExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -132,15 +122,14 @@ namespace GameStore.UnitTests.BL.Utilities
 
             //Assert
             Assert.Equal(expectedExpression.ToString(), result.ToString());
-
         }
-        
+
 
         [Fact]
-        public void ShouldReturnFilterbyAgeExpression()
+        public void ShouldReturnFilterByAgeExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -155,10 +144,10 @@ namespace GameStore.UnitTests.BL.Utilities
         }
 
         [Fact]
-        public void ShouldReturnFilterbyGenreExpression()
+        public void ShouldReturnFilterByGenreExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -173,10 +162,10 @@ namespace GameStore.UnitTests.BL.Utilities
         }
 
         [Fact]
-        public void ShouldReturnFilterbyGenreAndAgeExpression()
+        public void ShouldReturnFilterByGenreAndAgeExpression()
         {
             //Arrange
-            var fixture = new Fixture()
+            var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
             };
@@ -189,6 +178,5 @@ namespace GameStore.UnitTests.BL.Utilities
             //Assert
             Assert.NotNull(result);
         }
-
     }
 }

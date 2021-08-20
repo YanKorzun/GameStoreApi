@@ -10,6 +10,8 @@ namespace GameStore.BL.Mappers
         {
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Product, ExtendedProductDto>().ReverseMap();
+            CreateMap<Product, InputProductDto>().ReverseMap();
+            CreateMap<Product, ExtendedInputProductDto>().ReverseMap();
         }
     }
 }

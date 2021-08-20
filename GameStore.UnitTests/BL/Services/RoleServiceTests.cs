@@ -1,14 +1,15 @@
-﻿using AutoFixture;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoFixture;
 using AutoMapper;
 using FakeItEasy;
 using GameStore.BL.Enums;
+using GameStore.BL.Mappers;
 using GameStore.BL.Services;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Roles;
 using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Services
@@ -21,12 +22,13 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Create<RoleDto>();
 
-            A.CallTo(() => roleManager.CreateAsync(A<ApplicationRole>._)).Returns(Task.FromResult(IdentityResult.Success));
+            A.CallTo(() => roleManager.CreateAsync(A<ApplicationRole>._))
+                .Returns(Task.FromResult(IdentityResult.Success));
 
             //Act
             var result = await roleService.CreateAsync(role);
@@ -42,14 +44,15 @@ namespace GameStore.UnitTests.BL.Services
         {
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Create<RoleDto>();
 
-            A.CallTo(() => roleManager.CreateAsync(A<ApplicationRole>._)).Returns(Task.FromResult(IdentityResult.Failed()));
+            A.CallTo(() => roleManager.CreateAsync(A<ApplicationRole>._))
+                .Returns(Task.FromResult(IdentityResult.Failed()));
 
-            //Acty
+            //Act
             var result = await roleService.CreateAsync(role);
 
             //Assert
@@ -64,12 +67,13 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
 
-            A.CallTo(() => roleManager.DeleteAsync(A<ApplicationRole>._)).Returns(Task.FromResult(IdentityResult.Success));
+            A.CallTo(() => roleManager.DeleteAsync(A<ApplicationRole>._))
+                .Returns(Task.FromResult(IdentityResult.Success));
 
             //Act
             var result = await roleService.DeleteAsync(roleId);
@@ -82,26 +86,27 @@ namespace GameStore.UnitTests.BL.Services
 
         [Fact]
         public async Task ShouldReturnInternalErrorOnDeleteAsync()
-        { 
+        {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
 
 
-            A.CallTo(() => roleManager.FindByIdAsync(A<string>._));
-            A.CallTo(() => roleManager.DeleteAsync(A<ApplicationRole>._)).Returns(Task.FromResult(IdentityResult.Failed()));
+            A.CallTo(() => roleManager.DeleteAsync(A<ApplicationRole>._))
+                .Returns(Task.FromResult(IdentityResult.Failed()));
 
-            //Acty
+            //Act
             var result = await roleService.DeleteAsync(roleId);
 
             //Assert
             Assert.Equal(ServiceResultType.InternalError, result.Result);
 
             A.CallTo(() => roleManager.DeleteAsync(A<ApplicationRole>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => roleManager.FindByIdAsync(A<string>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -109,7 +114,7 @@ namespace GameStore.UnitTests.BL.Services
         {
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
@@ -132,7 +137,7 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Build<BasicUserRoleDto>().With(o => o.Email, "mynewEmail@gmail.com").Create();
@@ -146,22 +151,22 @@ namespace GameStore.UnitTests.BL.Services
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.GetRolesAsync(A<ApplicationUser>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userManager.RemoveFromRolesAsync(A<ApplicationUser>._, A<IList<string>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userManager.RemoveFromRolesAsync(A<ApplicationUser>._, A<IList<string>>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => roleManager.FindByNameAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.AddToRoleAsync(A<ApplicationUser>._, A<string>._)).MustHaveHappenedOnceExactly();
         }
 
-
         [Fact]
-        public async Task ShouldReturnNotfoundOnEditAsync()
+        public async Task ShouldReturnNotFoundOnEditAsync()
         {
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = A.Fake<IMapper>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
-            var role = new Fixture().Build<BasicUserRoleDto>().With(o=>o.Email, "mynewEmail@gmail.com").Create();
+            var role = new Fixture().Build<BasicUserRoleDto>().With(o => o.Email, "mynewEmail@gmail.com").Create();
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns(Task.FromResult<ApplicationUser>(null));
 
             //Act
@@ -172,7 +177,8 @@ namespace GameStore.UnitTests.BL.Services
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userManager.GetRolesAsync(A<ApplicationUser>._)).MustNotHaveHappened();
-            A.CallTo(() => userManager.RemoveFromRolesAsync(A<ApplicationUser>._, A<List<string>>._)).MustNotHaveHappened();
+            A.CallTo(() => userManager.RemoveFromRolesAsync(A<ApplicationUser>._, A<List<string>>._))
+                .MustNotHaveHappened();
             A.CallTo(() => roleManager.FindByNameAsync(A<string>._)).MustNotHaveHappened();
             A.CallTo(() => userManager.AddToRoleAsync(A<ApplicationUser>._, A<string>._)).MustNotHaveHappened();
         }
