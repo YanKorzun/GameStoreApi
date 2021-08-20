@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace GameStore.UnitTests.Web.Controllers.UserController
@@ -31,7 +30,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var patch = new JsonPatchDocument<BasicUserDto>
@@ -143,7 +145,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         {
             //Arrange
             var id = new Fixture().Create<int>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -206,7 +211,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             };
 
             var id = new Fixture().Create<int>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -270,7 +278,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
 
 
             var id = new Fixture().Create<int>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -334,7 +345,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var appUser = fixture.Create<ApplicationUser>();
@@ -388,7 +402,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Arrange
             const string wrongId = "KirillNoobSlayer2009";
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -435,7 +452,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         {
             //Arrange
             var id = new Fixture().Create<int>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -491,7 +511,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
                 Behaviors = { new NullRecursionBehavior() }
             };
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var userId = fixture.Create<int>();
@@ -546,7 +569,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
             //Arrange
             const string wrongId = "KirillNoobSlayer2009";
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =
@@ -592,7 +618,10 @@ namespace GameStore.UnitTests.Web.Controllers.UserController
         public async Task ShouldReturnInternalErrorOnUpdateProfileFailure()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var userService = A.Fake<IUserService>();
 
             var contextUser =

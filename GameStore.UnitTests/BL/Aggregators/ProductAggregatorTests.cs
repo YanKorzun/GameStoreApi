@@ -5,7 +5,6 @@ using GameStore.BL.Aggregators;
 using GameStore.BL.Mappers;
 using GameStore.DAL.Entities;
 using GameStore.WEB.DTO.Products;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Aggregators
@@ -17,7 +16,9 @@ namespace GameStore.UnitTests.BL.Aggregators
         {
             //Arrange
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new ProductModelProfile() })));
+            var mapper =
+                new Mapper(new MapperConfiguration(cfg =>
+                    cfg.AddProfiles(new List<Profile> { new ProductModelProfile() })));
             var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
@@ -29,35 +30,25 @@ namespace GameStore.UnitTests.BL.Aggregators
             var logoString = fixture.Create<string>();
             var bgString = fixture.Create<string>();
 
-            var expectedResult = mapper.Map<Product>(productDto);
+            var expectedProduct = mapper.Map<Product>(productDto);
 
-            expectedResult.Logo = logoString;
-            expectedResult.Background = bgString;
+            expectedProduct.Logo = logoString;
+            expectedProduct.Background = bgString;
 
             //Act
             var result = aggregator.AggregateProduct(productDto, bgString, logoString);
 
             //Assert
-            Assert.Equal(expectedResult.AgeRating, result.AgeRating);
-            Assert.Equal(expectedResult.Background, result.Background);
-            Assert.Equal(expectedResult.Count, result.Count);
-            Assert.Equal(expectedResult.DateCreated, result.DateCreated);
-            Assert.Equal(expectedResult.Developers, result.Developers);
-            Assert.Equal(expectedResult.Logo, result.Logo);
-            Assert.Equal(expectedResult.Genre, result.Genre);
-            Assert.Equal(expectedResult.Name, result.Name);
-            Assert.Equal(expectedResult.Platform, result.Platform);
-            Assert.Equal(expectedResult.Price, result.Price);
-            Assert.Equal(expectedResult.PublicationDate, result.PublicationDate);
-            Assert.Equal(expectedResult.Publishers, result.Publishers);
-            Assert.Equal(expectedResult.TotalRating, result.TotalRating);
+            AssertProduct(expectedProduct, result);
         }
 
         [Fact]
         public void ShouldReturnProductWhenSendsExtendedModel()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new ProductModelProfile() })));
+            var mapper =
+                new Mapper(new MapperConfiguration(cfg =>
+                    cfg.AddProfiles(new List<Profile> { new ProductModelProfile() })));
             var fixture = new Fixture
             {
                 Behaviors = { new NullRecursionBehavior() }
@@ -70,29 +61,34 @@ namespace GameStore.UnitTests.BL.Aggregators
             var logoString = fixture.Create<string>();
             var bgString = fixture.Create<string>();
 
-            var expectedResult = mapper.Map<Product>(productDto);
+            var expectedProduct = mapper.Map<Product>(productDto);
 
-            expectedResult.Logo = logoString;
-            expectedResult.Background = bgString;
+            expectedProduct.Logo = logoString;
+            expectedProduct.Background = bgString;
 
             //Act
             var result = aggregator.AggregateProduct(productDto, bgString, logoString);
 
             //Assert
-            Assert.Equal(expectedResult.Id, result.Id);
-            Assert.Equal(expectedResult.AgeRating, result.AgeRating);
-            Assert.Equal(expectedResult.Background, result.Background);
-            Assert.Equal(expectedResult.Count, result.Count);
-            Assert.Equal(expectedResult.DateCreated, result.DateCreated);
-            Assert.Equal(expectedResult.Developers, result.Developers);
-            Assert.Equal(expectedResult.Logo, result.Logo);
-            Assert.Equal(expectedResult.Genre, result.Genre);
-            Assert.Equal(expectedResult.Name, result.Name);
-            Assert.Equal(expectedResult.Platform, result.Platform);
-            Assert.Equal(expectedResult.Price, result.Price);
-            Assert.Equal(expectedResult.PublicationDate, result.PublicationDate);
-            Assert.Equal(expectedResult.Publishers, result.Publishers);
-            Assert.Equal(expectedResult.TotalRating, result.TotalRating);
+            Assert.Equal(expectedProduct.Id, result.Id);
+            AssertProduct(expectedProduct, result);
+        }
+
+        private static void AssertProduct(Product expectedProduct, Product result)
+        {
+            Assert.Equal(expectedProduct.AgeRating, result.AgeRating);
+            Assert.Equal(expectedProduct.Background, result.Background);
+            Assert.Equal(expectedProduct.Count, result.Count);
+            Assert.Equal(expectedProduct.DateCreated, result.DateCreated);
+            Assert.Equal(expectedProduct.Developers, result.Developers);
+            Assert.Equal(expectedProduct.Logo, result.Logo);
+            Assert.Equal(expectedProduct.Genre, result.Genre);
+            Assert.Equal(expectedProduct.Name, result.Name);
+            Assert.Equal(expectedProduct.Platform, result.Platform);
+            Assert.Equal(expectedProduct.Price, result.Price);
+            Assert.Equal(expectedProduct.PublicationDate, result.PublicationDate);
+            Assert.Equal(expectedProduct.Publishers, result.Publishers);
+            Assert.Equal(expectedProduct.TotalRating, result.TotalRating);
         }
     }
 }

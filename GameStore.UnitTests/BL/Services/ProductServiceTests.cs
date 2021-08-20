@@ -27,7 +27,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldReturnSuccessFromCreateProductAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
@@ -63,7 +66,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldReturnSuccessFromUpdateProductAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
@@ -99,7 +105,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             const string errorMessage = "problems with uploading your pictures";
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
@@ -120,7 +129,7 @@ namespace GameStore.UnitTests.BL.Services
                 new ImageUploadResult());
 
             A.CallTo(() => cloudinaryService.UploadAsync(A<IFormFile>._)).Returns(Task.FromResult(uploadResult));
-            
+
             //Act
             var result = await productService.UpdateProductAsync(inputDto);
 
@@ -135,7 +144,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldReturnSuccessResultFromDeleteProductAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
@@ -153,7 +165,7 @@ namespace GameStore.UnitTests.BL.Services
             var deleteResult = new ServiceResult(ServiceResultType.Success);
 
             A.CallTo(() => productRepository.DeleteProductAsync(A<int>._)).Returns(deleteResult);
-            
+
             //Act
             var result = await productService.DeleteProductAsync(productId);
 
@@ -167,7 +179,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldBeCalledOnceFromFindProductByIdAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
@@ -195,7 +210,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldBeCalledOnceFromGetProductsBySearchTermAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();
@@ -221,7 +239,10 @@ namespace GameStore.UnitTests.BL.Services
         public async Task ShouldBeCalledOnceFromGetPagedProductListAsync()
         {
             //Arrange
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var productRepository = A.Fake<IProductRepository>();
             var customProductAggregator = A.Fake<ICustomProductAggregator>();
             var cloudinaryService = A.Fake<ICloudinaryService>();

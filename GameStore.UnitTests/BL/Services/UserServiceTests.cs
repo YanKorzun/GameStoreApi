@@ -28,7 +28,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -73,7 +76,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -118,7 +124,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -163,7 +172,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -179,10 +191,6 @@ namespace GameStore.UnitTests.BL.Services
 
             var basicUserDto = fixture.Build<BasicUserDto>().With(o => o.Email, "ajsdhaijusd@gmail.com").Create();
             var settings = fixture.Create<AppSettings>();
-
-
-            var appuser = fixture.Build<ApplicationUser>().With(o => o.EmailConfirmed, false).Create();
-
 
             //Act
             var result = await userService.SignInAsync(basicUserDto, settings);
@@ -203,7 +211,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -221,9 +232,6 @@ namespace GameStore.UnitTests.BL.Services
             var settings = fixture.Create<AppSettings>();
 
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns<ApplicationUser>(null);
-
-            var appuser = fixture.Build<ApplicationUser>().With(o => o.EmailConfirmed, false).Create();
-
 
             //Act
             var result = await userService.SignInAsync(basicUserDto, settings);
@@ -245,7 +253,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -264,9 +275,6 @@ namespace GameStore.UnitTests.BL.Services
             A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, A<string>._)).Returns(IdentityResult.Success);
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns<ApplicationUser>(null);
 
-            var appuser = fixture.Build<ApplicationUser>().With(o => o.EmailConfirmed, false).Create();
-
-
             //Act
             var result = await userService.SignUpAsync(basicUserDto);
 
@@ -284,7 +292,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -303,9 +314,6 @@ namespace GameStore.UnitTests.BL.Services
             A.CallTo(() => userManager.CreateAsync(A<ApplicationUser>._, A<string>._)).Returns(IdentityResult.Failed());
             A.CallTo(() => userManager.FindByEmailAsync(A<string>._)).Returns<ApplicationUser>(null);
 
-            var appuser = fixture.Build<ApplicationUser>().With(o => o.EmailConfirmed, false).Create();
-
-
             //Act
             var result = await userService.SignUpAsync(basicUserDto);
 
@@ -323,7 +331,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -356,7 +367,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -375,8 +389,6 @@ namespace GameStore.UnitTests.BL.Services
             var data = fixture.Create<(ApplicationUser, string)>();
             var scheme = "scheme";
 
-            var basicUserDto = fixture.Build<BasicUserDto>().With(o => o.Email, "ajsdhaijusd@gmail.com").Create();
-
             //Act
             await userService.SendConfirmationMessageAsync(actionName, controllerName, data, scheme);
 
@@ -392,7 +404,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -425,7 +440,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -458,7 +476,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -493,7 +514,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -509,7 +533,6 @@ namespace GameStore.UnitTests.BL.Services
             var userId = 1;
             var user = fixture.Create<ApplicationUser>();
             var basicUserDto = fixture.Build<BasicUserDto>().With(o => o.Email, "ajsdhaijusd@gmail.com").Create();
-
 
             A.CallTo(() => userRepository.UpdateUserAsync(A<ApplicationUser>._, A<int>._))
                 .Returns(new ServiceResult<ApplicationUser>(ServiceResultType.Success, user));
@@ -531,7 +554,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -546,7 +572,6 @@ namespace GameStore.UnitTests.BL.Services
 
             var userId = 1;
             var user = fixture.Create<ApplicationUser>();
-
 
             A.CallTo(() => cacheService.GetEntity(A<int>._)).Returns(new ServiceResult<ApplicationUser>());
             A.CallTo(() => userRepository.FindUserByIdAsync(A<int>._))
@@ -569,7 +594,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -606,7 +634,10 @@ namespace GameStore.UnitTests.BL.Services
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var userRepository = A.Fake<IUserRepository>();
             var signInManager = A.Fake<SignInManager<ApplicationUser>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var roleService = A.Fake<IRoleService>();
             var urlHelper = A.Fake<IUrlHelper>();
             var emailSender = A.Fake<IEmailSender>();
@@ -614,13 +645,8 @@ namespace GameStore.UnitTests.BL.Services
 
             var userService = new UserService(userManager, userRepository, signInManager, mapper, roleService,
                 urlHelper, emailSender, cacheService);
-            var fixture = new Fixture
-            {
-                Behaviors = { new NullRecursionBehavior() }
-            };
 
             var userId = 1;
-
 
             A.CallTo(() => cacheService.GetEntity(A<int>._)).Returns(new ServiceResult<ApplicationUser>());
             A.CallTo(() => userRepository.FindUserByIdAsync(A<int>._)).Returns(new ServiceResult<ApplicationUser>());

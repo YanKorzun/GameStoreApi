@@ -1,4 +1,8 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using AutoFixture;
 using AutoMapper;
 using FakeItEasy;
 using GameStore.BL.Enums;
@@ -9,11 +13,6 @@ using GameStore.DAL.Entities;
 using GameStore.DAL.Enums;
 using GameStore.DAL.Interfaces;
 using GameStore.WEB.DTO.Orders;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace GameStore.UnitTests.BL.Services
@@ -25,7 +24,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -56,7 +58,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -89,7 +94,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -113,7 +121,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -146,7 +157,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             const string exceptionMessage = "Transaction failed";
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -179,7 +193,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -214,7 +231,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -245,7 +265,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);
@@ -275,7 +298,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             //Arrange
             var libraryService = A.Fake<IProductLibraryService>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile> { new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile() })));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
             var orderRepository = A.Fake<IOrderRepository>();
 
             var orderService = new OrderService(orderRepository, mapper, libraryService);

@@ -53,7 +53,7 @@ namespace GameStore.UnitTests.BL.Services
             var cloudinaryService = new CloudinaryService(settings);
 
             var filename = fixture.Create<string>();
-            var stream = new MemoryStream(); 
+            var stream = new MemoryStream();
             var writer = new StreamWriter(stream);
 
             await writer.WriteAsync(filename);

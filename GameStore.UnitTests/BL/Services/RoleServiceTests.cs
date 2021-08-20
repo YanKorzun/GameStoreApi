@@ -22,7 +22,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Create<RoleDto>();
@@ -44,7 +47,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Create<RoleDto>();
@@ -67,7 +73,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
@@ -90,7 +99,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
@@ -114,7 +126,10 @@ namespace GameStore.UnitTests.BL.Services
         {
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var roleId = new Fixture().Create<string>();
@@ -137,7 +152,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Build<BasicUserRoleDto>().With(o => o.Email, "mynewEmail@gmail.com").Create();
@@ -163,7 +181,10 @@ namespace GameStore.UnitTests.BL.Services
             //Arrange
             var userManager = A.Fake<UserManager<ApplicationUser>>();
             var roleManager = A.Fake<RoleManager<ApplicationRole>>();
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>{ new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()})));
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfiles(new List<Profile>
+            {
+                new RoleModelProfile(), new UserModelProfile(), new OrderModelProfile(), new ProductModelProfile()
+            })));
 
             var roleService = new RoleService(userManager, roleManager, mapper);
             var role = new Fixture().Build<BasicUserRoleDto>().With(o => o.Email, "mynewEmail@gmail.com").Create();
