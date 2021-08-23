@@ -6,6 +6,9 @@ services:
       context: GameStore
       dockerfile: Dockerfile
     restart: always
+    environment:
+        server: "mssql-server"
+        port: "8229"
     depends_on:
       - mssql-server
     ports:
@@ -18,3 +21,5 @@ services:
     environment:
       SA_PASSWORD: "iTechArtGroup11!"
       ACCEPT_EULA: "Y"
+    ports:
+      - "8229:1433"
