@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.DAL.Entities
 {
     public class ApplicationUser : IdentityUser<int>
     {
         public IList<ApplicationUserRole> UserRoles { get; set; }
-        public IList<GameLibraries> GamesLibraries { get; set; } = new List<GameLibraries>();
+        public bool IsDeleted { get; set; }
+        public IList<ProductLibraries> ProductLibraries { get; set; } = new List<ProductLibraries>();
+        public ICollection<Order> Orders { get; set; }
     }
 }

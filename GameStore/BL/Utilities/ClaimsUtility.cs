@@ -1,54 +1,23 @@
-﻿using GameStore.BL.Enums;
-using GameStore.BL.Interfaces;
+﻿using System.Security.Claims;
+using GameStore.BL.Constants;
+using GameStore.BL.Enums;
 using GameStore.BL.ResultWrappers;
-using GameStore.DAL.Entities;
-using GameStore.DAL.Interfaces;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace GameStore.BL.Utilities
 {
-    public class ClaimsUtility : IClaimsUtility
+    public static class ClaimsUtility
     {
-        private readonly IUserRepository _userRepository;
-
-        public const string AccountConfirmation = "Account confirmation";
-
-        public ClaimsUtility(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        public ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal contextUser)
+        public static ServiceResult<int> GetUserIdFromClaims(ClaimsPrincipal contextUser)
         {
             var id = contextUser.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            bool result = int.TryParse(id, out int number);
+            var result = int.TryParse(id, out var number);
             if (!result)
             {
-                return new(ServiceResultType.InvalidData);
+                return new(ServiceResultType.InvalidData, ExceptionMessageConstants.InvalidClaimsId);
             }
 
             return new(ServiceResultType.Success, number);
-        }
-
-        public async Task<ServiceResult<ApplicationUser>> GetUserFromClaimsAsync(ClaimsPrincipal contextUser)
-        {
-            var parseIdResult = GetUserIdFromClaims(contextUser);
-            if (parseIdResult.Result is not ServiceResultType.Success)
-            {
-                return new(parseIdResult.Result);
-            }
-
-            var userId = parseIdResult.Data;
-
-            var userSearchResult = await _userRepository.FindUserByIdAsync(userId);
-            if (userSearchResult.Result is not ServiceResultType.Success)
-            {
-                return userSearchResult;
-            }
-
-            return new(ServiceResultType.Success, userSearchResult.Data);
         }
     }
 }

@@ -10,11 +10,8 @@ namespace GameStore.WEB.StartUp.Configuration
         public static void RegisterIdentity(this IServiceCollection services)
         {
             services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            });
+                .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
         }
     }
 }

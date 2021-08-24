@@ -1,4 +1,3 @@
-using GameStore.Startup.Configuration;
 using GameStore.WEB.Settings;
 using GameStore.WEB.Startup.Configuration;
 using GameStore.WEB.StartUp.Configuration;
@@ -6,7 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace GameStore.WEB.StartUp
 {
@@ -23,29 +23,31 @@ namespace GameStore.WEB.StartUp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var AppSettings = RegisterSettings(Configuration);
-            services.RegisterServices(AppSettings);
-            services.RegisterDatabase(AppSettings.Database, LoggerFactory);
+            var appSettings = RegisterSettings(Configuration);
+            services.RegisterServices(appSettings);
+            services.RegisterDatabase(appSettings.Database, LoggerFactory);
             services.RegisterAutoMapper();
             services.RegisterSwagger();
             services.RegisterHealthChecks();
             services.RegisterIdentity();
-            services.RegisterAuthSettings(AppSettings.Token);
+            services.RegisterAuthSettings(appSettings.Token);
             services.RegisterHttpContextExtensions();
+            services.RegisterCompression();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            app.RegisterCompression();
             app.UseMiddleware<LoggingMiddleware>();
             app.RegisterSwaggerUi();
             app.RegisterHealthChecks();
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.RegisterExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
             app.UseRouting();
@@ -55,11 +57,14 @@ namespace GameStore.WEB.StartUp
         }
 
         private static AppSettings RegisterSettings(IConfiguration configuration) =>
-                new()
-                {
-                    Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>(),
-                    Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>(),
-                    SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings)).Get<SmtpClientSettings>()
-                };
+            new()
+            {
+                Database = configuration.GetSection(nameof(AppSettings.Database)).Get<DatabaseSettings>(),
+                Token = configuration.GetSection(nameof(AppSettings.Token)).Get<TokenSettings>(),
+                SmtpClientSettings = configuration.GetSection(nameof(AppSettings.SmtpClientSettings))
+                    .Get<SmtpClientSettings>(),
+                CloudinarySettings = configuration.GetSection(nameof(AppSettings.CloudinarySettings))
+                    .Get<CloudinarySettings>()
+            };
     }
 }

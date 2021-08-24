@@ -1,24 +1,27 @@
-﻿using GameStore.BL.ResultWrappers;
+﻿using System.Threading.Tasks;
+using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Users;
 using GameStore.WEB.Settings;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace GameStore.BL.Services
+namespace GameStore.BL.Interfaces
 {
     public interface IUserService
     {
-        public Task<ServiceResult<string>> SignInAsync(UserWithPasswordModel userDTO, AppSettings appSettings);
+        Task<ServiceResult<string>> SignInAsync(BasicUserDto basicUserModel, AppSettings appSettings);
 
-        public Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(UserWithPasswordModel userModel);
+        Task<ServiceResult<(ApplicationUser user, string confirmToken)>> SignUpAsync(BasicUserDto basicUserModel);
 
-        public Task<ServiceResult> ConfirmAsync(string id, string confirmToken);
+        Task<ServiceResult> ConfirmAsync(string id, string confirmToken);
 
-        public Task<ServiceResult> UdpateUserPasswordAsync(ApplicationUser user, UserWithPasswordModel userModel);
+        Task<ServiceResult> UpdateUserPasswordAsync(ApplicationUser user, BasicUserDto userModel);
 
-        public Task<ServiceResult<ApplicationUser>> UdpateUserProfileAsync(ClaimsPrincipal contextUser, UserModel user);
+        Task<ServiceResult<ApplicationUser>> UpdateUserProfileAsync(int userId,
+            UpdateUserDto updateUser);
 
-        public Task SendConfirmationMessageAsync(string actionName, string controllerName, (ApplicationUser appUser, string token) data, string scheme);
+        Task SendConfirmationMessageAsync(string actionName, string controllerName,
+            (ApplicationUser appUser, string token) data, string scheme);
+
+        Task<ServiceResult<ApplicationUser>> GetUserAsync(int id);
     }
 }

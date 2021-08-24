@@ -1,29 +1,32 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using GameStore.BL.Enums;
+using GameStore.BL.Interfaces;
 using GameStore.BL.ResultWrappers;
 using GameStore.DAL.Entities;
-using GameStore.WEB.DTO;
+using GameStore.WEB.DTO.Roles;
+using GameStore.WEB.DTO.Users;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 
 namespace GameStore.BL.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMapper _mapper;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper)
+        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
+            IMapper mapper)
         {
             _roleManager = roleManager;
             _mapper = mapper;
             _userManager = userManager;
         }
 
-        public async Task<ServiceResult> CreateAsync(RoleModel roleModel)
+        public async Task<ServiceResult> CreateAsync(RoleDto roleDto)
         {
-            var applicationRole = _mapper.Map<ApplicationRole>(roleModel);
+            var applicationRole = _mapper.Map<ApplicationRole>(roleDto);
 
             var result = await _roleManager.CreateAsync(applicationRole);
             if (!result.Succeeded)
@@ -51,9 +54,9 @@ namespace GameStore.BL.Services
             return new(ServiceResultType.Success);
         }
 
-        public async Task<ServiceResult> EditAsync(UserWithRoleModel userModel)
+        public async Task<ServiceResult> EditAsync(BasicUserRoleDto basicUserRoleModel)
         {
-            var user = await _userManager.FindByEmailAsync(userModel.Email);
+            var user = await _userManager.FindByEmailAsync(basicUserRoleModel.Email);
             if (user is null)
             {
                 return new(ServiceResultType.NotFound);
@@ -63,13 +66,13 @@ namespace GameStore.BL.Services
 
             await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-            var identityRole = await _roleManager.FindByNameAsync(userModel.Role);
+            var identityRole = await _roleManager.FindByNameAsync(basicUserRoleModel.Role);
             if (identityRole is null)
             {
-                await CreateAsync(new(name: userModel.Role));
+                await CreateAsync(new(basicUserRoleModel.Role));
             }
 
-            await _userManager.AddToRoleAsync(user, userModel.Role);
+            await _userManager.AddToRoleAsync(user, basicUserRoleModel.Role);
 
             return new(ServiceResultType.Success);
         }

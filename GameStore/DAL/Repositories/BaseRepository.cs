@@ -1,35 +1,38 @@
-﻿using GameStore.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GameStore.DAL.Enums;
+using GameStore.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.DAL.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _dbContext;
-        protected readonly DbSet<T> _entity;
+        protected readonly ApplicationDbContext DbContext;
+        protected readonly DbSet<T> Entity;
 
-        public BaseRepository(ApplicationDbContext dbContext)
+        protected BaseRepository(ApplicationDbContext databaseContext)
         {
-            _dbContext = dbContext;
-            _entity = _dbContext.Set<T>();
+            DbContext = databaseContext;
+            Entity = DbContext.Set<T>();
         }
 
         public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression)
         {
-            var item = await _entity.AsNoTracking().SingleOrDefaultAsync(expression);
+            var item = await Entity.AsNoTracking().SingleOrDefaultAsync(expression);
 
             return item;
         }
 
-        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+        public async Task<T> SearchForSingleItemAsync(Expression<Func<T, bool>> expression,
+            params Expression<Func<T, object>>[] includes)
         {
             try
             {
-                var query = _entity.Where(expression).AsNoTracking();
+                var query = Entity.Where(expression).AsNoTracking();
 
                 if (includes.Length != 0)
                 {
@@ -52,19 +55,187 @@ namespace GameStore.DAL.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new Exception($"Unable to find item in database. Error: {e.Message}");
+                throw new($"Unable to find item in database. Error: {e.Message}");
             }
         }
 
         public virtual async Task<T> CreateItemAsync(T entity)
         {
-            var createdEntity = await _dbContext.AddAsync(entity);
+            var createdEntity = await DbContext.AddAsync(entity);
 
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
 
             createdEntity.State = EntityState.Detached;
 
             return createdEntity.Entity;
+        }
+
+        public async Task<List<T>> CreateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                await Entity.AddRangeAsync(entitiesList);
+
+                var res = await DbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Could not create items in database. Error: {e.Message}");
+            }
+
+            return entitiesList;
+        }
+
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, TK>> sort,
+            OrderType orderType = OrderType.Asc
+        )
+        {
+            List<T> items;
+
+            if (orderType == OrderType.Asc)
+            {
+                items = await Entity.Where(expression).OrderBy(sort).AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                items = await Entity.Where(expression).OrderByDescending(sort).AsNoTracking().ToListAsync();
+            }
+
+            return items;
+        }
+
+        public async Task<List<T>> SearchForMultipleItemsAsync<TK>(
+            Expression<Func<T, bool>> expression,
+            int offset,
+            int limit,
+            Expression<Func<T, TK>> sort,
+            OrderType orderType
+        )
+        {
+            List<T> items;
+
+            if (orderType == OrderType.Asc)
+            {
+                if (expression != null)
+                {
+                    items = await Entity
+                        .Where(expression)
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    items = await Entity
+                        .OrderBy(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+            }
+            else
+            {
+                if (expression != null)
+                {
+                    items = await Entity
+                        .Where(expression)
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    items = await Entity
+                        .OrderByDescending(sort)
+                        .Skip(offset)
+                        .Take(limit)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+            }
+
+            return items;
+        }
+
+        public async Task<T> UpdateItemAsync(T item, params Expression<Func<T, object>>[] unmodifiedProperties)
+        {
+            try
+            {
+                Entity.Update(item);
+                foreach (var property in unmodifiedProperties)
+                {
+                    DbContext.Entry(item).Property(property).IsModified = false;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                DbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
+        }
+
+        public async Task<List<T>> UpdateItemsAsync(IEnumerable<T> items)
+        {
+            var entitiesList = items.ToList();
+
+            try
+            {
+                DbContext.UpdateRange(entitiesList);
+
+                await DbContext.SaveChangesAsync();
+
+                foreach (var entity in entitiesList)
+                {
+                    DbContext.Entry(entity).State = EntityState.Detached;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update items. Error: {e.Message}");
+            }
+
+            return entitiesList;
+        }
+
+        public async Task<T> UpdateItemWithModifiedPropsAsync(T item,
+            params Expression<Func<T, object>>[] modifiedProperties)
+        {
+            try
+            {
+                Entity.Update(item);
+                foreach (var property in modifiedProperties)
+                {
+                    DbContext.Entry(item).Property(property).IsModified = true;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                DbContext.Entry(item).State = EntityState.Detached;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new($"Unable to update item. Error: {e.Message}");
+            }
+
+            return item;
         }
     }
 }

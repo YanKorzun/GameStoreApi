@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace GameStore.WEB.Startup.Configuration
 {
@@ -30,7 +30,8 @@ namespace GameStore.WEB.Startup.Configuration
                     context.Request.Body.Position = 0;
                 }
 
-                _logger.LogInformation($"Request {context.Request?.Method} {context.Request?.Path.Value} {jsonBody} => {context.Response?.StatusCode}");
+                _logger.LogInformation(
+                    $"Request {context.Request?.Method} {context.Request?.Path.Value} {jsonBody} => {context.Response?.StatusCode}");
             }
             finally
             {
